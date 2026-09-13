@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-09-11T04:14:34.950Z",
+  "responses": [
+    {
+      "url": "https://18ae1020-7146-4401-b451-d91ef9d822fb-00-93pnpz6ij16v-r4ph5k0s.janeway.replit.dev/api/compose/stream",
+      "status": 200,
+      "headers": {
+        "content-type": "application/x-ndjson; charset=utf-8"
+      },
+      "body": "{\"type\":\"workflow-progress\",\"stage\":\"intent-classified\",\"message\":\"Semantic intent classified as edit.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"workflow-progress\",\"stage\":\"instrument-approval\",\"message\":\"Track membership proposals are waiting for explicit approval.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"result\",\"result\":{\"response\":\"Instrument membership changes are pending your explicit approval; no score material was changed.\",\"workflow\":\"instrument-approval\",\"styleSuggestions\":[],\"trackProposals\":[{\"id\":\"manual-piano-1789099985637\",\"action\":\"add\",\"instrument\":\"Upright Piano\",\"role\":\"keyboards\",\"midiProgram\":0,\"summary\":\"Compact four-bar piano cue: tense yet hopeful, simple chordal support under concise melody\",\"reason\":\"Reusing the existing upright piano track to fulfill the request without adding instruments. The four-bar structure fits within the 64-beat score duration at 96 BPM.\"}],\"consultations\":[],\"usageGuard\":\"Semantic intent gate, private per-track MIDI copies, sequential cumulative edits, and final evaluation protect the approved score.\",\"operations\":[],\"editWorkflow\":{\"intent\":\"discussion\",\"status\":\"discussion\",\"summary\":\"Approve or reject the proposed instrument membership changes before composition resumes.\",\"tasks\":[],\"events\":[{\"stage\":\"instrument-approval\",\"message\":\"Track membership proposals are waiting for explicit approval.\",\"agent\":\"Orchestrator\"}],\"changedFiles\":[]}}}\n"
+    },
+    {
+      "url": "https://18ae1020-7146-4401-b451-d91ef9d822fb-00-93pnpz6ij16v-r4ph5k0s.janeway.replit.dev/api/compose/stream",
+      "status": 200,
+      "headers": {
+        "content-type": "application/x-ndjson; charset=utf-8"
+      },
+      "body": "{\"type\":\"workflow-progress\",\"stage\":\"intent-classified\",\"message\":\"Semantic intent classified as edit.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"workflow-progress\",\"stage\":\"intent-classified\",\"message\":\"Semantic intent classified as edit.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"error\",\"error\":\"Task 1 has an invalid specialist assignment.\"}\n"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Film Score Studio"
+description = "A conversational AI composition workspace where film composers speak, type, or play MIDI ideas into one continuous creative flow, collaborate with a lead scoring agent and orchestration specialists, and review a simple stacked instrument track view."
+version = "1.0.0"
+id = "artifacts/film-score-studio"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18108
+
+[services.development]
+run = "pnpm --filter @workspace/film-score-studio run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/film-score-studio", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/film-score-studio/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18108"
+BASE_PATH = "/"

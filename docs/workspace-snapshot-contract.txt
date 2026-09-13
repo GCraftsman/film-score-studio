@@ -1,0 +1,59 @@
+Film Score Studio workspace integration contract
+
+The editor persists the complete project document under user-scoped keys
+derived by workspaceStorageKeys(userId), and splits onboarding/pending
+proposals into that same user's extras key. The legacy
+film-score-studio:project:v2 and extras keys are reserved for pre-auth
+recovery. Project-manager integration intentionally uses that
+WorkspaceDocument JSON envelope (not the hook's in-memory snapshot helpers),
+so the saved bridge is the actual code in:
+
+- artifacts/film-score-studio/src/lib/project-manager.ts
+  - readWorkspaceDocument/writeWorkspaceDocument
+  - preserveLocalWorkspace/readRecoveredWorkspace
+  - uploadPendingAudio/hydrateProjectAudio
+- artifacts/film-score-studio/src/components/project-workspace.tsx
+  - reads the authenticated remote document
+  - preserves the previous local document before replacing local storage
+  - writes the remote document, remounts the editor, and polls for dirty state
+  - uploads microphone blobs before saving the JSON document
+
+On editor remount, useWorkspace merges the extras key into a core document
+that came from project-manager. During normal editing the hook writes the
+complete document back into the core key; readWorkspaceDocument therefore
+prefers complete core onboarding/pendingProposals over older extras values.
+This prevents a newly created approval or its originating MIDI from being
+lost on Save.
+
+The editor-only import/export helpers remain available in
+artifacts/film-score-studio/src/lib/workspace-state.ts as
+WorkspaceSnapshot (version 3), exportWorkspaceSnapshot(project), and
+importWorkspaceSnapshot(snapshot, fallback). They are not required by the
+authenticated project bridge.
+
+WorkspaceDocument fields are score, scoreRevision, messages, undoStack,
+onboarding, and pendingProposals (plus any future passthrough fields).
+onboarding.originatingMidi and each pendingProposals[].originatingMidi retain
+the complete ordered MIDI snippets, including every note's MIDI pitch (`note`),
+velocity, startMs, and durationMs plus the snippet BPM. This means a style or instrument
+approval can resume after save/open; no MIDI events are reconstructed from
+summary text. The project API validates the JSON envelope, rejects embedded
+binary data, and has a 4 MB document limit. Microphone bytes remain in
+IndexedDB/object storage and are uploaded separately by their attachment IDs.
+
+Creating a project calls preserveLocalWorkspace(userId) before sending an empty
+defaultWorkspaceDocument(), so legacy/local work is available through the
+explicit recovery-project action but never seeds a new project. Opening a
+project calls preserveLocalWorkspace(userId) before
+writeWorkspaceDocument(remoteDocument). This preserves unsaved local work at
+the authenticated user's scoped recovery key while the authenticated project
+remains the active document. Legacy pre-auth documents can be recovered only
+through the explicit pre-auth recovery flow; existing imported tracks are
+preserved.
+
+The new-project default must be:
+{ "score": { "tempo": 96, "durationBeats": 64, "tracks": [] } }
+with no seeded tracks. The project API's current default uses
+onboarding: { completed: false }; useWorkspace normalizes that legacy/default
+shape to the "style-needed" phase. Do not seed tracks into a new project or
+replace a legacy local document during migration.

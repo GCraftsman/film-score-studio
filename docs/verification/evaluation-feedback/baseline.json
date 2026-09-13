@@ -1,0 +1,80 @@
+{
+  "tempo": 96,
+  "durationBeats": 8,
+  "tracks": [
+    {
+      "id": "track-piano",
+      "name": "Piano",
+      "instrument": "Piano",
+      "midiProgram": 0,
+      "regions": [
+        {
+          "id": "region-piano-phrase",
+          "name": "Existing piano phrase",
+          "startBeat": 0,
+          "durationBeats": 8,
+          "dynamics": "mp",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 60,
+              "velocity": 64,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 62,
+              "velocity": 64,
+              "startBeat": 1,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 64,
+              "velocity": 64,
+              "startBeat": 2,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 65,
+              "velocity": 64,
+              "startBeat": 3,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 67,
+              "velocity": 64,
+              "startBeat": 4,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 65,
+              "velocity": 64,
+              "startBeat": 5,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 64,
+              "velocity": 64,
+              "startBeat": 6,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 62,
+              "velocity": 64,
+              "startBeat": 7,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

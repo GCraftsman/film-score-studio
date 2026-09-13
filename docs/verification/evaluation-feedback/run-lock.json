@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "runId": "59e3473f-79ae-46ea-a352-410679fad631",
+  "startedAt": "2026-09-11T07:17:06.721Z",
+  "provider": "xai",
+  "workflow": "runCompositionWorkflow",
+  "baselinePath": "baseline.json",
+  "baselineSha256": "98f03f9dcb4e85864270259a6f9d9bd6e078c0347439c76eab8153286f0de588",
+  "note": "One isolated synthetic verification run. The baseline is not a user project."
+}

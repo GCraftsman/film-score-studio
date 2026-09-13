@@ -1,0 +1,902 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: composition
+    description: AI-assisted film scoring operations
+  - name: projects
+    description: Authenticated project and audio persistence
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /compose:
+    post:
+      operationId: composeWithOrchestrator
+      tags: [composition]
+      summary: Consult the film-score agent team
+      description: Routes a user message and MIDI drafts through the Orchestrator and a bounded set of specialist agents.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompositionRequest"
+      responses:
+        "200":
+          description: Orchestrator response with bounded specialist consultations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompositionResponse"
+        "400":
+          description: Invalid request
+        "502":
+          description: AI provider error
+        "401":
+          description: Authentication required
+      security:
+        - clerkSession: []
+  /compose/stream:
+    post:
+      operationId: streamCompositionProgress
+      tags: [composition]
+      summary: Stream film-score specialist progress
+      description: Streams specialist selection and lifecycle progress before the final Orchestrator response as newline-delimited JSON.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompositionRequest"
+      responses:
+        "200":
+          description: Newline-delimited specialist progress and final response events
+          content:
+            application/x-ndjson:
+              schema:
+                $ref: "#/components/schemas/CompositionStreamEvent"
+        "400":
+          description: Invalid request
+        "502":
+          description: AI provider error
+        "401":
+          description: Authentication required
+      security:
+        - clerkSession: []
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List the signed-in user's projects
+      responses:
+        "200":
+          description: Projects owned by the authenticated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProjectSummary"
+                required: [projects]
+        "401":
+          description: Authentication required
+      security:
+        - clerkSession: []
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a private project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+      responses:
+        "201":
+          description: Created project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Invalid name or workspace document
+        "401":
+          description: Authentication required
+      security:
+        - clerkSession: []
+  /projects/{projectId}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Read a private project
+      responses:
+        "200":
+          description: Project document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Invalid project id
+        "401":
+          description: Authentication required
+        "404":
+          description: Project not found
+      security:
+        - clerkSession: []
+    patch:
+      operationId: updateProject
+      tags: [projects]
+      summary: Rename or save a project with optimistic concurrency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+      responses:
+        "200":
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Invalid project id, version, name, or workspace document
+        "401":
+          description: Authentication required
+        "404":
+          description: Project not found
+        "409":
+          description: Expected version is stale
+      security:
+        - clerkSession: []
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a private project and its audio metadata
+      responses:
+        "204":
+          description: Project deleted
+        "400":
+          description: Invalid project id
+        "401":
+          description: Authentication required
+        "404":
+          description: Project not found
+      security:
+        - clerkSession: []
+  /projects/{projectId}/audio/upload-url:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    post:
+      operationId: createProjectAudioUploadUrl
+      tags: [projects]
+      summary: Create a signed upload URL for project microphone audio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AudioUploadRequest"
+      responses:
+        "200":
+          description: Signed object-storage upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AudioUploadResponse"
+        "400":
+          description: Invalid upload metadata
+        "401":
+          description: Authentication required
+        "404":
+          description: Project not found
+      security:
+        - clerkSession: []
+  /projects/{projectId}/midi/{trackId}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+      - $ref: "#/components/parameters/TrackId"
+    get:
+      operationId: downloadProjectTrackMidi
+      tags: [projects]
+      summary: Download one track from the saved private project score as MIDI
+      responses:
+        "200":
+          description: MIDI file generated from the saved track score
+          content:
+            audio/midi:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid project or track id
+        "401":
+          description: Authentication required
+        "404":
+          description: Project or track not found
+      security:
+        - clerkSession: []
+  /projects/{projectId}/audio/{audioId}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+      - name: audioId
+        in: path
+        required: true
+        description: UUID of the project audio attachment
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getProjectAudio
+      tags: [projects]
+      summary: Download a private project microphone attachment
+      responses:
+        "200":
+          description: Audio bytes
+          content:
+            audio/*:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid project or audio id
+        "401":
+          description: Authentication required
+        "404":
+          description: Audio or project not found
+      security:
+        - clerkSession: []
+components:
+  securitySchemes:
+    clerkSession:
+      type: apiKey
+      in: cookie
+      name: __session
+      description: Clerk-authenticated browser session cookie
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      description: UUID of the project
+      schema:
+        type: string
+        format: uuid
+    TrackId:
+      name: trackId
+      in: path
+      required: true
+      description: Identifier of a score track in the saved project document
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 80
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    WorkspaceDocument:
+      type: object
+      description: JSON workspace snapshot persisted by the editor. Binary audio is stored separately.
+      properties:
+        score:
+          $ref: "#/components/schemas/Score"
+        scoreRevision:
+          type: integer
+          minimum: 0
+        messages:
+          type: array
+          items: {}
+        undoStack:
+          type: array
+          items:
+            $ref: "#/components/schemas/Score"
+        onboarding:
+          type: object
+          additionalProperties: true
+        pendingProposals:
+          type: array
+          items: {}
+      required: [score, scoreRevision, messages, undoStack]
+      additionalProperties: true
+    ProjectSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, version, createdAt, updatedAt]
+    Project:
+      allOf:
+        - $ref: "#/components/schemas/ProjectSummary"
+        - type: object
+          properties:
+            document:
+              $ref: "#/components/schemas/WorkspaceDocument"
+          required: [document]
+    CreateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        document:
+          $ref: "#/components/schemas/WorkspaceDocument"
+      required: [name, document]
+    UpdateProjectRequest:
+      type: object
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        document:
+          $ref: "#/components/schemas/WorkspaceDocument"
+      required: [expectedVersion]
+    AudioUploadRequest:
+      type: object
+      properties:
+        audioId:
+          type: string
+          format: uuid
+        contentType:
+          type: string
+          pattern: "^audio/"
+          maxLength: 120
+        byteSize:
+          type: integer
+          minimum: 1
+          maximum: 26214400
+        durationMs:
+          type: integer
+          minimum: 1
+          maximum: 600000
+      required: [contentType, byteSize]
+    AudioUploadResponse:
+      type: object
+      properties:
+        audioId:
+          type: string
+          format: uuid
+        uploadURL:
+          type: string
+          format: uri
+        objectPath:
+          type: string
+      required: [audioId, uploadURL, objectPath]
+    MidiNote:
+      type: object
+      properties:
+        note:
+          type: integer
+          minimum: 0
+          maximum: 127
+        velocity:
+          type: integer
+          minimum: 0
+          maximum: 127
+        startMs:
+          type: number
+          minimum: 0
+        durationMs:
+          type: number
+          minimum: 1
+      required: [note, velocity, startMs, durationMs]
+    MidiSnippet:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 80
+        tempo:
+          type: number
+          minimum: 30
+          maximum: 300
+        durationMs:
+          type: number
+          minimum: 1
+          maximum: 300000
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/MidiNote"
+      required: [id, tempo, durationMs, notes]
+    ConversationMessage:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+          maxLength: 4000
+      required: [role, content]
+    CompositionRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          maxLength: 4000
+        phase:
+          type: string
+          enum: [style-intake, instrument-approval, composition]
+          default: composition
+          description: For a score with no tracks, omission is inferred as style-intake (or instrument-approval when selectedStyle is supplied).
+        selectedStyle:
+          type: string
+          maxLength: 1000
+        approvedTrackProposalIds:
+          type: array
+          maxItems: 32
+          items:
+            type: string
+            maxLength: 80
+        approvedTrackProposals:
+          type: array
+          maxItems: 32
+          description: Exact membership proposals explicitly approved by the composer. This contains both additions and deletions and is authorization metadata only; neither may change the saved score until the complete staged candidate verifies.
+          items:
+            $ref: "#/components/schemas/TrackProposal"
+        approvalContext:
+          $ref: "#/components/schemas/CompositionApprovalContext"
+        midiSnippets:
+          type: array
+          items:
+            $ref: "#/components/schemas/MidiSnippet"
+        history:
+          type: array
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/ConversationMessage"
+        score:
+          $ref: "#/components/schemas/Score"
+      required: [message, midiSnippets, history, score]
+    ScoreNote:
+      type: object
+      properties:
+        pitch: { type: integer, minimum: 0, maximum: 127 }
+        velocity: { type: integer, minimum: 1, maximum: 127 }
+        startBeat: { type: number, minimum: 0, maximum: 512 }
+        durationBeats: { type: number, exclusiveMinimum: 0, maximum: 64 }
+        articulation:
+          type: string
+          enum: [sustain, legato, staccato, marcato, tremolo, pizzicato]
+      required: [pitch, velocity, startBeat, durationBeats, articulation]
+    ScoreRegion:
+      type: object
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        startBeat: { type: number, minimum: 0, maximum: 512 }
+        durationBeats: { type: number, exclusiveMinimum: 0, maximum: 128 }
+        dynamics:
+          type: string
+          enum: [pp, p, mp, mf, f, ff]
+        articulation:
+          type: string
+          enum: [sustain, legato, staccato, marcato, tremolo, pizzicato]
+        notes:
+          type: array
+          minItems: 1
+          maxItems: 512
+          items:
+            $ref: "#/components/schemas/ScoreNote"
+      required: [id, name, startBeat, durationBeats, dynamics, articulation, notes]
+    ScoreTrack:
+      type: object
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        role: { type: string, minLength: 1, maxLength: 80 }
+        instrument: { type: string, minLength: 1, maxLength: 120 }
+        midiProgram: { type: integer, minimum: 0, maximum: 127 }
+        regions:
+          type: array
+          maxItems: 64
+          items:
+            $ref: "#/components/schemas/ScoreRegion"
+      required: [id, name, role, instrument, midiProgram, regions]
+    Score:
+      type: object
+      properties:
+        tempo: { type: number, minimum: 30, maximum: 300 }
+        durationBeats: { type: number, minimum: 1, maximum: 512 }
+        tracks:
+          type: array
+          minItems: 0
+          maxItems: 32
+          items:
+            $ref: "#/components/schemas/ScoreTrack"
+      required: [tempo, durationBeats, tracks]
+    StyleSuggestion:
+      type: object
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, minLength: 1, maxLength: 500 }
+        agent: { type: string, minLength: 1, maxLength: 120 }
+      required: [id, name, description, agent]
+    TrackProposal:
+      type: object
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        action:
+          type: string
+          enum: [add, delete]
+        trackId: { type: string, maxLength: 80 }
+        instrument: { type: string, minLength: 1, maxLength: 120 }
+        role: { type: string, minLength: 1, maxLength: 80 }
+        midiProgram: { type: integer, minimum: 0, maximum: 127 }
+        summary: { type: string, minLength: 1, maxLength: 240 }
+        reason: { type: string, minLength: 1, maxLength: 500 }
+      required: [id, action, instrument, role, midiProgram, summary, reason]
+    CompositionApprovalBudget:
+      type: object
+      description: Shared workflow capacity already consumed before an approval pause. Resuming may only consume remaining capacity.
+      properties:
+        adviserConsultationsUsed: { type: integer, minimum: 0, maximum: 16 }
+        trackWriterRoundsUsed: { type: integer, minimum: 0, maximum: 2 }
+        refinementRoundsUsed: { type: integer, minimum: 0, maximum: 1 }
+        operationRepairAttemptsUsed: { type: integer, minimum: 0, maximum: 2 }
+      required: [adviserConsultationsUsed, trackWriterRoundsUsed, refinementRoundsUsed, operationRepairAttemptsUsed]
+    CompositionApprovalContext:
+      type: object
+      description: Persisted, server-signed bounded context for an explicit track-membership approval pause. It retains the original source request, adviser roster/feedback, and consumed shared budget; it is not a score candidate and grants no write capability.
+      properties:
+        originalMessage: { type: string, minLength: 1, maxLength: 4000 }
+        originalHistory:
+          type: array
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/ConversationMessage"
+        originalMidi:
+          type: array
+          items:
+            $ref: "#/components/schemas/MidiSnippet"
+        selectedStyle: { type: string, maxLength: 1000 }
+        adviserRoster:
+          type: array
+          maxItems: 16
+          items:
+            $ref: "#/components/schemas/SpecialistSelection"
+        adviserConsultations:
+          type: array
+          maxItems: 16
+          items:
+            $ref: "#/components/schemas/AgentConsultation"
+        consumedBudget:
+          $ref: "#/components/schemas/CompositionApprovalBudget"
+        checkpointId:
+          type: string
+          format: uuid
+          description: Server-generated single-use checkpoint identifier. Clients persist and return it unchanged.
+        offeredTrackProposals:
+          type: array
+          description: Exact server-signed membership offer. Clients may approve a subset, but must return matching proposal objects unchanged.
+          maxItems: 32
+          items:
+            $ref: "#/components/schemas/TrackProposal"
+        declinedTrackProposals:
+          type: array
+          description: Previously offered members explicitly declined during this continuation. They must not be automatically proposed again.
+          maxItems: 32
+          items:
+            $ref: "#/components/schemas/TrackProposal"
+        accumulatedApprovedTrackProposals:
+          type: array
+          description: Signed approved membership accumulated across chained approval pauses. It is committed atomically only with a final verified candidate.
+          maxItems: 32
+          items:
+            $ref: "#/components/schemas/TrackProposal"
+        signature:
+          type: string
+          description: Server HMAC for this context, its offered membership, current score, and authenticated composer. Clients persist and return it unchanged.
+          pattern: "^[a-f0-9]{64}$"
+      required: [originalMessage, originalHistory, originalMidi, adviserRoster, adviserConsultations, consumedBudget, checkpointId, offeredTrackProposals, declinedTrackProposals, accumulatedApprovedTrackProposals, signature]
+    AddRegionOperation:
+      type: object
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        type: { type: string, const: add-region }
+        trackId: { type: string, minLength: 1, maxLength: 80 }
+        summary: { type: string, minLength: 1, maxLength: 240 }
+        region:
+          $ref: "#/components/schemas/ScoreRegion"
+      required: [id, type, trackId, summary, region]
+    RemoveRegionOperation:
+      type: object
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        type: { type: string, const: remove-region }
+        trackId: { type: string, minLength: 1, maxLength: 80 }
+        regionId: { type: string, minLength: 1, maxLength: 80 }
+        summary: { type: string, minLength: 1, maxLength: 240 }
+      required: [id, type, trackId, regionId, summary]
+    ScoreOperation:
+      oneOf:
+        - $ref: "#/components/schemas/AddRegionOperation"
+        - $ref: "#/components/schemas/RemoveRegionOperation"
+    AgentConsultation:
+      type: object
+      properties:
+        agent:
+          type: string
+        group:
+          type: string
+          enum: [instrument, style, concept]
+        question:
+          type: string
+        insight:
+          type: string
+      required: [agent, group, question, insight]
+    SpecialistSelection:
+      type: object
+      properties:
+        agent:
+          type: string
+        group:
+          type: string
+          enum: [instrument, style, concept]
+        question:
+          type: string
+      required: [agent, group, question]
+    CompositionStreamEvent:
+      oneOf:
+        - type: object
+          properties:
+            type:
+              type: string
+              const: workflow-progress
+            stage:
+              type: string
+            message:
+              type: string
+            reason:
+              type: string
+            agent:
+              type: string
+            taskId:
+              type: string
+            files:
+              type: array
+              items:
+                type: string
+            attempt:
+              type: string
+            index:
+              type: number
+            code:
+              type: string
+            fields:
+              type: array
+              items:
+                type: string
+            targetId:
+              type: string
+            duplicateId:
+              type: string
+            observedType:
+              type: string
+              enum: [string, number, boolean, object, array, "null", unknown]
+            observedLength:
+              type: number
+              format: int32
+              minimum: 0
+              maximum: 241
+            maxLength:
+              type: number
+              const: 240
+            outcome:
+              type: string
+          required: [type, stage, message]
+        - type: object
+          properties:
+            type:
+              type: string
+              const: specialists-selected
+            specialists:
+              type: array
+              maxItems: 64
+              items:
+                $ref: "#/components/schemas/SpecialistSelection"
+          required: [type, specialists]
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [specialist-started, specialist-completed]
+            agent:
+              type: string
+            group:
+              type: string
+              enum: [instrument, style, concept]
+          required: [type, agent, group]
+        - type: object
+          properties:
+            type:
+              type: string
+              const: result
+            result:
+              $ref: "#/components/schemas/CompositionResponse"
+          required: [type, result]
+        - type: object
+          properties:
+            type:
+              type: string
+              const: error
+            error:
+              type: string
+          required: [type, error]
+    EditWorkflowTask:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        priority:
+          type: string
+        status:
+          type: string
+        summary:
+          type: string
+        editedFiles:
+          type: array
+          items:
+            type: string
+      required: [id, title, priority, status, summary, editedFiles]
+    EditWorkflowEvent:
+      type: object
+      properties:
+        stage:
+          type: string
+        message:
+          type: string
+        reason:
+          type: string
+        agent:
+          type: string
+        taskId:
+          type: string
+        files:
+          type: array
+          items:
+            type: string
+        attempt:
+          type: string
+        index:
+          type: number
+        code:
+          type: string
+        fields:
+          type: array
+          items:
+            type: string
+        targetId:
+          type: string
+        duplicateId:
+          type: string
+        observedType:
+          type: string
+          enum: [string, number, boolean, object, array, "null", unknown]
+        observedLength:
+          type: number
+          format: int32
+          minimum: 0
+          maximum: 241
+        maxLength:
+          type: number
+          const: 240
+        outcome:
+          type: string
+      required: [stage, message]
+    EditWorkflow:
+      type: object
+      properties:
+        intent:
+          type: string
+          enum: [edit, discussion]
+        status:
+          type: string
+          enum: [verified, discussion]
+        summary:
+          type: string
+        tasks:
+          type: array
+          maxItems: 5
+          items:
+            $ref: "#/components/schemas/EditWorkflowTask"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/EditWorkflowEvent"
+        changedFiles:
+          type: array
+          items:
+            type: string
+      required: [intent, status, summary, tasks, events, changedFiles]
+    CompositionResponse:
+      type: object
+      properties:
+        response:
+          type: string
+        workflow:
+          type: string
+          enum: [style-intake, instrument-approval, composition]
+        selectedStyle:
+          type: string
+          maxLength: 1000
+        styleSuggestions:
+          type: array
+          maxItems: 6
+          items:
+            $ref: "#/components/schemas/StyleSuggestion"
+        trackProposals:
+          type: array
+          maxItems: 32
+          items:
+            $ref: "#/components/schemas/TrackProposal"
+        consultations:
+          type: array
+          maxItems: 64
+          items:
+            $ref: "#/components/schemas/AgentConsultation"
+        usageGuard:
+          type: string
+        operations:
+          type: array
+          maxItems: 512
+          items:
+            $ref: "#/components/schemas/ScoreOperation"
+        editWorkflow:
+          $ref: "#/components/schemas/EditWorkflow"
+        approvalContext:
+          $ref: "#/components/schemas/CompositionApprovalContext"
+      required: [response, workflow, styleSuggestions, trackProposals, consultations, usageGuard, operations]
+

@@ -1,0 +1,8 @@
+- [Cross-browser MIDI audio](cross-browser-sampled-audio.md) — licensed SoundFont synthesis, synchronous gesture unlock, and microphone codec constraints.
+- [Melody fidelity and approval](melody-fidelity-and-approval.md) — full MIDI performance must survive AI prompts; explicit track approval differs from automatic musical edits.
+- [Consultation request pacing](consultation-request-pacing.md) — share launch pacing across all AI stages; parallel bursts exceeded the service limit in live tests.
+- [Transactional composition](transactional-composition.md) — verified musical changes, private MIDI edits, and Orchestrator-mediated collaboration rather than advice-only success.
+- [Evaluation feedback safety](evaluation-feedback.md) — preserve screened reasons across correction and persistence; ground evidence in compared scores.
+- [Live composition testing](live-composition-testing.md) — collect long streams across short browser calls; a runner timeout does not imply server processing stopped.
+- [Provider truncation recovery](provider-truncation-recovery.md) — larger bounded replacements, complete consultation context, and lossless edit preservation within two repairs.
+- [Adviser repair safety](adviser-repair-safety.md) — reject actual write payloads; structural repairs must preserve review decisions, not just feedback text.

@@ -1,0 +1,81 @@
+{
+  "header": "MThd",
+  "headerLength": 6,
+  "format": 0,
+  "tracks": 1,
+  "division": 480,
+  "trackChunks": [
+    {
+      "id": "MTrk",
+      "len": 148
+    }
+  ],
+  "noteOnCount": 13,
+  "notes": [
+    {
+      "tick": 0,
+      "note": 60,
+      "velocity": 70
+    },
+    {
+      "tick": 240,
+      "note": 64,
+      "velocity": 65
+    },
+    {
+      "tick": 480,
+      "note": 67,
+      "velocity": 75
+    },
+    {
+      "tick": 960,
+      "note": 65,
+      "velocity": 60
+    },
+    {
+      "tick": 1920,
+      "note": 62,
+      "velocity": 80
+    },
+    {
+      "tick": 2160,
+      "note": 67,
+      "velocity": 70
+    },
+    {
+      "tick": 2400,
+      "note": 69,
+      "velocity": 75
+    },
+    {
+      "tick": 3360,
+      "note": 67,
+      "velocity": 65
+    },
+    {
+      "tick": 3840,
+      "note": 64,
+      "velocity": 70
+    },
+    {
+      "tick": 4080,
+      "note": 60,
+      "velocity": 60
+    },
+    {
+      "tick": 4320,
+      "note": 65,
+      "velocity": 75
+    },
+    {
+      "tick": 4800,
+      "note": 62,
+      "velocity": 70
+    },
+    {
+      "tick": 5760,
+      "note": 60,
+      "velocity": 80
+    }
+  ]
+}

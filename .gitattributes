@@ -1,0 +1,2 @@
+artifacts/film-score-studio/public/soundfonts/fluidr3-gm.sf2 filter=lfs diff=lfs merge=lfs -text
+artifacts/film-score-studio/public/soundfonts/upright-piano-kw.sf2 filter=lfs diff=lfs merge=lfs -text

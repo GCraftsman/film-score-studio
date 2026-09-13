@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-09-11T04:21:51.498Z",
+  "responses": [
+    {
+      "url": "https://18ae1020-7146-4401-b451-d91ef9d822fb-00-93pnpz6ij16v-r4ph5k0s.janeway.replit.dev/api/compose/stream",
+      "status": 200,
+      "headers": {
+        "content-type": "application/x-ndjson; charset=utf-8"
+      },
+      "body": "{\"type\":\"workflow-progress\",\"stage\":\"intent-classified\",\"message\":\"Semantic intent classified as edit.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"workflow-progress\",\"stage\":\"intent-classified\",\"message\":\"Semantic intent classified as edit.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"workflow-progress\",\"stage\":\"plan-format-repair\",\"message\":\"The edit plan needs one bounded structural repair before specialists can run.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"workflow-progress\",\"stage\":\"plan-created\",\"message\":\"1 edit task(s) planned largest scope first.\",\"agent\":\"Orchestrator\"}\n{\"type\":\"workflow-progress\",\"stage\":\"task-started\",\"message\":\"Create a compact four-bar piano cue for a tense but hopeful scene using only the existing upright piano track\",\"agent\":\"Orchestrator\",\"taskId\":\"task-1\"}\n{\"type\":\"workflow-progress\",\"stage\":\"agent-started\",\"message\":\"Private original track copies prepared.\",\"agent\":\"Upright Piano (instrument, track manual-piano-1789099985637)\",\"taskId\":\"task-1\",\"files\":[\"manual-piano-1789099985637.mid\"]}\n{\"type\":\"workflow-progress\",\"stage\":\"operation-format-repair\",\"message\":\"A structural operation repair was requested (region field has an invalid schema value).\",\"agent\":\"Upright Piano (instrument, track manual-piano-1789099985637)\",\"taskId\":\"task-1\"}\n{\"type\":\"error\",\"error\":\"Invalid score operation at index 0: target region ID \\\"region-tense-hopeful-01\\\" was not found on track \\\"manual-piano-1789099985637\\\".\"}\n"
+    }
+  ]
+}
