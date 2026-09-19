@@ -12,7 +12,7 @@ export interface UpdateProjectRequest {
   expectedVersion: number;
   /**
      * @minLength 1
-     * @maxLength 160
+     * @maxLength 800
      */
   name?: string;
   document?: WorkspaceDocument;

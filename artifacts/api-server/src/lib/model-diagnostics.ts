@@ -66,9 +66,9 @@ export type ModelCallContext = {
   maxTokens?: number;
 };
 
-const MAX_MODEL_NAME = 96;
-const MAX_REQUEST_ID = 128;
-const MAX_FINISH_REASON = 40;
+const MAX_MODEL_NAME = 480;
+const MAX_REQUEST_ID = 640;
+const MAX_FINISH_REASON = 200;
 const MAX_ENVELOPE_KEYS = 24;
 const MAX_USAGE = 1_000_000_000;
 const TOKEN_LIMIT_FINISH_REASONS = new Set([

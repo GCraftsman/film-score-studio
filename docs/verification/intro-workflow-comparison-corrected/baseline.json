@@ -1,0 +1,231 @@
+{
+  "tempo": 72,
+  "durationBeats": 256,
+  "tracks": [
+    {
+      "id": "track-piano",
+      "name": "Piano",
+      "instrument": "Piano",
+      "role": "keyboards",
+      "midiProgram": 0,
+      "regions": [
+        {
+          "id": "region-piano-opening",
+          "name": "Pre-existing track-piano opening",
+          "startBeat": 0,
+          "durationBeats": 16,
+          "dynamics": "mp",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 60,
+              "velocity": 58,
+              "startBeat": 0,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 62,
+              "velocity": 62,
+              "startBeat": 2,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 64,
+              "velocity": 66,
+              "startBeat": 4,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 67,
+              "velocity": 58,
+              "startBeat": 6,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 65,
+              "velocity": 62,
+              "startBeat": 8,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 64,
+              "velocity": 66,
+              "startBeat": 10,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 62,
+              "velocity": 58,
+              "startBeat": 12,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 60,
+              "velocity": 62,
+              "startBeat": 14,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "track-strings",
+      "name": "String Ensemble",
+      "instrument": "String Ensemble",
+      "role": "strings",
+      "midiProgram": 48,
+      "regions": [
+        {
+          "id": "region-strings-opening",
+          "name": "Pre-existing track-strings opening",
+          "startBeat": 0,
+          "durationBeats": 16,
+          "dynamics": "mp",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 48,
+              "velocity": 58,
+              "startBeat": 0,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 55,
+              "velocity": 62,
+              "startBeat": 2,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 60,
+              "velocity": 66,
+              "startBeat": 4,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 55,
+              "velocity": 58,
+              "startBeat": 6,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 50,
+              "velocity": 62,
+              "startBeat": 8,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 57,
+              "velocity": 66,
+              "startBeat": 10,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 62,
+              "velocity": 58,
+              "startBeat": 12,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 57,
+              "velocity": 62,
+              "startBeat": 14,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "track-horn",
+      "name": "French Horn",
+      "instrument": "French Horn",
+      "role": "brass",
+      "midiProgram": 60,
+      "regions": [
+        {
+          "id": "region-horn-opening",
+          "name": "Pre-existing track-horn opening",
+          "startBeat": 0,
+          "durationBeats": 16,
+          "dynamics": "mp",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 43,
+              "velocity": 58,
+              "startBeat": 0,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 46,
+              "velocity": 62,
+              "startBeat": 2,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 50,
+              "velocity": 66,
+              "startBeat": 4,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 48,
+              "velocity": 58,
+              "startBeat": 6,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 43,
+              "velocity": 62,
+              "startBeat": 8,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 46,
+              "velocity": 66,
+              "startBeat": 10,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 50,
+              "velocity": 58,
+              "startBeat": 12,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 48,
+              "velocity": 62,
+              "startBeat": 14,
+              "durationBeats": 1.5,
+              "articulation": "legato"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

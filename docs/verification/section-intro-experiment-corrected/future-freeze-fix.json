@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "status": "future-only-correction-not-used-by-live-run",
+  "scope": "post-run source correction",
+  "problem": "The executed runner hashed the entire runtime source-context.json after the live global plan. That file contains a derived plan and therefore legitimately changed from the offline fixture before final outcome persistence.",
+  "correction": "Future runs freeze baseline.json, the immutable source-context subset (source score/MIDI/hash/section contexts), and offline-fixture.json. The derived live plan may update source-context.json without changing immutable-source hashes.",
+  "providerRun": "not repeated",
+  "executedSnapshot": "experiment.executed.ts",
+  "evidenceRule": "This correction is not represented as executed live behavior; the executed snapshot and its recorded hash remain preserved."
+}

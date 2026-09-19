@@ -1,0 +1,19 @@
+[
+  {
+    "stage": "agent-response-error",
+    "message": "Specialist Contemporary Cinematic returned model-request-failure during initial: The model request failed before a safe response could be classified.",
+    "reason": "The model request failed before a safe response could be classified.",
+    "agent": "Contemporary Cinematic",
+    "code": "model-request-failure",
+    "fields": [
+      "response"
+    ],
+    "evaluatorCategory": "unknown",
+    "affectedScope": [
+      "unknown"
+    ],
+    "evidence": [],
+    "correctionOutcome": "not-attempted",
+    "commitStatus": "not-committed"
+  }
+]

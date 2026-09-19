@@ -1,0 +1,167 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>32-bar section experiment — recovered evidence</title><style>body{font:16px system-ui,sans-serif;max-width:1100px;margin:40px auto;padding:0 24px;color:#202124}h1{font-size:28px}h2{margin-top:28px} .bad{color:#a40000;font-weight:700}.ok{color:#176b32;font-weight:700}pre{white-space:pre-wrap;background:#f4f6f8;padding:18px;border-radius:8px;overflow:auto}li{margin:8px 0}.notice{border-left:4px solid #a40000;padding:12px 16px;background:#fff3f3}</style></head><body><h1>Section-based 32-bar intro experiment</h1><p class="bad">Failed / unapproved; safe evidence recovered after the one authorized live run.</p><div class="notice"><strong>No provider rerun occurred.</strong> The process crashed after all section writers and final review attempts, while calling the post-run freeze check, before outcome/report persistence.</div><h2>What is proven</h2><ul><li><span class="ok">12/12</span> owned track-section slots were staged; writer repairs: 0.</li><li>Per-call metrics persist 25 provider calls, exact byte/character/token counts, stage/attempt/status, and validator diagnostics.</li><li>Verification transport/contract call succeeded in metrics, but its response payload was not durably persisted.</li><li>The evaluator produced five validator-invalid attempts; no musical cause is inferred.</li></ul><h2>What is not claimed</h2><ul><li>No candidate, operations, candidate MIDI, or promoted score is available. No candidate is reconstructed or generated.</li><li>Section staging success is distinct from final independent-evaluator approval.</li></ul><h2>Recovery summary</h2><pre>{
+  "title": "Section-based 32-bar intro experiment — recovered live evidence",
+  "status": "failed / unapproved",
+  "scope": "32 bars, 4/4, 128 beats, 72 BPM, four 8-bar sections; Piano, String Ensemble, French Horn",
+  "sourcePreservation": "12/12 owned section slots staged; zero writer repairs; source ledger preserved. Candidate promotion is not claimed.",
+  "stageSummary": {
+    "skill-style": {
+      "calls": 3,
+      "invalid": 1,
+      "attempts": [
+        1,
+        1,
+        2
+      ],
+      "providerTotalTokens": 10110,
+      "statuses": [
+        "success",
+        "invalid",
+        "success"
+      ]
+    },
+    "skill-concept": {
+      "calls": 3,
+      "invalid": 2,
+      "attempts": [
+        1,
+        2,
+        3
+      ],
+      "providerTotalTokens": 15959,
+      "statuses": [
+        "invalid",
+        "invalid",
+        "success"
+      ]
+    },
+    "orchestrator-plan": {
+      "calls": 1,
+      "invalid": 0,
+      "attempts": [
+        1
+      ],
+      "providerTotalTokens": 5366,
+      "statuses": [
+        "success"
+      ]
+    },
+    "instrument-writer": {
+      "calls": 12,
+      "invalid": 0,
+      "attempts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "providerTotalTokens": 71488,
+      "statuses": [
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    "orchestrator-verification": {
+      "calls": 1,
+      "invalid": 0,
+      "attempts": [
+        1
+      ],
+      "providerTotalTokens": 12231,
+      "statuses": [
+        "success"
+      ]
+    },
+    "shared-evaluator": {
+      "calls": 5,
+      "invalid": 5,
+      "attempts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "providerTotalTokens": 47296,
+      "statuses": [
+        "invalid",
+        "invalid",
+        "invalid",
+        "invalid",
+        "invalid"
+      ]
+    }
+  },
+  "counts": {
+    "providerCalls": 25,
+    "invalidCalls": 8,
+    "inputChars": 618690,
+    "inputBytes": 618728,
+    "outputChars": 50887,
+    "providerInputTokens": 151103,
+    "providerOutputTokens": 11347,
+    "providerTotalTokens": 162450,
+    "peakInputBytes": 48983
+  },
+  "verification": {
+    "transportStatus": "success",
+    "metricStatus": "success",
+    "verdictPersisted": false,
+    "note": "The verification call metric is transport/contract success; the response payload was in memory and lost before outcome persistence."
+  },
+  "evaluator": {
+    "stage": "shared-evaluator",
+    "calls": 5,
+    "allStatuses": [
+      "invalid",
+      "invalid",
+      "invalid",
+      "invalid",
+      "invalid"
+    ],
+    "allValidationCodes": [
+      "shared-evaluator-validator",
+      "shared-evaluator-validator",
+      "shared-evaluator-validator",
+      "shared-evaluator-validator",
+      "shared-evaluator-validator"
+    ],
+    "reason": "All five evaluator attempts were rejected by the independent availability/pass/violations validator. No musical cause is inferred.",
+    "verdictPersisted": false
+  },
+  "crash": {
+    "stage": "post-run ensureFreeze before outcome/report persistence",
+    "safeDiagnostic": "Frozen evidence changed after offline gate: source-context.json.",
+    "stderrFile": "live-stderr.log",
+    "rawProviderResponsesNotPersisted": true
+  },
+  "missingDurableArtifacts": [
+    "outcome.json from original runtime",
+    "report.md from original runtime",
+    "candidate.json",
+    "candidate-midi/",
+    "staged-candidate.json",
+    "operations ledger payload",
+    "in-memory candidate ScoreValue",
+    "in-memory accepted verification payload",
+    "in-memory evaluator payload"
+  ],
+  "providerRunWasNotRepeated": true
+}</pre><p>Machine-readable details: <a href="outcome.json">outcome.json</a>, <a href="recovery-provenance.json">recovery-provenance.json</a>, and <a href="call-metrics.json">call-metrics.json</a>.</p></body></html>

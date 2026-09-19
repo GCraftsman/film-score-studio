@@ -20,3 +20,9 @@ Require explicit user approval for both supported instrument additions and delet
 **Why:** On 2026-09-12 the user superseded automatic additions with an adviser-first workflow and explicit approval of both membership actions. Advice can revisit instrumentation, but cannot authorize a membership change.
 
 **How to apply:** Preserve style selection, original MIDI, original adviser roster, and consumed budgets across approval and reload. Approval does not mutate the saved score; failed compositions must not leave empty added tracks behind.
+
+Bind whether approval must continue into playable composition in the server-signed approval checkpoint; do not ask another model to reinterpret the request after approval.
+
+**Why:** A playable composition request was reclassified as membership-only after approval, so new parts were committed with no MIDI. A later request then failed before writers, leaving the empty tracks visible.
+
+**How to apply:** For playable requests, require writer instructions and final playable MIDI on every approved addition after all refinements. Check the final candidate, not only the first writer pass; explicit membership-only requests may still create empty tracks.

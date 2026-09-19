@@ -16,7 +16,7 @@ import type { TrackProposal } from './trackProposal';
 export interface CompositionResponse {
   response: string;
   workflow: CompositionResponseWorkflow;
-  /** @maxLength 1000 */
+  /** @maxLength 5000 */
   selectedStyle?: string;
   /** @maxItems 6 */
   styleSuggestions: StyleSuggestion[];

@@ -50,3 +50,25 @@ test("scales provider request deadlines for specialist budgets with a hard cap",
   assert.equal(providerRequestTimeoutMs(0), 30_000);
   assert.equal(providerRequestTimeoutMs(100_000), 240_000);
 });
+
+test("cancelling a queued launch never invokes its provider task", async () => {
+  const controller = new AbortController();
+  let taskCalled = false;
+  const limiter = new PacedLaunchLimiter(
+    150,
+    () => 0,
+    async () => new Promise<void>(() => {
+      // The abort listener, rather than the limiter sleep, releases this
+      // reservation.
+    }),
+  );
+  await limiter.schedule(() => undefined);
+  const queued = limiter.schedule(() => {
+    taskCalled = true;
+  }, controller.signal);
+  await new Promise<void>((resolve) => setImmediate(resolve));
+  controller.abort();
+  await assert.rejects(queued, (error: unknown) =>
+    error instanceof Error && error.name === "AbortError");
+  assert.equal(taskCalled, false);
+});

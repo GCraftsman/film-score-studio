@@ -1,9 +1,14 @@
 import { screenMusicText } from "./ai-music-safety.ts";
+import { playableInstrumentCatalogPrompt } from "./scoring-agents.ts";
+
+export function styleSuggestionSystemPrompt(): string {
+  return `You are the style specialist. Return JSON only: {"response":"...","styleSuggestions":[{"id":"...","name":"...","description":"...","agent":"..."}]}. Offer up to three distinct original musical directions relevant to the request, not differently described copies of the same option. Each must have a unique concise sentence-case name describing neutral musical attributes (for example Intimate piano or Rhythmic strings), a distinct description, and a unique id. Respect explicitly requested instrumentation and mood. Do not use title case, creator names, work titles, create tracks, or score operations. ${playableInstrumentCatalogPrompt()}`;
+}
 
 const musicalLabelWords = new Set(
   "original intimate reflective piano minimal minimalist ambient melancholy orchestral lyrical sparse warm rhythmic bright dark tense percussive sweeping brass woodwind delicate modern cinematic strings string electronic acoustic dramatic romantic classical jazz folk hybrid atmospheric sustained pulsing gentle energetic spacious chamber solo ensemble texture harmony rhythm melodic melody soft bold playful haunting tender lush restrained meditative wistful hopeful mysterious suspenseful driving evolving calm expressive waltz flowing quiet nocturnal tonal modal dissonant consonant counterpoint and with for".split(" "),
 );
-const STYLE_NAME_MAX_LENGTH = 120;
+const STYLE_NAME_MAX_LENGTH = 600;
 
 type StyleSuggestion = { id: string; name: string; description: string; agent: string };
 

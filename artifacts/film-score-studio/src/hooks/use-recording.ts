@@ -155,7 +155,7 @@ export function useRecording() {
         8_000,
         'Audio output could not be enabled within 8 seconds. Check browser sound permissions and try again.',
       );
-      setSoundFontLoadLabel('Starting SoundFont worklet');
+      setSoundFontLoadLabel('Starting SoundFont audio');
       const engine = await ensureEngine(context);
       if (presetToPrepare) {
         const bank = SOUNDFONT_BANKS.find((candidate) => candidate.id === presetToPrepare.bankId);

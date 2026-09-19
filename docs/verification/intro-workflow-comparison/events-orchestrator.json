@@ -1,0 +1,6 @@
+[
+  {
+    "stage": "orchestrator-started",
+    "message": "Consolidated Orchestrator started a sequential on-demand skill flow."
+  }
+]

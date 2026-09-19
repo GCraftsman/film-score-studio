@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "recoveryKind": "post-run-safe-evidence-recovery",
+  "experiment": "isolated-32-bar-section-intro",
+  "recoveredAt": "2026-09-16T03:07:34.317Z",
+  "providerRunWasNotRepeated": true,
+  "liveRun": {
+    "runId": "9a64d27f-20b3-4c0d-aeee-cb15a44877b4",
+    "startedAt": "2026-09-16T03:04:32.932Z",
+    "modelPreference": "grok-4.20-0309-non-reasoning",
+    "sections": [
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8
+      }
+    ],
+    "repairCyclesAfterInitialPerFailedSection": 4,
+    "finiteGuards": {
+      "maxProviderCalls": 96,
+      "maxWallMs": 1500000
+    }
+  },
+  "executedSnapshot": {
+    "path": "experiment.executed.ts",
+    "bytes": 104122,
+    "sha256": "7629fce2d6d734bd8b3b3a195ab9682713980f1c4135f7acde2ce865a704c13b",
+    "matchesRecordedFreeze": true
+  },
+  "currentSourceAfterRun": {
+    "path": "experiment.ts",
+    "bytes": 105202,
+    "sha256": "3694eb5f5ebfd903ccadc400e5962204df7b38606170ac7dca6a7c167bc38d2e",
+    "differsFromExecutedSnapshot": true,
+    "note": "Future freeze-source correction was edited after the provider run; it is not claimed as executed live code."
+  },
+  "crash": {
+    "stage": "post-run ensureFreeze before outcome/report persistence",
+    "safeDiagnostic": "Frozen evidence changed after offline gate: source-context.json.",
+    "stderrFile": "live-stderr.log",
+    "rawProviderResponsesNotPersisted": true
+  },
+  "durableEvidence": {
+    "baseline.json": {
+      "bytes": 5995,
+      "sha256": "b3c6b89a34581079c17110d8c8b7e7d52275ab47faa2bb55f6b46afdc4da53ee"
+    },
+    "call-metrics.json": {
+      "bytes": 31230,
+      "sha256": "dccf47302e7868044a1dd884a5897b33a77962c15021a6586063ba2a46bb1c9c"
+    },
+    "events.json": {
+      "bytes": 5189,
+      "sha256": "0dff4aa642a0489a54d8a9871561c503dd6d67125918b186ad6b4e17a976999e"
+    },
+    "progress.json": {
+      "bytes": 2623,
+      "sha256": "ecc1cd82c04ae43f5c8e521a3d5d35755f202dbff27cd532581c9f922817f1b5"
+    },
+    "run-lock.json": {
+      "bytes": 884,
+      "sha256": "7c1e2877de631037aa595aa67ae07fc1fac456031facca8f2ef23e012223948c"
+    },
+    "source-context.json": {
+      "bytes": 29907,
+      "sha256": "deea2b0501d6a906d7c2cae8c87cd36cd5522eed7227167bee525ccf5bcb57b3"
+    },
+    "source-freeze.json": {
+      "bytes": 1446,
+      "sha256": "a6d9b695c8ad82479204e081c09a222beaf2a4ae6bdd694fbdb5de2e57404aec"
+    },
+    "offline-fixture.json": {
+      "bytes": 54562,
+      "sha256": "9cb76aafe9d6e4a554b1596c0951a760428712adc0aace3779407ffd06bdb423"
+    },
+    "experiment.executed.ts": {
+      "bytes": 104122,
+      "sha256": "7629fce2d6d734bd8b3b3a195ab9682713980f1c4135f7acde2ce865a704c13b"
+    }
+  },
+  "missingDurableArtifacts": [
+    "outcome.json from original runtime",
+    "report.md from original runtime",
+    "candidate.json",
+    "candidate-midi/",
+    "staged-candidate.json",
+    "operations ledger payload",
+    "in-memory candidate ScoreValue",
+    "in-memory accepted verification payload",
+    "in-memory evaluator payload"
+  ],
+  "durableSearch": {
+    "checkedExperimentDirectory": true,
+    "checkedWorkspaceVerificationMidiAndCandidatePaths": true,
+    "checkedTempTracePaths": true,
+    "candidateJsonFound": false,
+    "stagedCandidateJsonFound": false,
+    "partialStageJsonFound": false,
+    "candidateMidiDirectoryFound": false,
+    "sectionWriterMidiFound": false,
+    "privateAdvisoryMidiFound": true,
+    "privateAdvisoryMidiInterpretation": "Advisory-only files from style/concept/plan; not candidate score material."
+  },
+  "notes": [
+    "Candidate and operations are not reconstructed or generated.",
+    "The persisted ledger proves 12 owned section slots staged with zero writer repairs, but does not prove a durable promoted candidate.",
+    "Verification transport/validator success is reported from call metrics only; its response object was in memory and is not treated as a persisted verdict.",
+    "Evaluator failure is reported only as validator diagnostics from call metrics; no musical cause is inferred."
+  ]
+}

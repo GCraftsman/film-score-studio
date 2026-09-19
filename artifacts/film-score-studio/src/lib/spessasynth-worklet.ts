@@ -1,6 +1,7 @@
 import { WorkletSynthesizer } from 'spessasynth_lib';
 import { SoundBankLoader, SpessaSynthProcessor } from 'spessasynth_core';
 import type { SoundFontSynthesizer } from './soundfont-engine';
+import { shouldStartWithCompatibilityAudio } from './soundfont-audio-mode';
 
 const MODULE_LOAD_TIMEOUT_MS = 5_000;
 const PROCESSOR_FILE = 'audio-engine/spessasynth_processor-4.3.14.min.js';
@@ -162,6 +163,10 @@ export async function createSpessaSynthesizer(
   context: AudioContext,
   onMode?: (mode: SoundFontAudioMode) => void,
 ): Promise<SoundFontSynthesizer> {
+  if (shouldStartWithCompatibilityAudio(globalThis.location?.hostname ?? '')) {
+    onMode?.('compatibility');
+    return createCompatibilitySynthesizer(context);
+  }
   try {
     const synth = await createWorkletSynthesizer(context);
     onMode?.('worklet');

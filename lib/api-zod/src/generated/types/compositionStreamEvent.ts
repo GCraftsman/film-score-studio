@@ -25,10 +25,10 @@ export type CompositionStreamEvent = {
   observedType?: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null' | 'unknown';
   /**
      * @minimum 0
-     * @maximum 241
+     * @maximum 1201
      */
   observedLength?: number;
-  maxLength?: 240;
+  maxLength?: 1200;
   outcome?: string;
 } | {
   type: 'specialists-selected';

@@ -11,13 +11,13 @@ import type { TerminalComposeAudit } from "../routes/compose-diagnostics";
  */
 export const MAX_TERMINAL_AUDITS = 20;
 
-const AUDIT_ID_MAX_LENGTH = 160;
-const AUDIT_REASON_MAX_LENGTH = 2_000;
+const AUDIT_ID_MAX_LENGTH = 800;
+const AUDIT_REASON_MAX_LENGTH = 10_000;
 const AUDIT_EVIDENCE_MAX_ITEMS = 8;
-const AUDIT_EVIDENCE_MAX_LENGTH = 1_000;
+const AUDIT_EVIDENCE_MAX_LENGTH = 5_000;
 const AUDIT_SCOPE_MAX_ITEMS = 16;
-const AUDIT_SCOPE_MAX_LENGTH = 160;
-const AUDIT_CONSTRAINT_MAX_LENGTH = 2_000;
+const AUDIT_SCOPE_MAX_LENGTH = 800;
+const AUDIT_CONSTRAINT_MAX_LENGTH = 10_000;
 
 const terminalAuditCategory = z.enum(["malformed", "musical-rejection", "no-op", "unknown"]);
 const terminalAuditCommitStatus = z.enum(["not-committed", "unchanged", "committed"]);

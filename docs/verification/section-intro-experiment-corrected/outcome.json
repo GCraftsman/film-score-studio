@@ -1,0 +1,404 @@
+{
+  "schemaVersion": 1,
+  "recovered": true,
+  "mode": "one-bounded-live-run-recovered-from-post-run-crash",
+  "model": "grok-4.20-0309-non-reasoning",
+  "sourceFreeze": {
+    "schemaVersion": 1,
+    "source": "experiment.ts",
+    "snapshot": "experiment.executed.ts",
+    "sha256": "7629fce2d6d734bd8b3b3a195ab9682713980f1c4135f7acde2ce865a704c13b",
+    "bytes": 104122,
+    "frozenAt": "2026-09-16T03:04:29.301Z",
+    "productionModuleHashes": "production-module-hashes.json",
+    "skillHashes": {
+      "style": "ad4653b8692a9bda65b5e7b4052c110721a0db4447d341aef0df3720d3729a20",
+      "concept": "77a7557f676524ae2d0f1fc006335ed799a83343ae80d704851ef13b8b71c3f2",
+      "verification": "597ab165852de1975c6fa6307cef2643573e0752f5bb8ae4234c9dc3f8652eb0"
+    },
+    "immutablePriorBaseline": "../intro-workflow-comparison-final/baseline.json",
+    "note": "Code/import freeze created before offline fixture and finalized with immutable input, derived source, and passing offline fixture hashes before live.",
+    "productionModuleHashesVerified": true,
+    "priorBaselineSha256": "9edae902763647207c22f7bdc469aba283fd9363a882c10c26f62bf4a2670ac2",
+    "derivedBaselineSha256": "b3c6b89a34581079c17110d8c8b7e7d52275ab47faa2bb55f6b46afdc4da53ee",
+    "evidenceHashes": {
+      "baseline.json": "b3c6b89a34581079c17110d8c8b7e7d52275ab47faa2bb55f6b46afdc4da53ee",
+      "source-context.json": "f2f28f2c657c4dfd19f7f2702a0824efa121f59b99fd9be680aa7db6fbbd6f09",
+      "offline-fixture.json": "9cb76aafe9d6e4a554b1596c0951a760428712adc0aace3779407ffd06bdb423"
+    },
+    "freezeStage": "after-offline-fixture",
+    "frozenAfterOfflineAt": "2026-09-16T03:04:29.384Z"
+  },
+  "source": {
+    "path": "baseline.json",
+    "sha256": "b3c6b89a34581079c17110d8c8b7e7d52275ab47faa2bb55f6b46afdc4da53ee",
+    "durationBeats": 128,
+    "trackIds": [
+      "track-piano",
+      "track-strings",
+      "track-horn"
+    ],
+    "originalRegionCount": 3
+  },
+  "sectionRules": {
+    "totalBars": 32,
+    "totalBeats": 128,
+    "sectionCount": 4,
+    "sectionBars": 8,
+    "sectionBeats": 32,
+    "timeSignature": "4/4",
+    "tempo": 72
+  },
+  "repairPolicy": {
+    "maxRepairsAfterInitialPerFailedSection": 4,
+    "noSilentSectionDrop": true
+  },
+  "result": {
+    "status": "failed",
+    "approved": false,
+    "candidatePersisted": false,
+    "operationsPersisted": false,
+    "errors": [
+      {
+        "code": "shared-evaluator-validator",
+        "reason": "Independent evaluator availability/pass/violations consistency gate failed.",
+        "fields": [
+          "pass",
+          "violations"
+        ],
+        "attempts": 5
+      },
+      {
+        "code": "post-run-freeze-finalization",
+        "reason": "Frozen evidence changed after offline gate: source-context.json.",
+        "fields": [
+          "source-context.json"
+        ]
+      }
+    ],
+    "progress": [
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      }
+    ],
+    "objective": {
+      "pass": false,
+      "failures": [
+        "No candidate or operations were durably persisted after evaluator contract exhaustion; no musical/objective verdict is reconstructed."
+      ],
+      "durationBeats": 128,
+      "sectionCoverage": []
+    },
+    "verification": {
+      "transportStatus": "success",
+      "metricStatus": "success",
+      "verdictPersisted": false,
+      "note": "The verification call metric is transport/contract success; the response payload was in memory and lost before outcome persistence."
+    },
+    "evaluator": {
+      "stage": "shared-evaluator",
+      "calls": 5,
+      "allStatuses": [
+        "invalid",
+        "invalid",
+        "invalid",
+        "invalid",
+        "invalid"
+      ],
+      "allValidationCodes": [
+        "shared-evaluator-validator",
+        "shared-evaluator-validator",
+        "shared-evaluator-validator",
+        "shared-evaluator-validator",
+        "shared-evaluator-validator"
+      ],
+      "reason": "All five evaluator attempts were rejected by the independent availability/pass/violations validator. No musical cause is inferred.",
+      "verdictPersisted": false
+    },
+    "privateMidiFilesPersisted": [
+      "concept-concept-s1-piano-sec2-94c14f3d-8364-440c-8d49-4196563249f2.mid",
+      "concept-concept-s2-strings-sec2-998af4bb-3754-4426-83ec-0667c4140213.mid",
+      "plan-plan-s1-piano-sec1-026d8dae-ec9c-487e-a698-79e5f71d145e.mid",
+      "style-style-s1-piano-sec1-0d64ce95-3325-4ce8-86f3-796e4216514a.mid",
+      "style-style-s2-strings-sec1-db6dbe7e-7e3d-4138-b705-ea6c0eec1483.mid"
+    ],
+    "writerAttempts": 12,
+    "writerRepairs": 0,
+    "repairCountsBySection": {
+      "0:track-piano": 0,
+      "0:track-strings": 0,
+      "0:track-horn": 0,
+      "1:track-piano": 0,
+      "1:track-strings": 0,
+      "1:track-horn": 0,
+      "2:track-piano": 0,
+      "2:track-strings": 0,
+      "2:track-horn": 0,
+      "3:track-piano": 0,
+      "3:track-strings": 0,
+      "3:track-horn": 0
+    }
+  },
+  "callMetricsFile": "call-metrics.json",
+  "callTotals": {
+    "providerCalls": 25,
+    "invalidCalls": 8,
+    "inputChars": 618690,
+    "inputBytes": 618728,
+    "outputChars": 50887,
+    "providerInputTokens": 151103,
+    "providerOutputTokens": 11347,
+    "providerTotalTokens": 162450,
+    "peakInputBytes": 48983
+  },
+  "stageSummary": {
+    "skill-style": {
+      "calls": 3,
+      "invalid": 1,
+      "attempts": [
+        1,
+        1,
+        2
+      ],
+      "providerTotalTokens": 10110,
+      "statuses": [
+        "success",
+        "invalid",
+        "success"
+      ]
+    },
+    "skill-concept": {
+      "calls": 3,
+      "invalid": 2,
+      "attempts": [
+        1,
+        2,
+        3
+      ],
+      "providerTotalTokens": 15959,
+      "statuses": [
+        "invalid",
+        "invalid",
+        "success"
+      ]
+    },
+    "orchestrator-plan": {
+      "calls": 1,
+      "invalid": 0,
+      "attempts": [
+        1
+      ],
+      "providerTotalTokens": 5366,
+      "statuses": [
+        "success"
+      ]
+    },
+    "instrument-writer": {
+      "calls": 12,
+      "invalid": 0,
+      "attempts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "providerTotalTokens": 71488,
+      "statuses": [
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    "orchestrator-verification": {
+      "calls": 1,
+      "invalid": 0,
+      "attempts": [
+        1
+      ],
+      "providerTotalTokens": 12231,
+      "statuses": [
+        "success"
+      ]
+    },
+    "shared-evaluator": {
+      "calls": 5,
+      "invalid": 5,
+      "attempts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "providerTotalTokens": 47296,
+      "statuses": [
+        "invalid",
+        "invalid",
+        "invalid",
+        "invalid",
+        "invalid"
+      ]
+    }
+  },
+  "savedProjectTouched": false,
+  "normalProductionWorkflowChanged": false,
+  "recoveryProvenance": "recovery-provenance.json"
+}

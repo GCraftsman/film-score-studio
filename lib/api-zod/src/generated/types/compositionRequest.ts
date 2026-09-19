@@ -13,15 +13,17 @@ import type { Score } from './score';
 import type { TrackProposal } from './trackProposal';
 
 export interface CompositionRequest {
-  /** @maxLength 4000 */
+  /** @maxLength 20000 */
   message: string;
+  /** Optional authenticated project owner scope for temporary advisory MIDI objects. */
+  projectId?: string;
   /** For a score with no tracks, omission is inferred as style-intake (or instrument-approval when selectedStyle is supplied). */
   phase?: CompositionRequestPhase;
-  /** @maxLength 1000 */
+  /** @maxLength 5000 */
   selectedStyle?: string;
   /**
      * @maxItems 32
-     * @items.maxLength 80
+     * @items.maxLength 400
      */
   approvedTrackProposalIds?: string[];
   /**

@@ -7,6 +7,12 @@
  */
 
 export * from './addRegionOperation';
+export * from './adviserSuggestion';
+export * from './advisoryMidiClip';
+export * from './advisoryMidiNote';
+export * from './advisoryMidiRef';
+export * from './advisoryMidiRefAlignment';
+export * from './advisoryMidiRefTargets';
 export * from './agentConsultation';
 export * from './agentConsultationGroup';
 export * from './audioUploadRequest';

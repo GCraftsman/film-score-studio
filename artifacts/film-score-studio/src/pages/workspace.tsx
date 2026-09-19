@@ -570,21 +570,21 @@ function InputArea({
             <button
                 onClick={handleMicAction}
                 disabled={isComposing || micState === 'requesting' || micState === 'countdown'}
-                className={`p-2.5 rounded-full flex-shrink-0 transition-all ${
+                className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${
                     micState === 'recording' ? 'bg-destructive/20 text-destructive shadow-[0_0_12px_rgba(220,38,38,0.4)] animate-pulse' :
                     micState === 'idle' || micState === 'review' ? 'text-primary hover:bg-primary/15' : 'text-muted-foreground opacity-50'
                 }`}
                 aria-label={micState === 'recording' ? "Stop recording" : "Record audio"}
             >
-                {micState === 'recording' ? <Square className="w-4 h-4" /> : <Mic2 className="w-4 h-4" />}
+                {micState === 'recording' ? <Square className="w-5 h-5" /> : <Mic2 className="w-5 h-5" />}
             </button>
             <button
                 onClick={handleSend}
                 disabled={(!hasText && draftSnippets.length === 0 && audioDrafts.length === 0) || isComposing}
-                className="p-2.5 text-primary disabled:opacity-30 disabled:text-muted-foreground transition-all hover:bg-primary/15 rounded-full flex-shrink-0"
+                className="w-11 h-11 flex items-center justify-center text-primary disabled:opacity-30 disabled:text-muted-foreground transition-all hover:bg-primary/15 rounded-full flex-shrink-0"
                 aria-label="Send message"
             >
-                {isComposing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {isComposing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             </button>
         </div>
       </div>
@@ -658,6 +658,41 @@ function InputArea({
       )}
     </div>
   )
+}
+
+function CompactAgentBadge({ agent }: { agent: AgentState }) {
+  const isActive = agent.status === 'active';
+  const iconMap = {
+    strings: Waves,
+    brass: AudioLines,
+    woodwinds: Wind,
+    percussion: Drum,
+    keyboards: Piano,
+    choir: Mic2,
+    synths: CircuitBoard,
+    classical: Landmark,
+    modernist: Atom,
+    jazz: Music2,
+    electronic: Zap,
+    folk: Globe2,
+    minimalism: Moon,
+    cinematic: Clapperboard,
+    arc: TrendingUp,
+    theme: Repeat2,
+    harmony: GitMerge,
+    rhythm: Activity,
+    texture: Layers3,
+    continuity: Route,
+    pacing: Timer,
+  } as const;
+  const AgentIcon = iconMap[agent.id as keyof typeof iconMap] ?? SlidersHorizontal;
+
+  return (
+    <div className={`w-7 h-7 rounded-full relative flex items-center justify-center border shadow-sm transition-all duration-300 flex-shrink-0 ${isActive ? 'border-primary bg-primary/15 shadow-[0_0_10px_rgba(217,119,6,0.5)]' : 'border-border bg-black/25 opacity-60'}`} title={agent.name}>
+      {isActive && <span className="absolute inset-0 rounded-full animate-ping bg-primary/20 duration-1000" />}
+      <AgentIcon className={`w-3.5 h-3.5 relative z-10 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+    </div>
+  );
 }
 
 function AgentBadge({ agent }: { agent: AgentState }) {
@@ -745,8 +780,8 @@ export default function Workspace({
   const {
       score, tracks, agents, messages, sendMessage,
       pendingProposals, selectStyle, approveTrackProposals, rejectTrackProposals,
-      addTrack, deleteTrack, replaceTrack,
-      playhead, setPlayhead, isPlaying, setIsPlaying, isComposing,
+      replaceTrack,
+      playhead, setPlayhead, isPlaying, setIsPlaying, isComposing, stopComposition,
        applyOperations, rejectOperations, undo, canUndo, workflowProgress,
        retryMessage, terminalAudits,
    } = useWorkspace(userId, projectId);
@@ -759,6 +794,21 @@ export default function Workspace({
       draftSnippets, removeDraftSnippet, clearDraftSnippets,
       onNoteOn, onNoteOff, playSnippet, playScore, stopScore
   } = useRecording();
+
+  const hasMusicData = tracks.some(t => t.regions.some(r => r.notes.length > 0));
+  const [mobileTab, setMobileTab] = useState<'keyboard' | 'chat' | 'tracks'>(hasMusicData ? 'tracks' : 'keyboard');
+
+  useEffect(() => {
+    if (mobileTab === 'tracks' && !hasMusicData) {
+      setMobileTab('keyboard');
+    }
+  }, [hasMusicData, mobileTab]);
+
+  const handleSend = (text: string, audioAttachments: AudioAttachment[]) => {
+      void sendMessage(text, draftSnippets, audioAttachments);
+      clearDraftSnippets();
+      setMobileTab('chat');
+  };
 
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [playbackError, setPlaybackError] = useState('');
@@ -838,233 +888,274 @@ export default function Workspace({
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-[100dvh] bg-background text-foreground overflow-hidden selection:bg-primary/30">
+    <div className="flex flex-col h-[100dvh] bg-background text-foreground overflow-hidden selection:bg-primary/30 pt-16 md:pt-0">
 
-      {/* Left: Workspace & Tracks */}
-      <div className="flex flex-col flex-1 border-r border-border bg-card/40 relative min-w-0">
+      <div className="flex flex-1 min-h-0 md:flex-row">
+        {/* Left: Workspace & Tracks */}
+        <div className={`
+          ${mobileTab === 'chat' ? 'hidden' : 'flex flex-1'}
+          md:flex md:flex-1
+          flex-col border-r border-border bg-card/40 relative min-w-0
+        `}>
 
-        <header className="h-16 flex items-center px-6 border-b border-border justify-between bg-card z-10 flex-shrink-0 shadow-sm">
-           <div className="flex items-center gap-4">
-             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
-               <Film className="w-5 h-5 text-primary" />
+          <header className="h-16 flex items-center px-4 md:px-6 border-b border-border justify-between bg-card z-10 flex-shrink-0 shadow-sm gap-2">
+             <div className="flex items-center gap-3 md:gap-4 min-w-0">
+               <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner flex-shrink-0">
+                 <Film className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+               </div>
+               <div className="flex flex-col justify-center min-w-0">
+                 <h1 className="font-display font-medium text-base md:text-lg tracking-wide leading-tight truncate">1M3 - The Ascent</h1>
+                 <p className="text-[8px] md:text-[9px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5 truncate">Project: Leviathan</p>
+               </div>
              </div>
-             <div className="flex flex-col justify-center">
-               <h1 className="font-display font-medium text-lg tracking-wide leading-tight">1M3 - The Ascent</h1>
-               <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5">Project: Leviathan</p>
+             <div className="font-mono text-xs md:text-sm text-primary bg-primary/5 px-2 md:px-3 py-1 md:py-1.5 rounded border border-primary/20 flex items-center gap-1.5 md:gap-2.5 shadow-inner flex-shrink-0">
+               <span className={`w-1.5 h-1.5 rounded-full bg-primary ${isPlaying ? 'animate-pulse shadow-[0_0_8px_rgba(217,119,6,0.8)]' : 'opacity-50'}`} />
+               01:23:45:12
              </div>
-           </div>
-           <div className="font-mono text-sm text-primary bg-primary/5 px-3 py-1.5 rounded border border-primary/20 flex items-center gap-2.5 shadow-inner">
-             <span className={`w-1.5 h-1.5 rounded-full bg-primary ${isPlaying ? 'animate-pulse shadow-[0_0_8px_rgba(217,119,6,0.8)]' : 'opacity-50'}`} />
-             01:23:45:12
-           </div>
-        </header>
+          </header>
 
-        <div className="h-14 border-b border-border flex items-center px-6 justify-between bg-card/80 backdrop-blur-sm z-10 flex-shrink-0 overflow-x-auto no-scrollbar gap-4">
-            <div className="flex items-center gap-5 flex-shrink-0">
-                <div className="flex items-center gap-2.5">
-                    <button onClick={() => setPlayhead(0)} aria-label="Skip to beginning" className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-white/5 transition-colors">
-                        <SkipBack className="w-4 h-4 fill-current" />
-                    </button>
-                    <button
-                        onClick={togglePlayback}
-                         aria-label={isPlaying || isPlaybackStarting ? "Stop score playback" : "Play score"}
-                          title="Play the current structured score"
-                        className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-[0_0_15px_rgba(217,119,6,0.25)] hover:scale-105"
-                    >
-                        {isPlaying || isPlaybackStarting ? <Square className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-1" />}
-                    </button>
-                </div>
-                <button onClick={undo} disabled={!canUndo} aria-label="Undo last applied score proposal" className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-white/5 disabled:opacity-30">
-                  <Undo2 className="w-4 h-4" />
-                </button>
+          <div className="min-h-14 py-2 border-b border-border flex flex-wrap items-center px-4 md:px-6 justify-between bg-card/80 backdrop-blur-sm z-10 flex-shrink-0 gap-4">
+              <div className="flex items-center flex-wrap gap-4 md:gap-5 min-w-0 flex-1">
+                  <div className="flex items-center gap-2.5 flex-shrink-0">
+                      <button onClick={() => setPlayhead(0)} aria-label="Skip to beginning" className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-white/5 transition-colors">
+                          <SkipBack className="w-4 h-4 fill-current" />
+                      </button>
+                      <button
+                          onClick={togglePlayback}
+                           aria-label={isPlaying || isPlaybackStarting ? "Stop score playback" : "Play score"}
+                            title="Play the current structured score"
+                          className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-[0_0_15px_rgba(217,119,6,0.25)] hover:scale-105 flex-shrink-0"
+                      >
+                          {isPlaying || isPlaybackStarting ? <Square className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-1" />}
+                      </button>
+                  </div>
+                  <button onClick={undo} disabled={!canUndo} aria-label="Undo last applied score proposal" className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-white/5 disabled:opacity-30 flex-shrink-0">
+                    <Undo2 className="w-4 h-4" />
+                  </button>
 
-                <div className="h-5 w-px bg-border" />
+                  <div className="hidden md:block h-5 w-px bg-border flex-shrink-0" />
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => void previewAudio().catch((error) => {
-                          setPlaybackError(error instanceof Error ? error.message : 'Could not enable audio output.');
-                        })}
-                        aria-label={audioStatus === 'ready' ? 'Preview audio output' : 'Enable audio output'}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-[10px] font-bold transition-colors ${
-                          audioStatus === 'ready'
-                            ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
-                            : audioStatus === 'error'
-                              ? 'border-red-500/40 text-red-400 bg-red-500/10'
-                              : 'border-primary/40 text-primary bg-primary/10 hover:bg-primary/20'
-                        }`}
-                    >
-                        {audioStatus === 'error' ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                        {audioStatus === 'ready'
-                          ? soundFontAudioMode === 'compatibility' ? 'Compatibility MIDI audio' : 'Sound on'
-                          : audioStatus === 'loading'
-                            ? soundFontLoadLabel ?? 'Starting SoundFont worklet'
-                            : audioStatus === 'error' ? 'Audio error' : 'Enable sound'}
-                    </button>
-                     <a
-                       href="https://freepats.zenvoid.org/"
-                       target="_blank"
-                       rel="noreferrer"
-                       className="text-[9px] font-semibold text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground"
-                     >
-                       SoundFont credits
-                     </a>
-                     <a
-                       href="https://github.com/FluidSynth/fluidsynth"
-                       target="_blank"
-                       rel="noreferrer"
-                       className="hidden text-[9px] font-semibold text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground lg:inline"
-                     >
-                       FluidR3
-                     </a>
-                    <button
-                        onClick={() => setIsMetronomeOn(!isMetronomeOn)}
-                        aria-label="Toggle Metronome and Recording"
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold transition-colors ${isMetronomeOn ? 'bg-red-500/20 border-red-500/50 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'bg-transparent border-border text-muted-foreground hover:text-foreground hover:bg-white/5'}`}
-                    >
-                        <div className={`w-2 h-2 rounded-full ${isMetronomeOn ? 'bg-red-500 animate-pulse' : 'bg-muted-foreground'}`} />
-                        Metronome / Rec
-                    </button>
-                    <div className="flex items-center border border-border rounded-md overflow-hidden bg-black/20 focus-within:border-primary/50 transition-colors shadow-inner">
-                        <input
-                            type="number"
-                            value={tempo}
-                            onChange={(e) => setTempo(Number(e.target.value) || 120)}
-                            aria-label="Tempo BPM"
-                            className="w-12 bg-transparent text-sm text-center py-1 outline-none font-mono text-foreground font-bold"
-                        />
-                        <span className="text-[9px] text-muted-foreground pr-2 border-r border-border font-bold">BPM</span>
-                        <button onClick={tapTempo} aria-label="Tap Tempo" className="px-3 text-[10px] font-bold text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors active:bg-white/10 h-full">TAP</button>
+                  <div className="flex items-center flex-wrap gap-2 md:gap-3 flex-shrink-0">
+                      <button
+                          onClick={() => void previewAudio().catch((error) => {
+                            setPlaybackError(error instanceof Error ? error.message : 'Could not enable audio output.');
+                          })}
+                          aria-label={audioStatus === 'ready' ? 'Preview audio output' : 'Enable audio output'}
+                          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-[10px] font-bold transition-colors ${
+                            audioStatus === 'ready'
+                              ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
+                              : audioStatus === 'error'
+                                ? 'border-red-500/40 text-red-400 bg-red-500/10'
+                                : 'border-primary/40 text-primary bg-primary/10 hover:bg-primary/20'
+                          }`}
+                      >
+                          {audioStatus === 'error' ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                          {audioStatus === 'ready'
+                            ? soundFontAudioMode === 'compatibility' ? 'Compatibility MIDI audio' : 'Sound on'
+                            : audioStatus === 'loading'
+                              ? soundFontLoadLabel ?? 'Starting SoundFont worklet'
+                              : audioStatus === 'error' ? 'Audio error' : 'Enable sound'}
+                      </button>
+                       <a
+                         href="https://freepats.zenvoid.org/"
+                         target="_blank"
+                         rel="noreferrer"
+                         className="text-[9px] font-semibold text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground"
+                       >
+                         SoundFont credits
+                       </a>
+                       <a
+                         href="https://github.com/FluidSynth/fluidsynth"
+                         target="_blank"
+                         rel="noreferrer"
+                         className="hidden text-[9px] font-semibold text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground lg:inline"
+                       >
+                         FluidR3
+                       </a>
+                      <button
+                          onClick={() => setIsMetronomeOn(!isMetronomeOn)}
+                          aria-label="Toggle Metronome and Recording"
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold transition-colors ${isMetronomeOn ? 'bg-red-500/20 border-red-500/50 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'bg-transparent border-border text-muted-foreground hover:text-foreground hover:bg-white/5'}`}
+                      >
+                          <div className={`w-2 h-2 rounded-full ${isMetronomeOn ? 'bg-red-500 animate-pulse' : 'bg-muted-foreground'}`} />
+                          Metronome / Rec
+                      </button>
+                      <div className="flex items-center border border-border rounded-md overflow-hidden bg-black/20 focus-within:border-primary/50 transition-colors shadow-inner">
+                          <input
+                              type="number"
+                              value={tempo}
+                              onChange={(e) => setTempo(Number(e.target.value) || 120)}
+                              aria-label="Tempo BPM"
+                              className="w-12 bg-transparent text-sm text-center py-1 outline-none font-mono text-foreground font-bold"
+                          />
+                          <span className="text-[9px] text-muted-foreground pr-2 border-r border-border font-bold">BPM</span>
+                          <button onClick={tapTempo} aria-label="Tap Tempo" className="px-3 text-[10px] font-bold text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors active:bg-white/10 h-full">TAP</button>
+                      </div>
+                  </div>
+              </div>
+
+              <div className="flex items-center flex-wrap gap-4 md:gap-5 flex-shrink-0">
+                  <div className="flex items-center border border-border rounded-md overflow-hidden bg-black/20 shadow-inner flex-shrink-0">
+                      <select
+                        value={findInstrument(activeInstrument)?.id ?? activeInstrument}
+                        onChange={(e) => setActiveInstrument(e.target.value)}
+                        aria-label="Keyboard Instrument"
+                        className="bg-transparent text-xs font-bold text-foreground outline-none px-3 py-1.5 cursor-pointer appearance-none min-w-[120px]"
+                      >
+                          {INSTRUMENT_CATALOG.map((instrument) => (
+                              <option key={instrument.id} value={instrument.id}>{instrument.name}</option>
+                          ))}
+                      </select>
+                  </div>
+                  <button
+                      onClick={() => setShowKeyboard(!showKeyboard)}
+                      aria-pressed={showKeyboard}
+                      className={`hidden md:flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-md border transition-colors ${showKeyboard ? 'bg-primary/20 border-primary/50 text-primary' : 'border-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}
+                  >
+                      <Keyboard className="w-4 h-4" />
+                      MIDI Keyboard
+                  </button>
+                  <div className="flex flex-col items-end">
+                      <span className="text-[8px] text-muted-foreground uppercase tracking-widest font-bold mb-0.5">Current Position</span>
+                      <span className="font-mono text-[11px] bg-black/30 px-2 py-0.5 rounded border border-white/5 text-primary/90">
+                        Bar {currentBar} of {scoreBars}
+                      </span>
+                  </div>
+              </div>
+          </div>
+
+          <div className={`
+            ${mobileTab === 'tracks' ? 'block' : 'hidden'}
+            md:block
+            flex-1 overflow-y-auto p-4 md:p-8 space-y-3 no-scrollbar z-0 relative
+          `}>
+            <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
+             {playbackError && (
+               <div className="relative flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[10px] text-amber-200" role="alert">
+                 <VolumeX className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                 <span>{playbackError}</span>
+               </div>
+             )}
+             <div className="relative flex items-center justify-between pb-2 text-[9px] uppercase tracking-[0.16em] font-bold text-muted-foreground/70">
+                <span>Read-only structured score · {score.tempo} BPM</span>
+                <span className="rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1 text-emerald-400/80">{tracks.reduce((sum, track) => sum + track.regions.reduce((notes, region) => notes + region.notes.length, 0), 0)} playable MIDI events</span>
+             </div>
+            {tracks.map(track => (
+                <TrackRow key={track.id} track={track} playhead={playhead} durationBeats={score.durationBeats} />
+            ))}
+             <TrackControls
+               tracks={tracks}
+               catalog={trackCatalog}
+               onReplaceTrack={replaceTrack}
+             />
+          </div>
+
+          <div className={`
+             ${mobileTab === 'keyboard' ? 'flex flex-1' : 'hidden'}
+             ${showKeyboard ? 'md:flex md:flex-none md:h-56' : 'md:hidden'}
+             flex-col border-t border-border shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-20 flex-shrink-0 animate-in slide-in-from-bottom-4 duration-300 overflow-x-auto no-scrollbar
+          `}>
+               <PianoKeyboard
+                 className="flex-1"
+                 activeInstrument={activeInstrument}
+                 onInstrumentChange={setActiveInstrument}
+                 onNoteOn={onNoteOn}
+                 onNoteOff={onNoteOff}
+               />
+          </div>
+        </div>
+
+        {/* Right: Agents & Conversation */}
+        <div className={`
+          ${mobileTab === 'chat' ? 'flex flex-1' : 'hidden'}
+          md:flex md:w-[480px] md:h-full
+          w-full flex-col bg-card/95 relative z-20 shadow-2xl md:border-l border-border flex-shrink-0
+        `}>
+
+          <div className="p-3 md:p-4 md:pt-16 md:px-5 border-b border-border bg-card backdrop-blur-md z-20 flex-shrink-0 shadow-sm">
+             <div className="flex items-center justify-between mb-3 md:mb-4">
+                 <h2 className="text-[10px] uppercase tracking-widest text-foreground font-bold flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500/80 animate-pulse shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
+                    <span className="hidden md:inline">Scoring Team</span>
+                 </h2>
+                 {isComposing && stopComposition && (
+                   <button onClick={stopComposition} aria-label="Stop consultation" className="flex items-center gap-1.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground px-2.5 py-1.5 min-h-11 md:min-h-0 rounded-md text-[10px] font-bold shadow-sm transition-colors">
+                     <Square className="w-3 h-3 fill-current" /> Stop
+                   </button>
+                 )}
+             </div>
+
+             <div className="hidden md:flex flex-col gap-4">
+                 {(['instrument', 'style', 'concept'] as const).map(group => (
+                    <div key={group} className="flex flex-col gap-1.5">
+                       <span className="text-[8px] uppercase tracking-widest text-muted-foreground/60 font-bold ml-1">{group}</span>
+                       <div className="flex justify-between items-start w-full px-1">
+                         {agents.filter(a => a.group === group).map(a => (
+                           <AgentBadge key={a.id} agent={a} />
+                         ))}
+                       </div>
                     </div>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-5 flex-shrink-0">
-                <div className="flex items-center border border-border rounded-md overflow-hidden bg-black/20 shadow-inner">
-                    <select
-                      value={findInstrument(activeInstrument)?.id ?? activeInstrument}
-                      onChange={(e) => setActiveInstrument(e.target.value)}
-                      aria-label="Keyboard Instrument"
-                      className="bg-transparent text-xs font-bold text-foreground outline-none px-3 py-1.5 cursor-pointer appearance-none min-w-[120px]"
-                    >
-                        {INSTRUMENT_CATALOG.map((instrument) => (
-                            <option key={instrument.id} value={instrument.id}>{instrument.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <button
-                    onClick={() => setShowKeyboard(!showKeyboard)}
-                    aria-pressed={showKeyboard}
-                    className={`flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-md border transition-colors ${showKeyboard ? 'bg-primary/20 border-primary/50 text-primary' : 'border-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}
-                >
-                    <Keyboard className="w-4 h-4" />
-                    MIDI Keyboard
-                </button>
-                <div className="flex flex-col items-end">
-                    <span className="text-[8px] text-muted-foreground uppercase tracking-widest font-bold mb-0.5">Current Position</span>
-                    <span className="font-mono text-[11px] bg-black/30 px-2 py-0.5 rounded border border-white/5 text-primary/90">
-                      Bar {currentBar} of {scoreBars}
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-3 no-scrollbar z-0 relative">
-          <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
-           {playbackError && (
-             <div className="relative flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[10px] text-amber-200" role="alert">
-               <VolumeX className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-               <span>{playbackError}</span>
+                 ))}
              </div>
-           )}
-           <div className="relative flex items-center justify-between pb-2 text-[9px] uppercase tracking-[0.16em] font-bold text-muted-foreground/70">
-              <span>Read-only structured score · {score.tempo} BPM</span>
-              <span className="rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1 text-emerald-400/80">{tracks.reduce((sum, track) => sum + track.regions.reduce((notes, region) => notes + region.notes.length, 0), 0)} playable MIDI events</span>
-           </div>
-          {tracks.map(track => (
-              <TrackRow key={track.id} track={track} playhead={playhead} durationBeats={score.durationBeats} />
-          ))}
-           <TrackControls
-             tracks={tracks}
-             catalog={trackCatalog}
-             onAddTrack={addTrack}
-             onDeleteTrack={deleteTrack}
-             onReplaceTrack={replaceTrack}
-           />
-        </div>
 
-        {showKeyboard && (
-            <div className="h-56 border-t border-border shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-20 flex-shrink-0 animate-in slide-in-from-bottom-4 duration-300 overflow-x-auto no-scrollbar">
-                 <PianoKeyboard
-                   activeInstrument={activeInstrument}
-                   onInstrumentChange={setActiveInstrument}
-                   onNoteOn={onNoteOn}
-                   onNoteOff={onNoteOff}
+             <div className="flex md:hidden gap-2.5 overflow-x-auto no-scrollbar items-center pb-1">
+                 {agents.map(a => (
+                   <CompactAgentBadge key={a.id} agent={a} />
+                 ))}
+             </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-6 scroll-smooth bg-gradient-to-b from-card to-background">
+              {terminalAudits.length > 0 && <TerminalAuditPanel audits={terminalAudits} />}
+             {messages.map(m => (
+                 <MessageBubble
+                   key={m.id}
+                   message={m}
+                   tracks={tracks}
+                   pendingProposalIds={pendingProposalIds}
+                   onPlaySnippet={playSnippet}
+                   onApply={applyOperations}
+                   onReject={rejectOperations}
+                   onSelectStyle={selectStyle}
+                   onApproveTracks={approveTrackProposals}
+                   onRejectTracks={rejectTrackProposals}
+                    onRetry={retryMessage}
                  />
-            </div>
-        )}
+             ))}
+              {isComposing && workflowProgress.length > 0 && (
+                <WorkflowProgress events={workflowProgress} live />
+              )}
+             <div ref={messagesEndRef} className="h-4" />
+          </div>
+
+          <div className="p-4 md:p-5 border-t border-border bg-card relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex-shrink-0">
+             <InputArea
+                onSend={handleSend}
+               isComposing={isComposing}
+               draftSnippets={draftSnippets}
+               removeDraftSnippet={removeDraftSnippet}
+               playSnippet={playSnippet}
+             />
+          </div>
+        </div>
       </div>
 
-      {/* Right: Agents & Conversation */}
-      <div className="w-full md:w-[480px] h-[50vh] md:h-full flex flex-col bg-card/95 relative z-20 shadow-2xl border-l border-border flex-shrink-0">
-
-        <div className="p-4 px-5 border-b border-border bg-card backdrop-blur-md z-20 flex-shrink-0 shadow-sm">
-           <div className="flex items-center justify-between mb-4">
-               <h2 className="text-[10px] uppercase tracking-widest text-foreground font-bold flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500/80 animate-pulse shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
-                  Scoring Team
-               </h2>
-           </div>
-
-           <div className="flex flex-col gap-4">
-               {(['instrument', 'style', 'concept'] as const).map(group => (
-                  <div key={group} className="flex flex-col gap-1.5">
-                     <span className="text-[8px] uppercase tracking-widest text-muted-foreground/60 font-bold ml-1">{group}</span>
-                     <div className="flex justify-between items-start w-full px-1">
-                       {agents.filter(a => a.group === group).map(a => (
-                         <AgentBadge key={a.id} agent={a} />
-                       ))}
-                     </div>
-                  </div>
-               ))}
-           </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-5 space-y-6 scroll-smooth bg-gradient-to-b from-card to-background">
-            {terminalAudits.length > 0 && <TerminalAuditPanel audits={terminalAudits} />}
-           {messages.map(m => (
-               <MessageBubble
-                 key={m.id}
-                 message={m}
-                 tracks={tracks}
-                 pendingProposalIds={pendingProposalIds}
-                 onPlaySnippet={playSnippet}
-                 onApply={applyOperations}
-                 onReject={rejectOperations}
-                 onSelectStyle={selectStyle}
-                 onApproveTracks={approveTrackProposals}
-                 onRejectTracks={rejectTrackProposals}
-                  onRetry={retryMessage}
-               />
-           ))}
-            {isComposing && workflowProgress.length > 0 && (
-              <WorkflowProgress events={workflowProgress} live />
-            )}
-           <div ref={messagesEndRef} className="h-4" />
-        </div>
-
-        <div className="p-5 border-t border-border bg-card relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex-shrink-0">
-           <InputArea
-              onSend={(text, audioAttachments) => {
-                  void sendMessage(text, draftSnippets, audioAttachments);
-                 clearDraftSnippets();
-             }}
-             isComposing={isComposing}
-             draftSnippets={draftSnippets}
-             removeDraftSnippet={removeDraftSnippet}
-             playSnippet={playSnippet}
-           />
-        </div>
+      {/* Mobile Tab Bar */}
+      <div className="md:hidden flex h-[calc(3.5rem+env(safe-area-inset-bottom))] bg-card border-t border-border flex-shrink-0 z-50 pb-[env(safe-area-inset-bottom)]">
+         <button onClick={() => setMobileTab('keyboard')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'keyboard' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+           <Piano className="w-5 h-5" />
+           <span className="text-[10px] font-bold">Keyboard</span>
+         </button>
+         {hasMusicData && (
+           <button onClick={() => setMobileTab('tracks')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'tracks' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+             <Layers3 className="w-5 h-5" />
+             <span className="text-[10px] font-bold">Tracks</span>
+           </button>
+         )}
+         <button onClick={() => setMobileTab('chat')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'chat' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+           <Sparkles className="w-5 h-5" />
+           <span className="text-[10px] font-bold">Chat</span>
+         </button>
       </div>
     </div>
   )

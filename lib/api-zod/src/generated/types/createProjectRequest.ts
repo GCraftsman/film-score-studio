@@ -10,7 +10,7 @@ import type { WorkspaceDocument } from './workspaceDocument';
 export interface CreateProjectRequest {
   /**
      * @minLength 1
-     * @maxLength 160
+     * @maxLength 800
      */
   name: string;
   document: WorkspaceDocument;

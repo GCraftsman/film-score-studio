@@ -1,0 +1,968 @@
+{
+  "immutableSourceScore": {
+    "tempo": 72,
+    "durationBeats": 128,
+    "tracks": [
+      {
+        "id": "track-piano",
+        "name": "Piano",
+        "instrument": "Piano",
+        "role": "keyboards",
+        "midiProgram": 0,
+        "regions": [
+          {
+            "id": "region-piano-opening",
+            "name": "Pre-existing track-piano opening",
+            "startBeat": 0,
+            "durationBeats": 16,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 60,
+                "velocity": 58,
+                "startBeat": 0,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 62,
+                "velocity": 62,
+                "startBeat": 2,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 64,
+                "velocity": 66,
+                "startBeat": 4,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 67,
+                "velocity": 58,
+                "startBeat": 6,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 65,
+                "velocity": 62,
+                "startBeat": 8,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 64,
+                "velocity": 66,
+                "startBeat": 10,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 62,
+                "velocity": 58,
+                "startBeat": 12,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 60,
+                "velocity": 62,
+                "startBeat": 14,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "track-strings",
+        "name": "String Ensemble",
+        "instrument": "String Ensemble",
+        "role": "strings",
+        "midiProgram": 48,
+        "regions": [
+          {
+            "id": "region-strings-opening",
+            "name": "Pre-existing track-strings opening",
+            "startBeat": 0,
+            "durationBeats": 16,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 48,
+                "velocity": 58,
+                "startBeat": 0,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 55,
+                "velocity": 62,
+                "startBeat": 2,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 60,
+                "velocity": 66,
+                "startBeat": 4,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 55,
+                "velocity": 58,
+                "startBeat": 6,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 50,
+                "velocity": 62,
+                "startBeat": 8,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 57,
+                "velocity": 66,
+                "startBeat": 10,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 62,
+                "velocity": 58,
+                "startBeat": 12,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 57,
+                "velocity": 62,
+                "startBeat": 14,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "track-horn",
+        "name": "French Horn",
+        "instrument": "French Horn",
+        "role": "brass",
+        "midiProgram": 60,
+        "regions": [
+          {
+            "id": "region-horn-opening",
+            "name": "Pre-existing track-horn opening",
+            "startBeat": 0,
+            "durationBeats": 16,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 43,
+                "velocity": 58,
+                "startBeat": 0,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 46,
+                "velocity": 62,
+                "startBeat": 2,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 50,
+                "velocity": 66,
+                "startBeat": 4,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 48,
+                "velocity": 58,
+                "startBeat": 6,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 43,
+                "velocity": 62,
+                "startBeat": 8,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 46,
+                "velocity": 66,
+                "startBeat": 10,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 50,
+                "velocity": 58,
+                "startBeat": 12,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 48,
+                "velocity": 62,
+                "startBeat": 14,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "completeSourceMidi": [
+    {
+      "id": "source-track-piano",
+      "tempo": 72,
+      "durationMs": 106666.66666666667,
+      "notes": [
+        {
+          "note": 60,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "note": 62,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "note": 64,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "note": 67,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "note": 65,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "note": 64,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "note": 60,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        }
+      ]
+    },
+    {
+      "id": "source-track-strings",
+      "tempo": 72,
+      "durationMs": 106666.66666666667,
+      "notes": [
+        {
+          "note": 48,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "note": 55,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "note": 60,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "note": 55,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "note": 50,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "note": 57,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "note": 57,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        }
+      ]
+    },
+    {
+      "id": "source-track-horn",
+      "tempo": 72,
+      "durationMs": 106666.66666666667,
+      "notes": [
+        {
+          "note": 43,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "note": 46,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "note": 50,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "note": 48,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "note": 43,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "note": 46,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "note": 50,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "note": 48,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        }
+      ]
+    }
+  ],
+  "sourceNoteHash": "2a8c42fc0180bf0f46047a9f963b4a9bc04f9b90636859c9e4fc71a52d41002e",
+  "sectionContexts": [
+    {
+      "section": {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8
+      },
+      "exactSourceNotesInSection": [
+        {
+          "partId": "source-track-piano",
+          "note": 60,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 62,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 64,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 67,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 65,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 64,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 60,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 48,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 55,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 60,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 55,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 50,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 57,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 57,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 43,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 46,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 50,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 48,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 43,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 46,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 50,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 48,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        }
+      ],
+      "exactSourceNotesInPreviousAndNextSections": [
+        {
+          "partId": "source-track-piano",
+          "note": 60,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 62,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 64,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 67,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 65,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 64,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 60,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 48,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 55,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 60,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 55,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 50,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 57,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 57,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 43,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 46,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 50,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 48,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 43,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 46,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 50,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 48,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        }
+      ]
+    },
+    {
+      "section": {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8
+      },
+      "exactSourceNotesInSection": [],
+      "exactSourceNotesInPreviousAndNextSections": [
+        {
+          "partId": "source-track-piano",
+          "note": 60,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 62,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 64,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 67,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 65,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 64,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-piano",
+          "note": 60,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 48,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 55,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 60,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 55,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 50,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 57,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 62,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-strings",
+          "note": 57,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 43,
+          "velocity": 58,
+          "startMs": 0,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 46,
+          "velocity": 62,
+          "startMs": 1666.6666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 50,
+          "velocity": 66,
+          "startMs": 3333.3333333333335,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 48,
+          "velocity": 58,
+          "startMs": 5000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 43,
+          "velocity": 62,
+          "startMs": 6666.666666666667,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 46,
+          "velocity": 66,
+          "startMs": 8333.333333333334,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 50,
+          "velocity": 58,
+          "startMs": 10000,
+          "durationMs": 1250
+        },
+        {
+          "partId": "source-track-horn",
+          "note": 48,
+          "velocity": 62,
+          "startMs": 11666.666666666666,
+          "durationMs": 1250
+        }
+      ]
+    },
+    {
+      "section": {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8
+      },
+      "exactSourceNotesInSection": [],
+      "exactSourceNotesInPreviousAndNextSections": []
+    },
+    {
+      "section": {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8
+      },
+      "exactSourceNotesInSection": [],
+      "exactSourceNotesInPreviousAndNextSections": []
+    }
+  ],
+  "derivedGlobalPlan": {
+    "trackInstructions": [
+      {
+        "trackId": "track-piano",
+        "instruction": "Write sparse original material for all four 8-bar sections on this exact retained track."
+      },
+      {
+        "trackId": "track-strings",
+        "instruction": "Write sparse original material for all four 8-bar sections on this exact retained track."
+      },
+      {
+        "trackId": "track-horn",
+        "instruction": "Write sparse original material for all four 8-bar sections on this exact retained track."
+      }
+    ],
+    "privateMidiSuggestions": []
+  },
+  "note": "Global plan is supplemental; writers received the complete immutable source score/MIDI and these exact local source/neighbour notes."
+}

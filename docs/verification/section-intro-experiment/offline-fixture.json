@@ -1,0 +1,2001 @@
+{
+  "mode": "offline-full-flow-before-live",
+  "model": "offline-synthetic",
+  "checks": {
+    "completeAllSections": true,
+    "exactlyTwelveOwnedWriterSlots": true,
+    "sourceNotesAndRegionsPreserved": true,
+    "fourRepairCyclesThenNoSixthAttempt": true,
+    "privateAdvisoryLoaderRoundTrip": true,
+    "canonicalOperationPrompts": true,
+    "completeSourceContextPrompts": true,
+    "verifierNegativeGate": true,
+    "evaluatorNegativeGate": true,
+    "diagnosticsRemainSpecific": true
+  },
+  "repairExhaustion": {
+    "pass": true,
+    "initialAttempt": 1,
+    "repairCyclesAllowed": 4,
+    "callsMade": 5,
+    "fifthAttemptRejected": true,
+    "noSixthAttempt": true,
+    "diagnostics": [
+      {
+        "attempt": 1
+      },
+      {
+        "attempt": 2
+      },
+      {
+        "attempt": 3
+      },
+      {
+        "attempt": 4
+      },
+      {
+        "attempt": 5
+      }
+    ]
+  },
+  "result": {
+    "status": "verified",
+    "approved": true,
+    "candidate": {
+      "tempo": 72,
+      "durationBeats": 128,
+      "tracks": [
+        {
+          "id": "track-piano",
+          "name": "Piano",
+          "instrument": "Piano",
+          "role": "keyboards",
+          "midiProgram": 0,
+          "regions": [
+            {
+              "id": "region-piano-opening",
+              "name": "Pre-existing track-piano opening",
+              "startBeat": 0,
+              "durationBeats": 16,
+              "dynamics": "mp",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 60,
+                  "velocity": 58,
+                  "startBeat": 0,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 62,
+                  "velocity": 62,
+                  "startBeat": 2,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 64,
+                  "velocity": 66,
+                  "startBeat": 4,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 67,
+                  "velocity": 58,
+                  "startBeat": 6,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 65,
+                  "velocity": 62,
+                  "startBeat": 8,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 64,
+                  "velocity": 66,
+                  "startBeat": 10,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 62,
+                  "velocity": 58,
+                  "startBeat": 12,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 60,
+                  "velocity": 62,
+                  "startBeat": 14,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-piano-0",
+              "name": "Offline section continuation",
+              "startBeat": 0,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 60,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 67,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-piano-1",
+              "name": "Offline section continuation",
+              "startBeat": 32,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 61,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 68,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-piano-2",
+              "name": "Offline section continuation",
+              "startBeat": 64,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 62,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 69,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-piano-3",
+              "name": "Offline section continuation",
+              "startBeat": 96,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 63,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 70,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "track-strings",
+          "name": "String Ensemble",
+          "instrument": "String Ensemble",
+          "role": "strings",
+          "midiProgram": 48,
+          "regions": [
+            {
+              "id": "region-strings-opening",
+              "name": "Pre-existing track-strings opening",
+              "startBeat": 0,
+              "durationBeats": 16,
+              "dynamics": "mp",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 48,
+                  "velocity": 58,
+                  "startBeat": 0,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 55,
+                  "velocity": 62,
+                  "startBeat": 2,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 60,
+                  "velocity": 66,
+                  "startBeat": 4,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 55,
+                  "velocity": 58,
+                  "startBeat": 6,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 50,
+                  "velocity": 62,
+                  "startBeat": 8,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 57,
+                  "velocity": 66,
+                  "startBeat": 10,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 62,
+                  "velocity": 58,
+                  "startBeat": 12,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 57,
+                  "velocity": 62,
+                  "startBeat": 14,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-strings-0",
+              "name": "Offline section continuation",
+              "startBeat": 0,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 60,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 67,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-strings-1",
+              "name": "Offline section continuation",
+              "startBeat": 32,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 61,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 68,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-strings-2",
+              "name": "Offline section continuation",
+              "startBeat": 64,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 62,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 69,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-strings-3",
+              "name": "Offline section continuation",
+              "startBeat": 96,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 63,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 70,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "track-horn",
+          "name": "French Horn",
+          "instrument": "French Horn",
+          "role": "brass",
+          "midiProgram": 60,
+          "regions": [
+            {
+              "id": "region-horn-opening",
+              "name": "Pre-existing track-horn opening",
+              "startBeat": 0,
+              "durationBeats": 16,
+              "dynamics": "mp",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 43,
+                  "velocity": 58,
+                  "startBeat": 0,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 46,
+                  "velocity": 62,
+                  "startBeat": 2,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 50,
+                  "velocity": 66,
+                  "startBeat": 4,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 48,
+                  "velocity": 58,
+                  "startBeat": 6,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 43,
+                  "velocity": 62,
+                  "startBeat": 8,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 46,
+                  "velocity": 66,
+                  "startBeat": 10,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 50,
+                  "velocity": 58,
+                  "startBeat": 12,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 48,
+                  "velocity": 62,
+                  "startBeat": 14,
+                  "durationBeats": 1.5,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-horn-0",
+              "name": "Offline section continuation",
+              "startBeat": 0,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 60,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 67,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-horn-1",
+              "name": "Offline section continuation",
+              "startBeat": 32,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 61,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 68,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-horn-2",
+              "name": "Offline section continuation",
+              "startBeat": 64,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 62,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 69,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            },
+            {
+              "id": "offline-region-track-horn-3",
+              "name": "Offline section continuation",
+              "startBeat": 96,
+              "durationBeats": 32,
+              "dynamics": "mf",
+              "articulation": "legato",
+              "notes": [
+                {
+                  "pitch": 63,
+                  "velocity": 72,
+                  "startBeat": 0,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                },
+                {
+                  "pitch": 70,
+                  "velocity": 76,
+                  "startBeat": 31,
+                  "durationBeats": 1,
+                  "articulation": "legato"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "operations": [
+      {
+        "id": "offline-operation-track-piano-0",
+        "type": "add-region",
+        "trackId": "track-piano",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-piano-0",
+          "name": "Offline section continuation",
+          "startBeat": 0,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 60,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 67,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-strings-0",
+        "type": "add-region",
+        "trackId": "track-strings",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-strings-0",
+          "name": "Offline section continuation",
+          "startBeat": 0,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 60,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 67,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-horn-0",
+        "type": "add-region",
+        "trackId": "track-horn",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-horn-0",
+          "name": "Offline section continuation",
+          "startBeat": 0,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 60,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 67,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-piano-1",
+        "type": "add-region",
+        "trackId": "track-piano",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-piano-1",
+          "name": "Offline section continuation",
+          "startBeat": 32,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 61,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 68,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-strings-1",
+        "type": "add-region",
+        "trackId": "track-strings",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-strings-1",
+          "name": "Offline section continuation",
+          "startBeat": 32,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 61,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 68,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-horn-1",
+        "type": "add-region",
+        "trackId": "track-horn",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-horn-1",
+          "name": "Offline section continuation",
+          "startBeat": 32,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 61,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 68,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-piano-2",
+        "type": "add-region",
+        "trackId": "track-piano",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-piano-2",
+          "name": "Offline section continuation",
+          "startBeat": 64,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 62,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 69,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-strings-2",
+        "type": "add-region",
+        "trackId": "track-strings",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-strings-2",
+          "name": "Offline section continuation",
+          "startBeat": 64,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 62,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 69,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-horn-2",
+        "type": "add-region",
+        "trackId": "track-horn",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-horn-2",
+          "name": "Offline section continuation",
+          "startBeat": 64,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 62,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 69,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-piano-3",
+        "type": "add-region",
+        "trackId": "track-piano",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-piano-3",
+          "name": "Offline section continuation",
+          "startBeat": 96,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 63,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 70,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-strings-3",
+        "type": "add-region",
+        "trackId": "track-strings",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-strings-3",
+          "name": "Offline section continuation",
+          "startBeat": 96,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 63,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 70,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      },
+      {
+        "id": "offline-operation-track-horn-3",
+        "type": "add-region",
+        "trackId": "track-horn",
+        "summary": "Offline section continuation.",
+        "region": {
+          "id": "offline-region-track-horn-3",
+          "name": "Offline section continuation",
+          "startBeat": 96,
+          "durationBeats": 32,
+          "dynamics": "mf",
+          "articulation": "legato",
+          "notes": [
+            {
+              "pitch": 63,
+              "velocity": 72,
+              "startBeat": 0,
+              "durationBeats": 1,
+              "articulation": "legato"
+            },
+            {
+              "pitch": 70,
+              "velocity": 76,
+              "startBeat": 31,
+              "durationBeats": 1,
+              "articulation": "legato"
+            }
+          ]
+        }
+      }
+    ],
+    "errors": [],
+    "events": [
+      {
+        "stage": "global-plan-completed",
+        "sections": 4,
+        "sectionBeats": 32,
+        "tracks": [
+          "track-piano",
+          "track-strings",
+          "track-horn"
+        ],
+        "sourceHash": "2a8c42fc0180bf0f46047a9f963b4a9bc04f9b90636859c9e4fc71a52d41002e"
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 0,
+        "trackId": "track-piano",
+        "startBeat": 0,
+        "endBeat": 32,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 1
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 0,
+        "trackId": "track-strings",
+        "startBeat": 0,
+        "endBeat": 32,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 2
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 0,
+        "trackId": "track-horn",
+        "startBeat": 0,
+        "endBeat": 32,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 3
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 1,
+        "trackId": "track-piano",
+        "startBeat": 32,
+        "endBeat": 64,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 4
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 1,
+        "trackId": "track-strings",
+        "startBeat": 32,
+        "endBeat": 64,
+        "repairs": 1,
+        "operationCount": 1,
+        "stagedSiblingCount": 5
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 1,
+        "trackId": "track-horn",
+        "startBeat": 32,
+        "endBeat": 64,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 6
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 2,
+        "trackId": "track-piano",
+        "startBeat": 64,
+        "endBeat": 96,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 7
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 2,
+        "trackId": "track-strings",
+        "startBeat": 64,
+        "endBeat": 96,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 8
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 2,
+        "trackId": "track-horn",
+        "startBeat": 64,
+        "endBeat": 96,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 9
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 3,
+        "trackId": "track-piano",
+        "startBeat": 96,
+        "endBeat": 128,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 10
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 3,
+        "trackId": "track-strings",
+        "startBeat": 96,
+        "endBeat": 128,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 11
+      },
+      {
+        "stage": "section-staged",
+        "sectionIndex": 3,
+        "trackId": "track-horn",
+        "startBeat": 96,
+        "endBeat": 128,
+        "repairs": 0,
+        "operationCount": 1,
+        "stagedSiblingCount": 12
+      },
+      {
+        "stage": "whole-score-verified",
+        "checks": {
+          "duration": true,
+          "allSections": true,
+          "newMaterialPerTrack": true,
+          "membership": true,
+          "ownership": true,
+          "segments": true,
+          "originalRegions": true
+        }
+      },
+      {
+        "stage": "blind-evaluator-passed"
+      }
+    ],
+    "progress": [
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 0,
+        "startBeat": 0,
+        "endBeat": 32,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 2,
+        "repairs": 1,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 1,
+        "startBeat": 32,
+        "endBeat": 64,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 2,
+        "startBeat": 64,
+        "endBeat": 96,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8,
+        "trackId": "track-piano",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8,
+        "trackId": "track-strings",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      },
+      {
+        "index": 3,
+        "startBeat": 96,
+        "endBeat": 128,
+        "bars": 8,
+        "trackId": "track-horn",
+        "status": "staged",
+        "attempts": 1,
+        "repairs": 0,
+        "operationCount": 1,
+        "diagnostics": []
+      }
+    ],
+    "objective": {
+      "pass": true,
+      "failures": [],
+      "durationBeats": 128,
+      "sectionCoverage": true,
+      "sectionCoverageRows": [
+        {
+          "section": 0,
+          "trackId": "track-piano",
+          "noteCount": 10,
+          "pass": true
+        },
+        {
+          "section": 0,
+          "trackId": "track-strings",
+          "noteCount": 10,
+          "pass": true
+        },
+        {
+          "section": 0,
+          "trackId": "track-horn",
+          "noteCount": 10,
+          "pass": true
+        },
+        {
+          "section": 1,
+          "trackId": "track-piano",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 1,
+          "trackId": "track-strings",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 1,
+          "trackId": "track-horn",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 2,
+          "trackId": "track-piano",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 2,
+          "trackId": "track-strings",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 2,
+          "trackId": "track-horn",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 3,
+          "trackId": "track-piano",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 3,
+          "trackId": "track-strings",
+          "noteCount": 2,
+          "pass": true
+        },
+        {
+          "section": 3,
+          "trackId": "track-horn",
+          "noteCount": 2,
+          "pass": true
+        }
+      ],
+      "wholeScoreCoverage": {
+        "minStart": 0,
+        "maxEnd": 128,
+        "span": 128,
+        "coveredBeats": 19,
+        "densityFraction": 0.1484375,
+        "barsWithAnyNote": 12,
+        "noteCount": 48
+      },
+      "retainedMembership": true,
+      "originalRegionsPreserved": true,
+      "operationOwnership": true,
+      "canonicalOperationsValid": true,
+      "newMaterialTracks": [
+        "track-piano",
+        "track-strings",
+        "track-horn"
+      ],
+      "totalNotes": 48,
+      "sectionCount": 4,
+      "sectionBars": 8,
+      "totalBars": 32
+    },
+    "verification": {
+      "pass": true,
+      "reason": "Offline verification confirms all four sections and retained source.",
+      "checks": {
+        "duration": true,
+        "allSections": true,
+        "newMaterialPerTrack": true,
+        "membership": true,
+        "ownership": true,
+        "segments": true,
+        "originalRegions": true
+      }
+    },
+    "evaluator": {
+      "candidates": [
+        {
+          "id": "candidate-1",
+          "available": true,
+          "pass": true,
+          "reason": "Offline blind rubric passed.",
+          "violations": []
+        }
+      ],
+      "rubric": "Same offline rubric applied without the Orchestrator verdict."
+    },
+    "privateMidi": [
+      {
+        "id": "78a48729-e310-4db7-b8b2-6aa860e3bbd5",
+        "stage": "style",
+        "suggestionId": "offline-skill-style-0",
+        "objectPath": "/objects/projects/section-intro-experiment/00000000-0000-4000-8000-000000000000/645530bc-1c18-4766-9977-f8b531896e57",
+        "path": "private-midi/style-offline-skill-style-0-78a48729-e310-4db7-b8b2-6aa860e3bbd5.mid",
+        "sha256": "ac0abd24fae29f7e74652c8e6089a640f8c5e0c88e9bc522cc207cd20941c078",
+        "noteCount": 1,
+        "roundTripNoteCount": 1,
+        "targets": [
+          "track-piano"
+        ]
+      },
+      {
+        "id": "611548a4-a4c5-48c1-9b97-aea1629cde7e",
+        "stage": "style",
+        "suggestionId": "offline-skill-style-1",
+        "objectPath": "/objects/projects/section-intro-experiment/00000000-0000-4000-8000-000000000000/3b1fcb7d-d590-479b-93d8-e5cf3782854a",
+        "path": "private-midi/style-offline-skill-style-1-611548a4-a4c5-48c1-9b97-aea1629cde7e.mid",
+        "sha256": "0395399bf2f84481ab77418cfc5a00d485184172820ff6c6629996316865e12f",
+        "noteCount": 1,
+        "roundTripNoteCount": 1,
+        "targets": [
+          "track-strings"
+        ]
+      },
+      {
+        "id": "778e5368-18f6-4c5e-9723-0245f7c32863",
+        "stage": "style",
+        "suggestionId": "offline-skill-style-2",
+        "objectPath": "/objects/projects/section-intro-experiment/00000000-0000-4000-8000-000000000000/815a5ba4-08fb-4034-b269-872cc22e8b83",
+        "path": "private-midi/style-offline-skill-style-2-778e5368-18f6-4c5e-9723-0245f7c32863.mid",
+        "sha256": "9578982b1771c3189a1b6b129a2deee7467df76b45cf7ad18dde253138bff677",
+        "noteCount": 1,
+        "roundTripNoteCount": 1,
+        "targets": [
+          "track-horn"
+        ]
+      },
+      {
+        "id": "e6cfec23-88cd-4127-8db2-28ff2f153424",
+        "stage": "concept",
+        "suggestionId": "offline-skill-concept-1",
+        "objectPath": "/objects/projects/section-intro-experiment/00000000-0000-4000-8000-000000000000/4373994c-d7b8-419f-ba2c-bdebc6c5d013",
+        "path": "private-midi/concept-offline-skill-concept-1-e6cfec23-88cd-4127-8db2-28ff2f153424.mid",
+        "sha256": "aa166ff8475fc730bbdd010eb7995093ee834254f74481f4d3b17c1d1d6373b7",
+        "noteCount": 1,
+        "roundTripNoteCount": 1,
+        "targets": [
+          "track-strings"
+        ]
+      },
+      {
+        "id": "6ed16a7b-634e-47a7-8697-f779cc854cdc",
+        "stage": "concept",
+        "suggestionId": "offline-skill-concept-2",
+        "objectPath": "/objects/projects/section-intro-experiment/00000000-0000-4000-8000-000000000000/f41443dc-0410-4c8e-9ff9-d770ab57f965",
+        "path": "private-midi/concept-offline-skill-concept-2-6ed16a7b-634e-47a7-8697-f779cc854cdc.mid",
+        "sha256": "88f3b82c65a1479510e14f4cdef8e58498b06dd0401623323cc0c565cdec20a4",
+        "noteCount": 1,
+        "roundTripNoteCount": 1,
+        "targets": [
+          "track-horn"
+        ]
+      },
+      {
+        "id": "fb71098d-f673-4b44-b357-66b47497fbe5",
+        "stage": "concept",
+        "suggestionId": "offline-skill-concept-0",
+        "objectPath": "/objects/projects/section-intro-experiment/00000000-0000-4000-8000-000000000000/2e4b992d-6b6a-4189-b1d1-70d6bc63644e",
+        "path": "private-midi/concept-offline-skill-concept-0-fb71098d-f673-4b44-b357-66b47497fbe5.mid",
+        "sha256": "421a1ad830acd6c9800934444d728e0363c0a3bd39ac44f54616a774029f9ae9",
+        "noteCount": 1,
+        "roundTripNoteCount": 1,
+        "targets": [
+          "track-piano"
+        ]
+      }
+    ],
+    "advisoryMidiLoads": 24,
+    "writerAttempts": 12,
+    "writerRepairs": 1,
+    "repairCountsBySection": {
+      "0:track-piano": 0,
+      "0:track-strings": 0,
+      "0:track-horn": 0,
+      "1:track-piano": 0,
+      "1:track-strings": 1,
+      "1:track-horn": 0,
+      "2:track-piano": 0,
+      "2:track-strings": 0,
+      "2:track-horn": 0,
+      "3:track-piano": 0,
+      "3:track-strings": 0,
+      "3:track-horn": 0
+    },
+    "wallMs": 79
+  },
+  "calls": [
+    {
+      "arm": "section-orchestrator",
+      "stage": "skill-style",
+      "agent": "the single global Orchestrator loading the style skill sequentially",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 10690,
+      "inputBytes": 10692,
+      "messageChars": 9776,
+      "messageBytes": 9778,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "loadedSkillKeys": [
+        "style"
+      ],
+      "outputChars": 1070,
+      "outputBytes": 1070,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-skill-style-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "skill-concept",
+      "agent": "the same single global Orchestrator loading the concept skill after style",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 11945,
+      "inputBytes": 11947,
+      "messageChars": 10911,
+      "messageBytes": 10913,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 1082,
+      "outputBytes": 1082,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-skill-concept-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "orchestrator-plan",
+      "agent": "the same single global Orchestrator making a global 32-bar plan after sequential style and concept skills",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 15626,
+      "inputBytes": 15628,
+      "messageChars": 14320,
+      "messageBytes": 14322,
+      "wallMs": 1,
+      "status": "success",
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 445,
+      "outputBytes": 445,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-orchestrator-plan-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the Piano Instrument Writer, the sole production writer assigned to retained track \"track-piano\" and absolute section 1 (0-32 beats, 8 bars)",
+      "sectionIndex": 0,
+      "trackId": "track-piano",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 24695,
+      "inputBytes": 24697,
+      "messageChars": 22462,
+      "messageBytes": 22464,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 523,
+      "outputBytes": 523,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the String Ensemble Instrument Writer, the sole production writer assigned to retained track \"track-strings\" and absolute section 1 (0-32 beats, 8 bars)",
+      "sectionIndex": 0,
+      "trackId": "track-strings",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 25139,
+      "inputBytes": 25141,
+      "messageChars": 22860,
+      "messageBytes": 22862,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 529,
+      "outputBytes": 529,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the French Horn Instrument Writer, the sole production writer assigned to retained track \"track-horn\" and absolute section 1 (0-32 beats, 8 bars)",
+      "sectionIndex": 0,
+      "trackId": "track-horn",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 25456,
+      "inputBytes": 25458,
+      "messageChars": 23131,
+      "messageBytes": 23133,
+      "wallMs": 1,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 520,
+      "outputBytes": 520,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the Piano Instrument Writer, the sole production writer assigned to retained track \"track-piano\" and absolute section 2 (32-64 beats, 8 bars)",
+      "sectionIndex": 1,
+      "trackId": "track-piano",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 24512,
+      "inputBytes": 24514,
+      "messageChars": 22265,
+      "messageBytes": 22267,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 524,
+      "outputBytes": 524,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the String Ensemble Instrument Writer, the sole production writer assigned to retained track \"track-strings\" and absolute section 2 (32-64 beats, 8 bars)",
+      "sectionIndex": 1,
+      "trackId": "track-strings",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 24963,
+      "inputBytes": 24965,
+      "messageChars": 22670,
+      "messageBytes": 22672,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 530,
+      "outputBytes": 530,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the String Ensemble Instrument Writer, the sole production writer assigned to retained track \"track-strings\" and absolute section 2 (32-64 beats, 8 bars)",
+      "sectionIndex": 1,
+      "trackId": "track-strings",
+      "attempt": 2,
+      "maxTokens": 32000,
+      "inputChars": 26195,
+      "inputBytes": 26197,
+      "messageChars": 23749,
+      "messageBytes": 23751,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 530,
+      "outputBytes": 530,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-2",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the French Horn Instrument Writer, the sole production writer assigned to retained track \"track-horn\" and absolute section 2 (32-64 beats, 8 bars)",
+      "sectionIndex": 1,
+      "trackId": "track-horn",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 25272,
+      "inputBytes": 25274,
+      "messageChars": 22933,
+      "messageBytes": 22935,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 521,
+      "outputBytes": 521,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the Piano Instrument Writer, the sole production writer assigned to retained track \"track-piano\" and absolute section 3 (64-96 beats, 8 bars)",
+      "sectionIndex": 2,
+      "trackId": "track-piano",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 23376,
+      "inputBytes": 23378,
+      "messageChars": 21233,
+      "messageBytes": 21235,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 524,
+      "outputBytes": 524,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the String Ensemble Instrument Writer, the sole production writer assigned to retained track \"track-strings\" and absolute section 3 (64-96 beats, 8 bars)",
+      "sectionIndex": 2,
+      "trackId": "track-strings",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 23829,
+      "inputBytes": 23831,
+      "messageChars": 21640,
+      "messageBytes": 21642,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 530,
+      "outputBytes": 530,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the French Horn Instrument Writer, the sole production writer assigned to retained track \"track-horn\" and absolute section 3 (64-96 beats, 8 bars)",
+      "sectionIndex": 2,
+      "trackId": "track-horn",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 24135,
+      "inputBytes": 24137,
+      "messageChars": 21900,
+      "messageBytes": 21902,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 521,
+      "outputBytes": 521,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the Piano Instrument Writer, the sole production writer assigned to retained track \"track-piano\" and absolute section 4 (96-128 beats, 8 bars)",
+      "sectionIndex": 3,
+      "trackId": "track-piano",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 24871,
+      "inputBytes": 24873,
+      "messageChars": 22544,
+      "messageBytes": 22546,
+      "wallMs": 1,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 524,
+      "outputBytes": 524,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the String Ensemble Instrument Writer, the sole production writer assigned to retained track \"track-strings\" and absolute section 4 (96-128 beats, 8 bars)",
+      "sectionIndex": 3,
+      "trackId": "track-strings",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 25326,
+      "inputBytes": 25328,
+      "messageChars": 22953,
+      "messageBytes": 22955,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 530,
+      "outputBytes": 530,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "instrument-writer",
+      "agent": "the French Horn Instrument Writer, the sole production writer assigned to retained track \"track-horn\" and absolute section 4 (96-128 beats, 8 bars)",
+      "sectionIndex": 3,
+      "trackId": "track-horn",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 25629,
+      "inputBytes": 25631,
+      "messageChars": 23210,
+      "messageBytes": 23212,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCanonicalSchema": true,
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "promptHasExactSectionScope": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style"
+      ],
+      "outputChars": 521,
+      "outputBytes": 521,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-instrument-writer-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "section-orchestrator",
+      "stage": "orchestrator-verification",
+      "agent": "the global Orchestrator loading the verification skill last",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 31321,
+      "inputBytes": 31323,
+      "messageChars": 27891,
+      "messageBytes": 27893,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCompleteScore": true,
+      "promptHasCompleteSourceMidi": true,
+      "loadedSkillKeys": [
+        "concept",
+        "style",
+        "verification"
+      ],
+      "outputChars": 240,
+      "outputBytes": 240,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-orchestrator-verification-1",
+      "transportAttempts": 0
+    },
+    {
+      "arm": "shared",
+      "stage": "shared-evaluator",
+      "agent": "an independent blind evaluator",
+      "attempt": 1,
+      "maxTokens": 16000,
+      "inputChars": 20334,
+      "inputBytes": 20334,
+      "messageChars": 17933,
+      "messageBytes": 17933,
+      "wallMs": 0,
+      "status": "success",
+      "promptHasCompleteScore": false,
+      "promptHasCompleteSourceMidi": false,
+      "loadedSkillKeys": [],
+      "outputChars": 195,
+      "outputBytes": 195,
+      "providerInputTokens": 100,
+      "providerOutputTokens": 100,
+      "providerTotalTokens": 200,
+      "finishReason": "stop",
+      "providerModel": "offline-synthetic",
+      "providerRequestId": "offline-shared-evaluator-1",
+      "transportAttempts": 0
+    }
+  ]
+}

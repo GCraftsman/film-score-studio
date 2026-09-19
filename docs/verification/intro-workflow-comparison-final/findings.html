@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>64-bar intro experiment: findings and scaling</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:920px;margin:48px auto;padding:0 24px;color:#202730}h1,h2{line-height:1.2}h2{margin-top:36px}table{border-collapse:collapse;width:100%;font-size:15px}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}th{background:#f2f4f7}.note{background:#f2f4f7;padding:18px;border-left:4px solid #416b98}small{color:#58616d}</style>
+<h1>64-bar intro experiment</h1>
+<p>September 15, 2026 · Film Score Studio</p>
+<p class="note"><strong>Result: inconclusive comparison; neither workflow completed a verified intro.</strong> No saved project or normal application workflow was changed. No complete MIDI candidate was approved or exported.</p>
+<h2>What was tested</h2>
+<p>An original cinematic intro, 64 bars in 4/4 at 72 BPM (256 beats, about 3 minutes 33 seconds), extending a synthetic 24-note opening across existing piano, string ensemble, and French horn tracks. Existing material and track membership were preserved.</p>
+<p>The final isolated pair used the same xAI model, <code>grok-4.20-0309-non-reasoning</code>, identical score bounds and generous 16,000-token initial response allowances for equivalent advisory/skill and writer stages. The current workflow's adviser allowance was lifted only in the experiment. Normal production behavior was unchanged.</p>
+<p>The alternative retained instrument writers and used a consistent Orchestrator identity with progressively loaded style, concept, and verification skill documents, accumulated working context, and private MIDI references dereferenced for the targeted writer. This was a fixed sequence, not an autonomous skill-selection system. Both retained bounded repairs and atomic MIDI validation.</p>
+<h2>Final live pair: measured results</h2>
+<table><tr><th>Measure</th><th>Current adviser workflow</th><th>Consolidated Orchestrator</th></tr>
+<tr><td>Verified 64-bar intro</td><td>No</td><td>No</td></tr>
+<tr><td>Time until failure</td><td>81.1 seconds</td><td>72.0 seconds</td></tr>
+<tr><td>Model completion calls</td><td>6</td><td>8</td></tr>
+<tr><td>Peak input tokens, one call</td><td>12,999</td><td>11,762</td></tr>
+<tr><td>Peak serialized request size</td><td>53,124 bytes</td><td>48,269 bytes</td></tr>
+<tr><td>Cumulative input tokens</td><td>36,353</td><td>69,309</td></tr>
+<tr><td>Cumulative output tokens</td><td>8,090</td><td>6,989</td></tr>
+<tr><td>Total input + output tokens</td><td>44,443</td><td>76,298</td></tr></table>
+<p><small>One model-discovery request is excluded from completion counts and token totals. Usage was returned for every completion call. Timings compare time to different failures, not time to successful composition.</small></p>
+<p><strong>Current:</strong> an adviser safety-screen failure recovered. Piano writing then produced a note extending past its region. The bounded musical-regeneration response ended with <code>tool_calls</code>, not an accepted completed JSON response. No candidate was committed.</p>
+<p><strong>Consolidated:</strong> style, concept, planning, piano, and strings completed. Piano and strings produced six valid staged operations. French horn failed bounded response validation after the initial request and two repairs. The final sanitized error did not retain the field-level diagnosis, so the precise horn defect is unknown. Partial staged work was not promoted to a candidate.</p>
+<p>Neither whole-score Orchestrator verification nor blind candidate evaluation could be exercised. Thus there is no evidence here that one approach produces better music or a higher completion rate. The consolidated approach reached more track writing, but also used more cumulative input tokens.</p>
+<h2>How large did the context get?</h2>
+<p>The consolidated peak was approximately <strong>11.8 thousand input tokens and 48 KB</strong>. All source material and loaded skills were retained; no arbitrary score truncation was used. The experiment did not hit an observed input-context limit, and the provider metadata did not supply a documented maximum context size.</p>
+<p>This is <strong>not a huge-context stress test</strong>: the baseline had only 24 notes, and neither workflow finished the requested 64-bar score. Requested duration alone does not establish context size. The main observed blockers were output correctness and response handling, not input capacity.</p>
+<h2>Large-score sizing: local estimates, not live results</h2>
+<p>The table below measures synthetic score JSON at eight notes per bar per track, stored in eight-bar regions. It excludes prompts, source-MIDI duplication, history, skills, and repeated calls. Decimal MB are used. These are serialization estimates, not proof that the current validators accept these scores.</p>
+<table><tr><th>Bars</th><th>Tracks</th><th>Notes</th><th>Score JSON alone</th></tr>
+<tr><td>64</td><td>3</td><td>1,536</td><td>0.136 MB</td></tr>
+<tr><td>256</td><td>3</td><td>6,144</td><td>0.542 MB</td></tr>
+<tr><td>1,024</td><td>3</td><td>24,576</td><td>2.170 MB</td></tr>
+<tr><td>64</td><td>24</td><td>12,288</td><td>1.086 MB</td></tr>
+<tr><td>256</td><td>24</td><td>49,152</td><td>4.340 MB</td></tr>
+<tr><td>1,024</td><td>24</td><td>196,608</td><td>17.360 MB</td></tr></table>
+<p>At fixed track count and note density, storage and inline context grow roughly with bar count. Sending the entire score to every writer multiplies that cost by the number of calls. Accumulated skill replies and private MIDI add further input. Larger input capacity does not make an arbitrarily large output reliable.</p>
+<h2>Recommended strategy before scaling</h2>
+<ol>
+<li><strong>Write bounded sections:</strong> ask each instrument agent for 8–16 bars at a time, with explicit local timing and transition constraints. Validate each section and retain it privately; publish only after the requested whole score passes checks.</li>
+<li><strong>Keep a global composition plan:</strong> an Orchestrator maintains the full form, motifs, harmonic direction, instrumentation, and original acceptance criteria. Section writing must not lose long-range structure.</li>
+<li><strong>Retrieve exact musical data when needed:</strong> preserve complete original MIDI in storage, index it by track and beat range, and provide exact relevant notes plus neighboring sections. Derived summaries should guide navigation, never replace source events.</li>
+<li><strong>Separate local from global verification:</strong> deterministic timing, ownership, and schema checks first; section constraints next; whole-score continuity and musical review last.</li>
+<li><strong>Make limits score-aware:</strong> current validators cap region starts at beat 512, region durations at 128 beats, notes per region at 512, and operations per workflow at 60. Very long scores require deliberate limit/paging changes as well as context strategies.</li>
+<li><strong>Measure again on completed larger scores:</strong> use multiple paired prompts and dense existing scores after section writing works. Report peak context, cumulative tokens, completion rate, fidelity, and blind musical quality separately.</li>
+</ol>
+<h2>Experiment limitations and provenance</h2>
+<p>Two earlier setup attempts were excluded: unequal response budgets stopped the first before composition; the next exposed a missing advisory-MIDI loader and an incomplete experimental writer contract. They remain separate evidence, not architecture results. The final harness passed offline full-flow and negative fixtures before the final live pair; its executed source and directly imported production modules were hashed and verified.</p>
+<p>The final experiment remains a single synthetic three-track prompt. It did not finish either candidate, did not establish a maximum feasible score size, and does not justify replacing the normal workflow. The strongest next step is section-based generation with unchanged transactional safety, followed by a broader comparison.</p>
+</html>

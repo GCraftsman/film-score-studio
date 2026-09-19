@@ -1,0 +1,17 @@
+[
+  {
+    "arm": "provider",
+    "stage": "skill-style",
+    "attempt": 1,
+    "maxTokens": 0,
+    "inputChars": 0,
+    "inputBytes": 0,
+    "messageChars": 0,
+    "messageBytes": 0,
+    "outputChars": 4836,
+    "outputBytes": 4836,
+    "providerModel": "grok-4.20-0309-non-reasoning",
+    "wallMs": 418,
+    "status": "success"
+  }
+]

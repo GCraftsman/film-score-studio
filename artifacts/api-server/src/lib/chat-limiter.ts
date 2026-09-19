@@ -4,6 +4,46 @@ export type Clock = () => number;
 const realSleep: Sleep = (milliseconds) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
 
+function abortError(signal?: AbortSignal): Error {
+  const reason = signal?.reason;
+  if (reason instanceof Error && reason.name === "AbortError") return reason;
+  const error = new Error("The provider request was aborted.");
+  error.name = "AbortError";
+  return error;
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) throw abortError(signal);
+}
+
+async function sleepWithAbort(
+  milliseconds: number,
+  sleep: Sleep,
+  signal?: AbortSignal,
+): Promise<void> {
+  throwIfAborted(signal);
+  if (!signal) {
+    await sleep(milliseconds);
+    return;
+  }
+  await new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const finish = (callback: () => void) => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener("abort", onAbort);
+      callback();
+    };
+    const onAbort = () => finish(() => reject(abortError(signal)));
+    signal.addEventListener("abort", onAbort, { once: true });
+    sleep(milliseconds).then(
+      () => finish(resolve),
+      (error: unknown) => finish(() => reject(error)),
+    );
+    if (signal.aborted) onAbort();
+  });
+}
+
 /**
  * Reserves launch slots rather than waiting for work to finish. This keeps
  * requests in flight concurrently while ensuring that a burst of specialists
@@ -26,16 +66,21 @@ export class PacedLaunchLimiter {
     this.sleep = sleep;
   }
 
-  schedule<T>(task: () => Promise<T> | T): Promise<T> {
+  schedule<T>(task: () => Promise<T> | T, signal?: AbortSignal): Promise<T> {
     const reservation = this.tail.then(async () => {
+      throwIfAborted(signal);
       const waitMs = Math.max(0, this.nextLaunchAt - this.now());
-      if (waitMs > 0) await this.sleep(waitMs);
+      if (waitMs > 0) await sleepWithAbort(waitMs, this.sleep, signal);
+      throwIfAborted(signal);
       this.nextLaunchAt = Math.max(this.nextLaunchAt, this.now()) + this.intervalMs;
     });
     // A task's completion must not hold the launch queue. Only reservation
     // failures block that individual call; the queue itself always advances.
     this.tail = reservation.then(() => undefined, () => undefined);
-    return reservation.then(task);
+    return reservation.then(() => {
+      throwIfAborted(signal);
+      return task();
+    });
   }
 }
 

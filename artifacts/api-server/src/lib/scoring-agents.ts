@@ -52,6 +52,19 @@ export const PLAYABLE_INSTRUMENTS = [
   { id: "modern-drum-kit", name: "Modern Drum Kit", role: "percussion", midiProgram: 0, soundfont: { bankId: "gm", bank: 128, program: 0, isDrum: true } },
 ] as const;
 
+/**
+ * Compact, canonical catalog text for early model prompts.  Keep the
+ * membership authority in the orchestrator validators; this is grounding
+ * context only, so advisers can mention a creative timbre without inventing
+ * a playable track.
+ */
+export function playableInstrumentCatalogPrompt(): string {
+  const catalog = PLAYABLE_INSTRUMENTS
+    .map(({ name, role, midiProgram }) => `${name} (${role}, program ${midiProgram})`)
+    .join("; ");
+  return `Supported playable instrument catalog (name, role, General MIDI program): ${catalog}. Use only these names for track proposals. If a creative timbre reference is not in this catalog, keep it as prose only and explicitly map it to the closest supported catalog instrument, describing achievable technique, articulation, register, dynamics, and texture; never propose the unsupported timbre as a track.`;
+}
+
 function normalizeInstrument(value: string): string {
   return value.trim().toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
 }

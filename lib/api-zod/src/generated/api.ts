@@ -21,39 +21,39 @@ export const HealthCheckResponse = zod.object({
  * Routes a user message and MIDI drafts through the Orchestrator and a bounded set of specialist agents.
  * @summary Consult the film-score agent team
  */
-export const composeWithOrchestratorBodyMessageMax = 4000;
+export const composeWithOrchestratorBodyMessageMax = 20000;
 
 export const composeWithOrchestratorBodyPhaseDefault = `composition`;
-export const composeWithOrchestratorBodySelectedStyleMax = 1000;
+export const composeWithOrchestratorBodySelectedStyleMax = 5000;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalIdsItemMax = 80;
+export const composeWithOrchestratorBodyApprovedTrackProposalIdsItemMax = 400;
 
 export const composeWithOrchestratorBodyApprovedTrackProposalIdsMax = 32;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorBodyApprovedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorBodyApprovedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorBodyApprovedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorBodyApprovedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorBodyApprovedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorBodyApprovedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorBodyApprovedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorBodyApprovedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorBodyApprovedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorBodyApprovedTrackProposalsMax = 32;
 
-export const composeWithOrchestratorBodyApprovalContextOriginalMessageMax = 4000;
+export const composeWithOrchestratorBodyApprovalContextOriginalMessageMax = 20000;
 
-export const composeWithOrchestratorBodyApprovalContextOriginalHistoryItemContentMax = 4000;
+export const composeWithOrchestratorBodyApprovalContextOriginalHistoryItemContentMax = 20000;
 
 export const composeWithOrchestratorBodyApprovalContextOriginalHistoryMax = 12;
 
-export const composeWithOrchestratorBodyApprovalContextOriginalMidiItemIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextOriginalMidiItemIdMax = 400;
 
 export const composeWithOrchestratorBodyApprovalContextOriginalMidiItemTempoMin = 30;
 export const composeWithOrchestratorBodyApprovalContextOriginalMidiItemTempoMax = 300;
@@ -69,9 +69,52 @@ export const composeWithOrchestratorBodyApprovalContextOriginalMidiItemNotesItem
 export const composeWithOrchestratorBodyApprovalContextOriginalMidiItemNotesItemStartMsMin = 0;
 
 
-export const composeWithOrchestratorBodyApprovalContextSelectedStyleMax = 1000;
+export const composeWithOrchestratorBodyApprovalContextSelectedStyleMax = 5000;
 
 export const composeWithOrchestratorBodyApprovalContextAdviserRosterMax = 16;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemIdMax = 400;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemLabelMax = 600;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsItemMax = 2000;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsMax = 4;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsItemMax = 400;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsMax = 8;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentIdMax = 400;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentNameMax = 600;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax = 1500;
+
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp = new RegExp('^/objects/projects/[A-Za-z0-9_-]+/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax = 600;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin = 0;
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax = 512;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin = 0;
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax = 512;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax = 400;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax = 8;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax = 400;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax = 2;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax = 600;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax = 2;
+
+export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsMax = 8;
 
 export const composeWithOrchestratorBodyApprovalContextAdviserConsultationsMax = 16;
 
@@ -87,59 +130,59 @@ export const composeWithOrchestratorBodyApprovalContextConsumedBudgetRefinementR
 export const composeWithOrchestratorBodyApprovalContextConsumedBudgetOperationRepairAttemptsUsedMin = 0;
 export const composeWithOrchestratorBodyApprovalContextConsumedBudgetOperationRepairAttemptsUsedMax = 2;
 
-export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorBodyApprovalContextOfferedTrackProposalsMax = 32;
 
-export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorBodyApprovalContextDeclinedTrackProposalsMax = 32;
 
-export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorBodyApprovalContextAccumulatedApprovedTrackProposalsMax = 32;
 
 export const composeWithOrchestratorBodyApprovalContextSignatureRegExp = new RegExp('^[a-f0-9]{64}$');
-export const composeWithOrchestratorBodyMidiSnippetsItemIdMax = 80;
+export const composeWithOrchestratorBodyMidiSnippetsItemIdMax = 400;
 
 export const composeWithOrchestratorBodyMidiSnippetsItemTempoMin = 30;
 export const composeWithOrchestratorBodyMidiSnippetsItemTempoMax = 300;
@@ -155,7 +198,7 @@ export const composeWithOrchestratorBodyMidiSnippetsItemNotesItemVelocityMax = 1
 export const composeWithOrchestratorBodyMidiSnippetsItemNotesItemStartMsMin = 0;
 
 
-export const composeWithOrchestratorBodyHistoryItemContentMax = 4000;
+export const composeWithOrchestratorBodyHistoryItemContentMax = 20000;
 
 export const composeWithOrchestratorBodyHistoryMax = 12;
 
@@ -164,20 +207,20 @@ export const composeWithOrchestratorBodyScoreTempoMax = 300;
 
 export const composeWithOrchestratorBodyScoreDurationBeatsMax = 512;
 
-export const composeWithOrchestratorBodyScoreTracksItemIdMax = 80;
+export const composeWithOrchestratorBodyScoreTracksItemIdMax = 400;
 
-export const composeWithOrchestratorBodyScoreTracksItemNameMax = 120;
+export const composeWithOrchestratorBodyScoreTracksItemNameMax = 600;
 
-export const composeWithOrchestratorBodyScoreTracksItemRoleMax = 80;
+export const composeWithOrchestratorBodyScoreTracksItemRoleMax = 400;
 
-export const composeWithOrchestratorBodyScoreTracksItemInstrumentMax = 120;
+export const composeWithOrchestratorBodyScoreTracksItemInstrumentMax = 600;
 
 export const composeWithOrchestratorBodyScoreTracksItemMidiProgramMin = 0;
 export const composeWithOrchestratorBodyScoreTracksItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorBodyScoreTracksItemRegionsItemIdMax = 80;
+export const composeWithOrchestratorBodyScoreTracksItemRegionsItemIdMax = 400;
 
-export const composeWithOrchestratorBodyScoreTracksItemRegionsItemNameMax = 120;
+export const composeWithOrchestratorBodyScoreTracksItemRegionsItemNameMax = 600;
 
 export const composeWithOrchestratorBodyScoreTracksItemRegionsItemStartBeatMin = 0;
 export const composeWithOrchestratorBodyScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -207,6 +250,7 @@ export const composeWithOrchestratorBodyScoreTracksMax = 32;
 
 export const ComposeWithOrchestratorBody = zod.object({
   "message": zod.string().max(composeWithOrchestratorBodyMessageMax),
+  "projectId": zod.string().uuid().optional().describe('Optional authenticated project owner scope for temporary advisory MIDI objects.'),
   "phase": zod.enum(['style-intake', 'instrument-approval', 'composition']).default(composeWithOrchestratorBodyPhaseDefault).describe('For a score with no tracks, omission is inferred as style-intake (or instrument-approval when selectedStyle is supplied).'),
   "selectedStyle": zod.string().max(composeWithOrchestratorBodySelectedStyleMax).optional(),
   "approvedTrackProposalIds": zod.array(zod.string().max(composeWithOrchestratorBodyApprovedTrackProposalIdsItemMax)).max(composeWithOrchestratorBodyApprovedTrackProposalIdsMax).optional(),
@@ -238,6 +282,8 @@ export const ComposeWithOrchestratorBody = zod.object({
 }))
 })),
   "selectedStyle": zod.string().max(composeWithOrchestratorBodyApprovalContextSelectedStyleMax).optional(),
+  "projectId": zod.string().uuid().optional().describe('Authenticated owner\/project scope bound into the approval signature.'),
+  "requiresPlayableMaterial": zod.boolean().optional().describe('Server-signed initial Orchestrator decision that the original request requires playable notes or regions after membership approval. Omitted only for legacy checkpoints.'),
   "adviserRoster": zod.array(zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
@@ -247,7 +293,30 @@ export const ComposeWithOrchestratorBody = zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
   "question": zod.string(),
-  "insight": zod.string()
+  "insight": zod.string(),
+  "suggestions": zod.array(zod.object({
+  "id": zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemIdMax),
+  "label": zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemLabelMax),
+  "instructions": zod.array(zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsItemMax)).min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsMax),
+  "targetTrackIds": zod.array(zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsItemMax)).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsMax),
+  "instrumentId": zod.string().max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentIdMax).optional(),
+  "instrumentName": zod.string().max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentNameMax).optional(),
+  "advisoryMidiRef": zod.object({
+  "id": zod.string().uuid(),
+  "objectPath": zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax).regex(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp),
+  "sha256": zod.string().regex(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp),
+  "label": zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax),
+  "alignment": zod.object({
+  "startBeat": zod.number().min(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax),
+  "durationBeats": zod.number().gt(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax)
+}),
+  "targets": zod.object({
+  "trackIds": zod.array(zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax)).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax),
+  "instrumentIds": zod.array(zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax)).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax),
+  "instruments": zod.array(zod.string().min(1).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax)).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax)
+})
+}).optional().describe('Immutable server-owned reference to advisory MIDI; opaque and never auto-applied.')
+})).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsItemSuggestionsMax).optional()
 })).max(composeWithOrchestratorBodyApprovalContextAdviserConsultationsMax),
   "consumedBudget": zod.object({
   "adviserConsultationsUsed": zod.number().int().min(composeWithOrchestratorBodyApprovalContextConsumedBudgetAdviserConsultationsUsedMin).max(composeWithOrchestratorBodyApprovalContextConsumedBudgetAdviserConsultationsUsedMax),
@@ -331,46 +400,89 @@ export const ComposeWithOrchestratorBody = zod.object({
 })
 })
 
-export const composeWithOrchestratorResponseSelectedStyleMax = 1000;
+export const composeWithOrchestratorResponseSelectedStyleMax = 5000;
 
-export const composeWithOrchestratorResponseStyleSuggestionsItemIdMax = 80;
+export const composeWithOrchestratorResponseStyleSuggestionsItemIdMax = 400;
 
-export const composeWithOrchestratorResponseStyleSuggestionsItemNameMax = 120;
+export const composeWithOrchestratorResponseStyleSuggestionsItemNameMax = 600;
 
-export const composeWithOrchestratorResponseStyleSuggestionsItemDescriptionMax = 500;
+export const composeWithOrchestratorResponseStyleSuggestionsItemDescriptionMax = 2500;
 
-export const composeWithOrchestratorResponseStyleSuggestionsItemAgentMax = 120;
+export const composeWithOrchestratorResponseStyleSuggestionsItemAgentMax = 600;
 
 export const composeWithOrchestratorResponseStyleSuggestionsMax = 6;
 
-export const composeWithOrchestratorResponseTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorResponseTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorResponseTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorResponseTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorResponseTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorResponseTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorResponseTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorResponseTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorResponseTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorResponseTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorResponseTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorResponseTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorResponseTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorResponseTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorResponseTrackProposalsMax = 32;
 
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemIdMax = 400;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemLabelMax = 600;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstructionsItemMax = 2000;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstructionsMax = 4;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemTargetTrackIdsItemMax = 400;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemTargetTrackIdsMax = 8;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstrumentIdMax = 400;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstrumentNameMax = 600;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax = 1500;
+
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp = new RegExp('^/objects/projects/[A-Za-z0-9_-]+/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax = 600;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin = 0;
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax = 512;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin = 0;
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax = 512;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax = 400;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax = 8;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax = 400;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax = 2;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax = 600;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax = 2;
+
+export const composeWithOrchestratorResponseConsultationsItemSuggestionsMax = 8;
+
 export const composeWithOrchestratorResponseConsultationsMax = 64;
 
-export const composeWithOrchestratorResponseOperationsItemOneIdMax = 80;
+export const composeWithOrchestratorResponseOperationsItemOneIdMax = 400;
 
-export const composeWithOrchestratorResponseOperationsItemOneTrackIdMax = 80;
+export const composeWithOrchestratorResponseOperationsItemOneTrackIdMax = 400;
 
-export const composeWithOrchestratorResponseOperationsItemOneSummaryMax = 240;
+export const composeWithOrchestratorResponseOperationsItemOneSummaryMax = 1200;
 
-export const composeWithOrchestratorResponseOperationsItemOneRegionIdMax = 80;
+export const composeWithOrchestratorResponseOperationsItemOneRegionIdMax = 400;
 
-export const composeWithOrchestratorResponseOperationsItemOneRegionNameMax = 120;
+export const composeWithOrchestratorResponseOperationsItemOneRegionNameMax = 600;
 
 export const composeWithOrchestratorResponseOperationsItemOneRegionStartBeatMin = 0;
 export const composeWithOrchestratorResponseOperationsItemOneRegionStartBeatMax = 512;
@@ -391,28 +503,28 @@ export const composeWithOrchestratorResponseOperationsItemOneRegionNotesItemDura
 
 export const composeWithOrchestratorResponseOperationsItemOneRegionNotesMax = 512;
 
-export const composeWithOrchestratorResponseOperationsItemTwoIdMax = 80;
+export const composeWithOrchestratorResponseOperationsItemTwoIdMax = 400;
 
-export const composeWithOrchestratorResponseOperationsItemTwoTrackIdMax = 80;
+export const composeWithOrchestratorResponseOperationsItemTwoTrackIdMax = 400;
 
-export const composeWithOrchestratorResponseOperationsItemTwoRegionIdMax = 80;
+export const composeWithOrchestratorResponseOperationsItemTwoRegionIdMax = 400;
 
-export const composeWithOrchestratorResponseOperationsItemTwoSummaryMax = 240;
+export const composeWithOrchestratorResponseOperationsItemTwoSummaryMax = 1200;
 
 export const composeWithOrchestratorResponseOperationsMax = 512;
 
 export const composeWithOrchestratorResponseEditWorkflowTasksMax = 5;
 
 export const composeWithOrchestratorResponseEditWorkflowEventsItemObservedLengthMin = 0;
-export const composeWithOrchestratorResponseEditWorkflowEventsItemObservedLengthMax = 241;
+export const composeWithOrchestratorResponseEditWorkflowEventsItemObservedLengthMax = 1201;
 
-export const composeWithOrchestratorResponseApprovalContextOriginalMessageMax = 4000;
+export const composeWithOrchestratorResponseApprovalContextOriginalMessageMax = 20000;
 
-export const composeWithOrchestratorResponseApprovalContextOriginalHistoryItemContentMax = 4000;
+export const composeWithOrchestratorResponseApprovalContextOriginalHistoryItemContentMax = 20000;
 
 export const composeWithOrchestratorResponseApprovalContextOriginalHistoryMax = 12;
 
-export const composeWithOrchestratorResponseApprovalContextOriginalMidiItemIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextOriginalMidiItemIdMax = 400;
 
 export const composeWithOrchestratorResponseApprovalContextOriginalMidiItemTempoMin = 30;
 export const composeWithOrchestratorResponseApprovalContextOriginalMidiItemTempoMax = 300;
@@ -428,9 +540,52 @@ export const composeWithOrchestratorResponseApprovalContextOriginalMidiItemNotes
 export const composeWithOrchestratorResponseApprovalContextOriginalMidiItemNotesItemStartMsMin = 0;
 
 
-export const composeWithOrchestratorResponseApprovalContextSelectedStyleMax = 1000;
+export const composeWithOrchestratorResponseApprovalContextSelectedStyleMax = 5000;
 
 export const composeWithOrchestratorResponseApprovalContextAdviserRosterMax = 16;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemIdMax = 400;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemLabelMax = 600;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsItemMax = 2000;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsMax = 4;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsItemMax = 400;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsMax = 8;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentIdMax = 400;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentNameMax = 600;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax = 1500;
+
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp = new RegExp('^/objects/projects/[A-Za-z0-9_-]+/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax = 600;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin = 0;
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax = 512;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin = 0;
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax = 512;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax = 400;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax = 8;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax = 400;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax = 2;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax = 600;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax = 2;
+
+export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsMax = 8;
 
 export const composeWithOrchestratorResponseApprovalContextAdviserConsultationsMax = 16;
 
@@ -446,54 +601,54 @@ export const composeWithOrchestratorResponseApprovalContextConsumedBudgetRefinem
 export const composeWithOrchestratorResponseApprovalContextConsumedBudgetOperationRepairAttemptsUsedMin = 0;
 export const composeWithOrchestratorResponseApprovalContextConsumedBudgetOperationRepairAttemptsUsedMax = 2;
 
-export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorResponseApprovalContextOfferedTrackProposalsMax = 32;
 
-export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorResponseApprovalContextDeclinedTrackProposalsMax = 32;
 
-export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemIdMax = 400;
 
-export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemTrackIdMax = 80;
+export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemTrackIdMax = 400;
 
-export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemInstrumentMax = 120;
+export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemInstrumentMax = 600;
 
-export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemRoleMax = 80;
+export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemRoleMax = 400;
 
 export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemMidiProgramMin = 0;
 export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemMidiProgramMax = 127;
 
-export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemSummaryMax = 240;
+export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemSummaryMax = 1200;
 
-export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemReasonMax = 500;
+export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsItemReasonMax = 2500;
 
 export const composeWithOrchestratorResponseApprovalContextAccumulatedApprovedTrackProposalsMax = 32;
 
@@ -524,7 +679,30 @@ export const ComposeWithOrchestratorResponse = zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
   "question": zod.string(),
-  "insight": zod.string()
+  "insight": zod.string(),
+  "suggestions": zod.array(zod.object({
+  "id": zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemIdMax),
+  "label": zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemLabelMax),
+  "instructions": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstructionsItemMax)).min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstructionsMax),
+  "targetTrackIds": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemTargetTrackIdsItemMax)).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemTargetTrackIdsMax),
+  "instrumentId": zod.string().max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstrumentIdMax).optional(),
+  "instrumentName": zod.string().max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemInstrumentNameMax).optional(),
+  "advisoryMidiRef": zod.object({
+  "id": zod.string().uuid(),
+  "objectPath": zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax).regex(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp),
+  "sha256": zod.string().regex(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp),
+  "label": zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax),
+  "alignment": zod.object({
+  "startBeat": zod.number().min(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax),
+  "durationBeats": zod.number().gt(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax)
+}),
+  "targets": zod.object({
+  "trackIds": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax)).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax),
+  "instrumentIds": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax)).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax),
+  "instruments": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax)).max(composeWithOrchestratorResponseConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax)
+})
+}).optional().describe('Immutable server-owned reference to advisory MIDI; opaque and never auto-applied.')
+})).max(composeWithOrchestratorResponseConsultationsItemSuggestionsMax).optional()
 })).max(composeWithOrchestratorResponseConsultationsMax),
   "usageGuard": zod.string(),
   "operations": zod.array(zod.union([zod.object({
@@ -581,7 +759,7 @@ export const ComposeWithOrchestratorResponse = zod.object({
   "duplicateId": zod.string().optional(),
   "observedType": zod.enum(['string', 'number', 'boolean', 'object', 'array', 'null', 'unknown']).optional(),
   "observedLength": zod.number().min(composeWithOrchestratorResponseEditWorkflowEventsItemObservedLengthMin).max(composeWithOrchestratorResponseEditWorkflowEventsItemObservedLengthMax).optional(),
-  "maxLength": zod.literal(240).optional(),
+  "maxLength": zod.literal(1200).optional(),
   "outcome": zod.string().optional()
 })),
   "changedFiles": zod.array(zod.string())
@@ -604,6 +782,8 @@ export const ComposeWithOrchestratorResponse = zod.object({
 }))
 })),
   "selectedStyle": zod.string().max(composeWithOrchestratorResponseApprovalContextSelectedStyleMax).optional(),
+  "projectId": zod.string().uuid().optional().describe('Authenticated owner\/project scope bound into the approval signature.'),
+  "requiresPlayableMaterial": zod.boolean().optional().describe('Server-signed initial Orchestrator decision that the original request requires playable notes or regions after membership approval. Omitted only for legacy checkpoints.'),
   "adviserRoster": zod.array(zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
@@ -613,7 +793,30 @@ export const ComposeWithOrchestratorResponse = zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
   "question": zod.string(),
-  "insight": zod.string()
+  "insight": zod.string(),
+  "suggestions": zod.array(zod.object({
+  "id": zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemIdMax),
+  "label": zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemLabelMax),
+  "instructions": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsItemMax)).min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsMax),
+  "targetTrackIds": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsItemMax)).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsMax),
+  "instrumentId": zod.string().max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentIdMax).optional(),
+  "instrumentName": zod.string().max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentNameMax).optional(),
+  "advisoryMidiRef": zod.object({
+  "id": zod.string().uuid(),
+  "objectPath": zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax).regex(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp),
+  "sha256": zod.string().regex(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp),
+  "label": zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax),
+  "alignment": zod.object({
+  "startBeat": zod.number().min(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax),
+  "durationBeats": zod.number().gt(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax)
+}),
+  "targets": zod.object({
+  "trackIds": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax)).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax),
+  "instrumentIds": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax)).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax),
+  "instruments": zod.array(zod.string().min(1).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax)).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax)
+})
+}).optional().describe('Immutable server-owned reference to advisory MIDI; opaque and never auto-applied.')
+})).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsItemSuggestionsMax).optional()
 })).max(composeWithOrchestratorResponseApprovalContextAdviserConsultationsMax),
   "consumedBudget": zod.object({
   "adviserConsultationsUsed": zod.number().int().min(composeWithOrchestratorResponseApprovalContextConsumedBudgetAdviserConsultationsUsedMin).max(composeWithOrchestratorResponseApprovalContextConsumedBudgetAdviserConsultationsUsedMax),
@@ -661,39 +864,39 @@ export const ComposeWithOrchestratorResponse = zod.object({
  * Streams specialist selection and lifecycle progress before the final Orchestrator response as newline-delimited JSON.
  * @summary Stream film-score specialist progress
  */
-export const streamCompositionProgressBodyMessageMax = 4000;
+export const streamCompositionProgressBodyMessageMax = 20000;
 
 export const streamCompositionProgressBodyPhaseDefault = `composition`;
-export const streamCompositionProgressBodySelectedStyleMax = 1000;
+export const streamCompositionProgressBodySelectedStyleMax = 5000;
 
-export const streamCompositionProgressBodyApprovedTrackProposalIdsItemMax = 80;
+export const streamCompositionProgressBodyApprovedTrackProposalIdsItemMax = 400;
 
 export const streamCompositionProgressBodyApprovedTrackProposalIdsMax = 32;
 
-export const streamCompositionProgressBodyApprovedTrackProposalsItemIdMax = 80;
+export const streamCompositionProgressBodyApprovedTrackProposalsItemIdMax = 400;
 
-export const streamCompositionProgressBodyApprovedTrackProposalsItemTrackIdMax = 80;
+export const streamCompositionProgressBodyApprovedTrackProposalsItemTrackIdMax = 400;
 
-export const streamCompositionProgressBodyApprovedTrackProposalsItemInstrumentMax = 120;
+export const streamCompositionProgressBodyApprovedTrackProposalsItemInstrumentMax = 600;
 
-export const streamCompositionProgressBodyApprovedTrackProposalsItemRoleMax = 80;
+export const streamCompositionProgressBodyApprovedTrackProposalsItemRoleMax = 400;
 
 export const streamCompositionProgressBodyApprovedTrackProposalsItemMidiProgramMin = 0;
 export const streamCompositionProgressBodyApprovedTrackProposalsItemMidiProgramMax = 127;
 
-export const streamCompositionProgressBodyApprovedTrackProposalsItemSummaryMax = 240;
+export const streamCompositionProgressBodyApprovedTrackProposalsItemSummaryMax = 1200;
 
-export const streamCompositionProgressBodyApprovedTrackProposalsItemReasonMax = 500;
+export const streamCompositionProgressBodyApprovedTrackProposalsItemReasonMax = 2500;
 
 export const streamCompositionProgressBodyApprovedTrackProposalsMax = 32;
 
-export const streamCompositionProgressBodyApprovalContextOriginalMessageMax = 4000;
+export const streamCompositionProgressBodyApprovalContextOriginalMessageMax = 20000;
 
-export const streamCompositionProgressBodyApprovalContextOriginalHistoryItemContentMax = 4000;
+export const streamCompositionProgressBodyApprovalContextOriginalHistoryItemContentMax = 20000;
 
 export const streamCompositionProgressBodyApprovalContextOriginalHistoryMax = 12;
 
-export const streamCompositionProgressBodyApprovalContextOriginalMidiItemIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextOriginalMidiItemIdMax = 400;
 
 export const streamCompositionProgressBodyApprovalContextOriginalMidiItemTempoMin = 30;
 export const streamCompositionProgressBodyApprovalContextOriginalMidiItemTempoMax = 300;
@@ -709,9 +912,52 @@ export const streamCompositionProgressBodyApprovalContextOriginalMidiItemNotesIt
 export const streamCompositionProgressBodyApprovalContextOriginalMidiItemNotesItemStartMsMin = 0;
 
 
-export const streamCompositionProgressBodyApprovalContextSelectedStyleMax = 1000;
+export const streamCompositionProgressBodyApprovalContextSelectedStyleMax = 5000;
 
 export const streamCompositionProgressBodyApprovalContextAdviserRosterMax = 16;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemIdMax = 400;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemLabelMax = 600;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsItemMax = 2000;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsMax = 4;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsItemMax = 400;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsMax = 8;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentIdMax = 400;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentNameMax = 600;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax = 1500;
+
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp = new RegExp('^/objects/projects/[A-Za-z0-9_-]+/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax = 600;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin = 0;
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax = 512;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin = 0;
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax = 512;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax = 400;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax = 8;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax = 400;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax = 2;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax = 600;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax = 2;
+
+export const streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsMax = 8;
 
 export const streamCompositionProgressBodyApprovalContextAdviserConsultationsMax = 16;
 
@@ -727,59 +973,59 @@ export const streamCompositionProgressBodyApprovalContextConsumedBudgetRefinemen
 export const streamCompositionProgressBodyApprovalContextConsumedBudgetOperationRepairAttemptsUsedMin = 0;
 export const streamCompositionProgressBodyApprovalContextConsumedBudgetOperationRepairAttemptsUsedMax = 2;
 
-export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemIdMax = 400;
 
-export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemTrackIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemTrackIdMax = 400;
 
-export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemInstrumentMax = 120;
+export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemInstrumentMax = 600;
 
-export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemRoleMax = 80;
+export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemRoleMax = 400;
 
 export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemMidiProgramMin = 0;
 export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemMidiProgramMax = 127;
 
-export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemSummaryMax = 240;
+export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemSummaryMax = 1200;
 
-export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemReasonMax = 500;
+export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsItemReasonMax = 2500;
 
 export const streamCompositionProgressBodyApprovalContextOfferedTrackProposalsMax = 32;
 
-export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemIdMax = 400;
 
-export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemTrackIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemTrackIdMax = 400;
 
-export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemInstrumentMax = 120;
+export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemInstrumentMax = 600;
 
-export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemRoleMax = 80;
+export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemRoleMax = 400;
 
 export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemMidiProgramMin = 0;
 export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemMidiProgramMax = 127;
 
-export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemSummaryMax = 240;
+export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemSummaryMax = 1200;
 
-export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemReasonMax = 500;
+export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsItemReasonMax = 2500;
 
 export const streamCompositionProgressBodyApprovalContextDeclinedTrackProposalsMax = 32;
 
-export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemIdMax = 400;
 
-export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemTrackIdMax = 80;
+export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemTrackIdMax = 400;
 
-export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemInstrumentMax = 120;
+export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemInstrumentMax = 600;
 
-export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemRoleMax = 80;
+export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemRoleMax = 400;
 
 export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemMidiProgramMin = 0;
 export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemMidiProgramMax = 127;
 
-export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemSummaryMax = 240;
+export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemSummaryMax = 1200;
 
-export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemReasonMax = 500;
+export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsItemReasonMax = 2500;
 
 export const streamCompositionProgressBodyApprovalContextAccumulatedApprovedTrackProposalsMax = 32;
 
 export const streamCompositionProgressBodyApprovalContextSignatureRegExp = new RegExp('^[a-f0-9]{64}$');
-export const streamCompositionProgressBodyMidiSnippetsItemIdMax = 80;
+export const streamCompositionProgressBodyMidiSnippetsItemIdMax = 400;
 
 export const streamCompositionProgressBodyMidiSnippetsItemTempoMin = 30;
 export const streamCompositionProgressBodyMidiSnippetsItemTempoMax = 300;
@@ -795,7 +1041,7 @@ export const streamCompositionProgressBodyMidiSnippetsItemNotesItemVelocityMax =
 export const streamCompositionProgressBodyMidiSnippetsItemNotesItemStartMsMin = 0;
 
 
-export const streamCompositionProgressBodyHistoryItemContentMax = 4000;
+export const streamCompositionProgressBodyHistoryItemContentMax = 20000;
 
 export const streamCompositionProgressBodyHistoryMax = 12;
 
@@ -804,20 +1050,20 @@ export const streamCompositionProgressBodyScoreTempoMax = 300;
 
 export const streamCompositionProgressBodyScoreDurationBeatsMax = 512;
 
-export const streamCompositionProgressBodyScoreTracksItemIdMax = 80;
+export const streamCompositionProgressBodyScoreTracksItemIdMax = 400;
 
-export const streamCompositionProgressBodyScoreTracksItemNameMax = 120;
+export const streamCompositionProgressBodyScoreTracksItemNameMax = 600;
 
-export const streamCompositionProgressBodyScoreTracksItemRoleMax = 80;
+export const streamCompositionProgressBodyScoreTracksItemRoleMax = 400;
 
-export const streamCompositionProgressBodyScoreTracksItemInstrumentMax = 120;
+export const streamCompositionProgressBodyScoreTracksItemInstrumentMax = 600;
 
 export const streamCompositionProgressBodyScoreTracksItemMidiProgramMin = 0;
 export const streamCompositionProgressBodyScoreTracksItemMidiProgramMax = 127;
 
-export const streamCompositionProgressBodyScoreTracksItemRegionsItemIdMax = 80;
+export const streamCompositionProgressBodyScoreTracksItemRegionsItemIdMax = 400;
 
-export const streamCompositionProgressBodyScoreTracksItemRegionsItemNameMax = 120;
+export const streamCompositionProgressBodyScoreTracksItemRegionsItemNameMax = 600;
 
 export const streamCompositionProgressBodyScoreTracksItemRegionsItemStartBeatMin = 0;
 export const streamCompositionProgressBodyScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -847,6 +1093,7 @@ export const streamCompositionProgressBodyScoreTracksMax = 32;
 
 export const StreamCompositionProgressBody = zod.object({
   "message": zod.string().max(streamCompositionProgressBodyMessageMax),
+  "projectId": zod.string().uuid().optional().describe('Optional authenticated project owner scope for temporary advisory MIDI objects.'),
   "phase": zod.enum(['style-intake', 'instrument-approval', 'composition']).default(streamCompositionProgressBodyPhaseDefault).describe('For a score with no tracks, omission is inferred as style-intake (or instrument-approval when selectedStyle is supplied).'),
   "selectedStyle": zod.string().max(streamCompositionProgressBodySelectedStyleMax).optional(),
   "approvedTrackProposalIds": zod.array(zod.string().max(streamCompositionProgressBodyApprovedTrackProposalIdsItemMax)).max(streamCompositionProgressBodyApprovedTrackProposalIdsMax).optional(),
@@ -878,6 +1125,8 @@ export const StreamCompositionProgressBody = zod.object({
 }))
 })),
   "selectedStyle": zod.string().max(streamCompositionProgressBodyApprovalContextSelectedStyleMax).optional(),
+  "projectId": zod.string().uuid().optional().describe('Authenticated owner\/project scope bound into the approval signature.'),
+  "requiresPlayableMaterial": zod.boolean().optional().describe('Server-signed initial Orchestrator decision that the original request requires playable notes or regions after membership approval. Omitted only for legacy checkpoints.'),
   "adviserRoster": zod.array(zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
@@ -887,7 +1136,30 @@ export const StreamCompositionProgressBody = zod.object({
   "agent": zod.string(),
   "group": zod.enum(['instrument', 'style', 'concept']),
   "question": zod.string(),
-  "insight": zod.string()
+  "insight": zod.string(),
+  "suggestions": zod.array(zod.object({
+  "id": zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemIdMax),
+  "label": zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemLabelMax),
+  "instructions": zod.array(zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsItemMax)).min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstructionsMax),
+  "targetTrackIds": zod.array(zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsItemMax)).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemTargetTrackIdsMax),
+  "instrumentId": zod.string().max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentIdMax).optional(),
+  "instrumentName": zod.string().max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemInstrumentNameMax).optional(),
+  "advisoryMidiRef": zod.object({
+  "id": zod.string().uuid(),
+  "objectPath": zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathMax).regex(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefObjectPathRegExp),
+  "sha256": zod.string().regex(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefSha256RegExp),
+  "label": zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefLabelMax),
+  "alignment": zod.object({
+  "startBeat": zod.number().min(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMin).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentStartBeatMax),
+  "durationBeats": zod.number().gt(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsExclusiveMin).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefAlignmentDurationBeatsMax)
+}),
+  "targets": zod.object({
+  "trackIds": zod.array(zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsItemMax)).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsTrackIdsMax),
+  "instrumentIds": zod.array(zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsItemMax)).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentIdsMax),
+  "instruments": zod.array(zod.string().min(1).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsItemMax)).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsItemAdvisoryMidiRefTargetsInstrumentsMax)
+})
+}).optional().describe('Immutable server-owned reference to advisory MIDI; opaque and never auto-applied.')
+})).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsItemSuggestionsMax).optional()
 })).max(streamCompositionProgressBodyApprovalContextAdviserConsultationsMax),
   "consumedBudget": zod.object({
   "adviserConsultationsUsed": zod.number().int().min(streamCompositionProgressBodyApprovalContextConsumedBudgetAdviserConsultationsUsedMin).max(streamCompositionProgressBodyApprovalContextConsumedBudgetAdviserConsultationsUsedMax),
@@ -994,27 +1266,27 @@ export const ListProjectsResponse = zod.object({
 /**
  * @summary Create a private project
  */
-export const createProjectBodyNameMax = 160;
+export const createProjectBodyNameMax = 800;
 
 export const createProjectBodyDocumentScoreTempoMin = 30;
 export const createProjectBodyDocumentScoreTempoMax = 300;
 
 export const createProjectBodyDocumentScoreDurationBeatsMax = 512;
 
-export const createProjectBodyDocumentScoreTracksItemIdMax = 80;
+export const createProjectBodyDocumentScoreTracksItemIdMax = 400;
 
-export const createProjectBodyDocumentScoreTracksItemNameMax = 120;
+export const createProjectBodyDocumentScoreTracksItemNameMax = 600;
 
-export const createProjectBodyDocumentScoreTracksItemRoleMax = 80;
+export const createProjectBodyDocumentScoreTracksItemRoleMax = 400;
 
-export const createProjectBodyDocumentScoreTracksItemInstrumentMax = 120;
+export const createProjectBodyDocumentScoreTracksItemInstrumentMax = 600;
 
 export const createProjectBodyDocumentScoreTracksItemMidiProgramMin = 0;
 export const createProjectBodyDocumentScoreTracksItemMidiProgramMax = 127;
 
-export const createProjectBodyDocumentScoreTracksItemRegionsItemIdMax = 80;
+export const createProjectBodyDocumentScoreTracksItemRegionsItemIdMax = 400;
 
-export const createProjectBodyDocumentScoreTracksItemRegionsItemNameMax = 120;
+export const createProjectBodyDocumentScoreTracksItemRegionsItemNameMax = 600;
 
 export const createProjectBodyDocumentScoreTracksItemRegionsItemStartBeatMin = 0;
 export const createProjectBodyDocumentScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -1047,20 +1319,20 @@ export const createProjectBodyDocumentUndoStackItemTempoMax = 300;
 
 export const createProjectBodyDocumentUndoStackItemDurationBeatsMax = 512;
 
-export const createProjectBodyDocumentUndoStackItemTracksItemIdMax = 80;
+export const createProjectBodyDocumentUndoStackItemTracksItemIdMax = 400;
 
-export const createProjectBodyDocumentUndoStackItemTracksItemNameMax = 120;
+export const createProjectBodyDocumentUndoStackItemTracksItemNameMax = 600;
 
-export const createProjectBodyDocumentUndoStackItemTracksItemRoleMax = 80;
+export const createProjectBodyDocumentUndoStackItemTracksItemRoleMax = 400;
 
-export const createProjectBodyDocumentUndoStackItemTracksItemInstrumentMax = 120;
+export const createProjectBodyDocumentUndoStackItemTracksItemInstrumentMax = 600;
 
 export const createProjectBodyDocumentUndoStackItemTracksItemMidiProgramMin = 0;
 export const createProjectBodyDocumentUndoStackItemTracksItemMidiProgramMax = 127;
 
-export const createProjectBodyDocumentUndoStackItemTracksItemRegionsItemIdMax = 80;
+export const createProjectBodyDocumentUndoStackItemTracksItemRegionsItemIdMax = 400;
 
-export const createProjectBodyDocumentUndoStackItemTracksItemRegionsItemNameMax = 120;
+export const createProjectBodyDocumentUndoStackItemTracksItemRegionsItemNameMax = 600;
 
 export const createProjectBodyDocumentUndoStackItemTracksItemRegionsItemStartBeatMin = 0;
 export const createProjectBodyDocumentUndoStackItemTracksItemRegionsItemStartBeatMax = 512;
@@ -1156,20 +1428,20 @@ export const createProjectResponseTwoDocumentScoreTempoMax = 300;
 
 export const createProjectResponseTwoDocumentScoreDurationBeatsMax = 512;
 
-export const createProjectResponseTwoDocumentScoreTracksItemIdMax = 80;
+export const createProjectResponseTwoDocumentScoreTracksItemIdMax = 400;
 
-export const createProjectResponseTwoDocumentScoreTracksItemNameMax = 120;
+export const createProjectResponseTwoDocumentScoreTracksItemNameMax = 600;
 
-export const createProjectResponseTwoDocumentScoreTracksItemRoleMax = 80;
+export const createProjectResponseTwoDocumentScoreTracksItemRoleMax = 400;
 
-export const createProjectResponseTwoDocumentScoreTracksItemInstrumentMax = 120;
+export const createProjectResponseTwoDocumentScoreTracksItemInstrumentMax = 600;
 
 export const createProjectResponseTwoDocumentScoreTracksItemMidiProgramMin = 0;
 export const createProjectResponseTwoDocumentScoreTracksItemMidiProgramMax = 127;
 
-export const createProjectResponseTwoDocumentScoreTracksItemRegionsItemIdMax = 80;
+export const createProjectResponseTwoDocumentScoreTracksItemRegionsItemIdMax = 400;
 
-export const createProjectResponseTwoDocumentScoreTracksItemRegionsItemNameMax = 120;
+export const createProjectResponseTwoDocumentScoreTracksItemRegionsItemNameMax = 600;
 
 export const createProjectResponseTwoDocumentScoreTracksItemRegionsItemStartBeatMin = 0;
 export const createProjectResponseTwoDocumentScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -1202,20 +1474,20 @@ export const createProjectResponseTwoDocumentUndoStackItemTempoMax = 300;
 
 export const createProjectResponseTwoDocumentUndoStackItemDurationBeatsMax = 512;
 
-export const createProjectResponseTwoDocumentUndoStackItemTracksItemIdMax = 80;
+export const createProjectResponseTwoDocumentUndoStackItemTracksItemIdMax = 400;
 
-export const createProjectResponseTwoDocumentUndoStackItemTracksItemNameMax = 120;
+export const createProjectResponseTwoDocumentUndoStackItemTracksItemNameMax = 600;
 
-export const createProjectResponseTwoDocumentUndoStackItemTracksItemRoleMax = 80;
+export const createProjectResponseTwoDocumentUndoStackItemTracksItemRoleMax = 400;
 
-export const createProjectResponseTwoDocumentUndoStackItemTracksItemInstrumentMax = 120;
+export const createProjectResponseTwoDocumentUndoStackItemTracksItemInstrumentMax = 600;
 
 export const createProjectResponseTwoDocumentUndoStackItemTracksItemMidiProgramMin = 0;
 export const createProjectResponseTwoDocumentUndoStackItemTracksItemMidiProgramMax = 127;
 
-export const createProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemIdMax = 80;
+export const createProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemIdMax = 400;
 
-export const createProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemNameMax = 120;
+export const createProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemNameMax = 600;
 
 export const createProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemStartBeatMin = 0;
 export const createProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemStartBeatMax = 512;
@@ -1324,20 +1596,20 @@ export const getProjectResponseTwoDocumentScoreTempoMax = 300;
 
 export const getProjectResponseTwoDocumentScoreDurationBeatsMax = 512;
 
-export const getProjectResponseTwoDocumentScoreTracksItemIdMax = 80;
+export const getProjectResponseTwoDocumentScoreTracksItemIdMax = 400;
 
-export const getProjectResponseTwoDocumentScoreTracksItemNameMax = 120;
+export const getProjectResponseTwoDocumentScoreTracksItemNameMax = 600;
 
-export const getProjectResponseTwoDocumentScoreTracksItemRoleMax = 80;
+export const getProjectResponseTwoDocumentScoreTracksItemRoleMax = 400;
 
-export const getProjectResponseTwoDocumentScoreTracksItemInstrumentMax = 120;
+export const getProjectResponseTwoDocumentScoreTracksItemInstrumentMax = 600;
 
 export const getProjectResponseTwoDocumentScoreTracksItemMidiProgramMin = 0;
 export const getProjectResponseTwoDocumentScoreTracksItemMidiProgramMax = 127;
 
-export const getProjectResponseTwoDocumentScoreTracksItemRegionsItemIdMax = 80;
+export const getProjectResponseTwoDocumentScoreTracksItemRegionsItemIdMax = 400;
 
-export const getProjectResponseTwoDocumentScoreTracksItemRegionsItemNameMax = 120;
+export const getProjectResponseTwoDocumentScoreTracksItemRegionsItemNameMax = 600;
 
 export const getProjectResponseTwoDocumentScoreTracksItemRegionsItemStartBeatMin = 0;
 export const getProjectResponseTwoDocumentScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -1370,20 +1642,20 @@ export const getProjectResponseTwoDocumentUndoStackItemTempoMax = 300;
 
 export const getProjectResponseTwoDocumentUndoStackItemDurationBeatsMax = 512;
 
-export const getProjectResponseTwoDocumentUndoStackItemTracksItemIdMax = 80;
+export const getProjectResponseTwoDocumentUndoStackItemTracksItemIdMax = 400;
 
-export const getProjectResponseTwoDocumentUndoStackItemTracksItemNameMax = 120;
+export const getProjectResponseTwoDocumentUndoStackItemTracksItemNameMax = 600;
 
-export const getProjectResponseTwoDocumentUndoStackItemTracksItemRoleMax = 80;
+export const getProjectResponseTwoDocumentUndoStackItemTracksItemRoleMax = 400;
 
-export const getProjectResponseTwoDocumentUndoStackItemTracksItemInstrumentMax = 120;
+export const getProjectResponseTwoDocumentUndoStackItemTracksItemInstrumentMax = 600;
 
 export const getProjectResponseTwoDocumentUndoStackItemTracksItemMidiProgramMin = 0;
 export const getProjectResponseTwoDocumentUndoStackItemTracksItemMidiProgramMax = 127;
 
-export const getProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemIdMax = 80;
+export const getProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemIdMax = 400;
 
-export const getProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemNameMax = 120;
+export const getProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemNameMax = 600;
 
 export const getProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemStartBeatMin = 0;
 export const getProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemStartBeatMax = 512;
@@ -1487,27 +1759,27 @@ export const UpdateProjectParams = zod.object({
 })
 
 
-export const updateProjectBodyNameMax = 160;
+export const updateProjectBodyNameMax = 800;
 
 export const updateProjectBodyDocumentScoreTempoMin = 30;
 export const updateProjectBodyDocumentScoreTempoMax = 300;
 
 export const updateProjectBodyDocumentScoreDurationBeatsMax = 512;
 
-export const updateProjectBodyDocumentScoreTracksItemIdMax = 80;
+export const updateProjectBodyDocumentScoreTracksItemIdMax = 400;
 
-export const updateProjectBodyDocumentScoreTracksItemNameMax = 120;
+export const updateProjectBodyDocumentScoreTracksItemNameMax = 600;
 
-export const updateProjectBodyDocumentScoreTracksItemRoleMax = 80;
+export const updateProjectBodyDocumentScoreTracksItemRoleMax = 400;
 
-export const updateProjectBodyDocumentScoreTracksItemInstrumentMax = 120;
+export const updateProjectBodyDocumentScoreTracksItemInstrumentMax = 600;
 
 export const updateProjectBodyDocumentScoreTracksItemMidiProgramMin = 0;
 export const updateProjectBodyDocumentScoreTracksItemMidiProgramMax = 127;
 
-export const updateProjectBodyDocumentScoreTracksItemRegionsItemIdMax = 80;
+export const updateProjectBodyDocumentScoreTracksItemRegionsItemIdMax = 400;
 
-export const updateProjectBodyDocumentScoreTracksItemRegionsItemNameMax = 120;
+export const updateProjectBodyDocumentScoreTracksItemRegionsItemNameMax = 600;
 
 export const updateProjectBodyDocumentScoreTracksItemRegionsItemStartBeatMin = 0;
 export const updateProjectBodyDocumentScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -1540,20 +1812,20 @@ export const updateProjectBodyDocumentUndoStackItemTempoMax = 300;
 
 export const updateProjectBodyDocumentUndoStackItemDurationBeatsMax = 512;
 
-export const updateProjectBodyDocumentUndoStackItemTracksItemIdMax = 80;
+export const updateProjectBodyDocumentUndoStackItemTracksItemIdMax = 400;
 
-export const updateProjectBodyDocumentUndoStackItemTracksItemNameMax = 120;
+export const updateProjectBodyDocumentUndoStackItemTracksItemNameMax = 600;
 
-export const updateProjectBodyDocumentUndoStackItemTracksItemRoleMax = 80;
+export const updateProjectBodyDocumentUndoStackItemTracksItemRoleMax = 400;
 
-export const updateProjectBodyDocumentUndoStackItemTracksItemInstrumentMax = 120;
+export const updateProjectBodyDocumentUndoStackItemTracksItemInstrumentMax = 600;
 
 export const updateProjectBodyDocumentUndoStackItemTracksItemMidiProgramMin = 0;
 export const updateProjectBodyDocumentUndoStackItemTracksItemMidiProgramMax = 127;
 
-export const updateProjectBodyDocumentUndoStackItemTracksItemRegionsItemIdMax = 80;
+export const updateProjectBodyDocumentUndoStackItemTracksItemRegionsItemIdMax = 400;
 
-export const updateProjectBodyDocumentUndoStackItemTracksItemRegionsItemNameMax = 120;
+export const updateProjectBodyDocumentUndoStackItemTracksItemRegionsItemNameMax = 600;
 
 export const updateProjectBodyDocumentUndoStackItemTracksItemRegionsItemStartBeatMin = 0;
 export const updateProjectBodyDocumentUndoStackItemTracksItemRegionsItemStartBeatMax = 512;
@@ -1650,20 +1922,20 @@ export const updateProjectResponseTwoDocumentScoreTempoMax = 300;
 
 export const updateProjectResponseTwoDocumentScoreDurationBeatsMax = 512;
 
-export const updateProjectResponseTwoDocumentScoreTracksItemIdMax = 80;
+export const updateProjectResponseTwoDocumentScoreTracksItemIdMax = 400;
 
-export const updateProjectResponseTwoDocumentScoreTracksItemNameMax = 120;
+export const updateProjectResponseTwoDocumentScoreTracksItemNameMax = 600;
 
-export const updateProjectResponseTwoDocumentScoreTracksItemRoleMax = 80;
+export const updateProjectResponseTwoDocumentScoreTracksItemRoleMax = 400;
 
-export const updateProjectResponseTwoDocumentScoreTracksItemInstrumentMax = 120;
+export const updateProjectResponseTwoDocumentScoreTracksItemInstrumentMax = 600;
 
 export const updateProjectResponseTwoDocumentScoreTracksItemMidiProgramMin = 0;
 export const updateProjectResponseTwoDocumentScoreTracksItemMidiProgramMax = 127;
 
-export const updateProjectResponseTwoDocumentScoreTracksItemRegionsItemIdMax = 80;
+export const updateProjectResponseTwoDocumentScoreTracksItemRegionsItemIdMax = 400;
 
-export const updateProjectResponseTwoDocumentScoreTracksItemRegionsItemNameMax = 120;
+export const updateProjectResponseTwoDocumentScoreTracksItemRegionsItemNameMax = 600;
 
 export const updateProjectResponseTwoDocumentScoreTracksItemRegionsItemStartBeatMin = 0;
 export const updateProjectResponseTwoDocumentScoreTracksItemRegionsItemStartBeatMax = 512;
@@ -1696,20 +1968,20 @@ export const updateProjectResponseTwoDocumentUndoStackItemTempoMax = 300;
 
 export const updateProjectResponseTwoDocumentUndoStackItemDurationBeatsMax = 512;
 
-export const updateProjectResponseTwoDocumentUndoStackItemTracksItemIdMax = 80;
+export const updateProjectResponseTwoDocumentUndoStackItemTracksItemIdMax = 400;
 
-export const updateProjectResponseTwoDocumentUndoStackItemTracksItemNameMax = 120;
+export const updateProjectResponseTwoDocumentUndoStackItemTracksItemNameMax = 600;
 
-export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRoleMax = 80;
+export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRoleMax = 400;
 
-export const updateProjectResponseTwoDocumentUndoStackItemTracksItemInstrumentMax = 120;
+export const updateProjectResponseTwoDocumentUndoStackItemTracksItemInstrumentMax = 600;
 
 export const updateProjectResponseTwoDocumentUndoStackItemTracksItemMidiProgramMin = 0;
 export const updateProjectResponseTwoDocumentUndoStackItemTracksItemMidiProgramMax = 127;
 
-export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemIdMax = 80;
+export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemIdMax = 400;
 
-export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemNameMax = 120;
+export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemNameMax = 600;
 
 export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemStartBeatMin = 0;
 export const updateProjectResponseTwoDocumentUndoStackItemTracksItemRegionsItemStartBeatMax = 512;
@@ -1822,7 +2094,7 @@ export const CreateProjectAudioUploadUrlParams = zod.object({
   "projectId": zod.coerce.string().uuid().describe('UUID of the project')
 })
 
-export const createProjectAudioUploadUrlBodyContentTypeMax = 120;
+export const createProjectAudioUploadUrlBodyContentTypeMax = 600;
 
 
 export const createProjectAudioUploadUrlBodyContentTypeRegExp = new RegExp('^audio');
@@ -1849,7 +2121,7 @@ export const CreateProjectAudioUploadUrlResponse = zod.object({
 /**
  * @summary Download one track from the saved private project score as MIDI
  */
-export const downloadProjectTrackMidiPathTrackIdMax = 80;
+export const downloadProjectTrackMidiPathTrackIdMax = 400;
 
 
 

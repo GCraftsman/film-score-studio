@@ -7,7 +7,7 @@ Treat a productive-sounding agent conversation as insufficient evidence of compo
 
 **Why:** The user reported piano-solo conversations that generated no music and requested a file-editing workflow instead of advice followed by unverified generation.
 
-**How to apply:** Stage one candidate with at most five track owners, read-only advisers before and after writing, and one affected-track refinement followed by acceptance verification. Both membership actions need approval; verified changes auto-apply atomically with Undo.
+**How to apply:** Stage one candidate with scoped track owners and optional read-only advice before writing. Both membership actions need approval; deterministically validated MIDI changes auto-apply atomically with Undo. Do not require a post-write AI musical verdict.
 
 Compare and merge musical events rather than MIDI binary bytes or region identifiers. A renamed region containing identical notes is not a musical modification.
 
@@ -23,9 +23,33 @@ Use structured, deterministic specialist identifiers at model boundaries rather 
 
 Use read-only style/concept advisers and server-scoped track-owning instrument writers over one staged candidate, not private copies and conflict merges. Structural repair feedback must stay visible in the saved audit even when the agent ultimately succeeds.
 
-**Why:** On 2026-09-12 the user superseded private-copy merging with adviser-first planning, same-adviser candidate review, and at most one affected-instrument refinement. The existing two-repair ceiling remains important so recurring instruction problems are not hidden behind retries.
+**Why:** The user superseded private-copy merging with adviser-first planning and scoped instrument writing. They later explicitly removed final AI review after valid section generation repeatedly failed the review stage.
 
-**How to apply:** Treat two repairs as a ceiling, not a success guarantee. Keep the original score unchanged on exhaustion; distinguish instruction-format repair from musical compromise and evaluation correction.
+**How to apply:** Keep repair budgets explicit and bounded, and keep the original score unchanged on validation exhaustion. Distinguish instruction-format repair from musical regeneration; do not reintroduce subjective evaluation as a commit gate.
+
+Valid MIDI with correct requested timing/length should reach the score without final adviser or Orchestrator musical approval.
+
+**Why:** The user explicitly chose direct application over final AI review after section-writing tests completed but independent review failed.
+
+**How to apply:** Preserve deterministic MIDI/schema, timing, ownership, membership approval, source constraints, and atomic application. This decision removes subjective rejection, not technical validation. Do not silently reinstate an evaluator or a review-driven rewrite loop.
+
+Use concrete valid values in model-facing JSON examples; never put pipe-delimited enum alternatives in a JSON value.
+
+**Why:** A writer copied a pseudo-enum such as `pp|p|mp|mf|f|ff` into region dynamics, then repeated it because the repair prompt also prohibited changing musical fields.
+
+**How to apply:** List allowed values outside the JSON example. Structural repair may change only metadata/envelopes. Missing whole regions and invalid targets still fail closed; explicit bounded musical regeneration is the exception for eligible invalid musical fields.
+
+Allow one explicitly identified musical regeneration across a composition run, consuming the existing shared recovery budget rather than adding an independent retry pool.
+
+**Why:** The user authorized bounded regeneration after repeated writer timing failures, while retaining transactional score safety. This supersedes the earlier blanket rejection of every invalid musical field.
+
+**How to apply:** Keep complete original context and prominent pre-response checks. Regenerate only eligible musical defects; preserve valid siblings and their multiplicity, operation count/order and targets. Reject mixed unrelated structural/capability defects. Regenerated output receives normal validation and MIDI verification; failure never partially commits.
+
+Stopping a signed track-approval continuation must offer a fresh-plan retry, never replay the original approval checkpoint.
+
+**Why:** The server may consume a single-use approval before the client disconnects. Simply restoring the approval button leaves the composer with an unusable capability even though no score edit was committed.
+
+**How to apply:** Invalidate the client request generation before aborting, discard late results, supersede the stopped membership proposal, and retain original context for a fresh plan. Style-selection cancellation can instead restore its selectable gate because it is not a signed membership capability.
 
 Structural repairs must preserve musical edits that became valid in any earlier attempt, not only edits valid in the original response.
 

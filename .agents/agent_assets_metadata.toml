@@ -1,0 +1,30 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "zwuDVJ43f7uGoIS1-Gen8"
+uri = "file://docs/verification/intro-workflow-comparison-final/findings.html"
+type = "text"
+title = "64-bar intro experiment: results and scaling"
+description = "Measured comparison, failure details, context sizes, large-score estimates, and recommended next steps."
+logical_id = "db70084f-9f10-4408-8a75-7854c499a085"
+content_hash = "sha256:e27c105c8d7938d2b61795e6c6a2c4312735bf5b0fca5a8df1a9c558389aa568"
+size = 8112
+mtime_ms = 1789512792395
+storage_uri = "gcs://replit-rams-assets-janeway/rams/assets/repl:18ae1020-7146-4401-b451-d91ef9d822fb/db70084f-9f10-4408-8a75-7854c499a085/702fe876-f970-4691-ab8e-62f522846498"
+storage_version_token = "1789512804245663"
+content_type = "text/html"
+
+[[outputs]]
+id = "Nc7qgkS3zQIC-fHBXhjK5"
+uri = "file://docs/verification/section-intro-experiment-corrected/standalone.html"
+type = "text"
+title = "32-bar section test: results"
+description = "Recorded section-writing results, four-repair policy, context usage, and final-review limitations."
+logical_id = "33d56f87-b5e3-414e-88ce-a16be74d03a3"
+content_hash = "sha256:ea8df6f23f4d40e131ddbf03eb9cdd9014da1c590d8ae121a1b08f90a9be6b33"
+size = 5744
+mtime_ms = 1789528054316
+storage_uri = "gcs://replit-rams-assets-janeway/rams/assets/repl:18ae1020-7146-4401-b451-d91ef9d822fb/33d56f87-b5e3-414e-88ce-a16be74d03a3/0ac58a56-79c8-4847-aaf8-7638b5a8228b"
+storage_version_token = "1789528110905174"
+content_type = "text/html"

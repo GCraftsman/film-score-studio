@@ -307,7 +307,7 @@ export default function ProjectWorkspace() {
   return (
     <div className="relative h-[100dvh]">
       <Workspace key={workspaceKey} userId={userId} projectId={projectId} />
-      <div className="pointer-events-none absolute inset-x-0 top-32 z-40 flex flex-wrap items-start justify-between gap-2 p-3 md:inset-x-auto md:right-0 md:top-0 md:w-[480px]">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex h-16 items-center justify-between gap-2 px-2 md:h-auto md:items-start md:px-3 md:py-3 md:inset-x-auto md:right-0 md:w-[480px]">
         <div className="pointer-events-auto flex min-w-0 items-center gap-2 rounded-xl border border-border bg-card/95 px-2 py-1.5 shadow-xl backdrop-blur">
           <button onClick={leave} className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs text-muted-foreground hover:bg-white/5 hover:text-foreground">
             <ArrowLeft className="h-3.5 w-3.5" /> Projects
@@ -358,19 +358,19 @@ export default function ProjectWorkspace() {
         </div>
       </div>
       {saveError && (
-        <div className="pointer-events-auto absolute right-3 top-[13rem] z-40 flex max-w-sm items-start gap-2 rounded-lg border border-destructive/30 bg-card/95 p-3 text-xs text-destructive shadow-xl md:top-16">
+        <div className="pointer-events-auto absolute right-3 top-16 z-40 flex max-w-sm items-start gap-2 rounded-lg border border-destructive/30 bg-card/95 p-3 text-xs text-destructive shadow-xl md:top-16">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>{saveError}</span>
         </div>
       )}
       {downloadError && (
-        <div className="pointer-events-auto absolute right-3 top-[16rem] z-40 flex max-w-sm items-start gap-2 rounded-lg border border-amber-500/30 bg-card/95 p-3 text-xs text-amber-300 shadow-xl md:top-28">
+        <div className="pointer-events-auto absolute right-3 top-28 z-40 flex max-w-sm items-start gap-2 rounded-lg border border-amber-500/30 bg-card/95 p-3 text-xs text-amber-300 shadow-xl md:top-28">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>{downloadError}</span>
         </div>
       )}
       {draftNotice && (
-        <div className="pointer-events-auto absolute left-3 top-[13rem] z-40 flex max-w-lg items-center gap-3 rounded-lg border border-primary/30 bg-card/95 p-3 text-xs text-primary shadow-xl md:left-auto md:right-3 md:top-24">
+        <div className="pointer-events-auto absolute left-3 top-16 z-40 flex max-w-lg items-center gap-3 rounded-lg border border-primary/30 bg-card/95 p-3 text-xs text-primary shadow-xl md:left-auto md:right-3 md:top-24">
           <span>
             {draftNotice.kind === "restored"
               ? `Unsaved changes restored for this project from revision ${draftNotice.draft.baseVersion}. Save when ready.`

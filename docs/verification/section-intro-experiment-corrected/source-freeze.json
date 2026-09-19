@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "source": "experiment.ts",
+  "snapshot": "experiment.executed.ts",
+  "sha256": "7629fce2d6d734bd8b3b3a195ab9682713980f1c4135f7acde2ce865a704c13b",
+  "bytes": 104122,
+  "frozenAt": "2026-09-16T03:04:29.301Z",
+  "productionModuleHashes": "production-module-hashes.json",
+  "skillHashes": {
+    "style": "ad4653b8692a9bda65b5e7b4052c110721a0db4447d341aef0df3720d3729a20",
+    "concept": "77a7557f676524ae2d0f1fc006335ed799a83343ae80d704851ef13b8b71c3f2",
+    "verification": "597ab165852de1975c6fa6307cef2643573e0752f5bb8ae4234c9dc3f8652eb0"
+  },
+  "immutablePriorBaseline": "../intro-workflow-comparison-final/baseline.json",
+  "note": "Code/import freeze created before offline fixture and finalized with immutable input, derived source, and passing offline fixture hashes before live.",
+  "productionModuleHashesVerified": true,
+  "priorBaselineSha256": "9edae902763647207c22f7bdc469aba283fd9363a882c10c26f62bf4a2670ac2",
+  "derivedBaselineSha256": "b3c6b89a34581079c17110d8c8b7e7d52275ab47faa2bb55f6b46afdc4da53ee",
+  "evidenceHashes": {
+    "baseline.json": "b3c6b89a34581079c17110d8c8b7e7d52275ab47faa2bb55f6b46afdc4da53ee",
+    "source-context.json": "f2f28f2c657c4dfd19f7f2702a0824efa121f59b99fd9be680aa7db6fbbd6f09",
+    "offline-fixture.json": "9cb76aafe9d6e4a554b1596c0951a760428712adc0aace3779407ffd06bdb423"
+  },
+  "freezeStage": "after-offline-fixture",
+  "frozenAfterOfflineAt": "2026-09-16T03:04:29.384Z"
+}

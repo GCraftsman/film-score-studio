@@ -7,6 +7,7 @@ import {
   applyTrackProposal,
   buildApprovedCompositionContinuation,
   buildCompositionRequest,
+  cancelledCompositionRecovery,
   canonicalInstrumentName,
   dedupeWorkflowEvents,
   evaluateOperationApplication,
@@ -195,7 +196,7 @@ test('workspace snapshots retain every structured operation diagnostic field', (
   const diagnostic: EditWorkflow['events'][number] = {
     stage: 'operation-format-error',
     message: 'Initial validation failed for the proposed operation.',
-    reason: 'operation summary must be a non-empty string with at most 240 characters',
+    reason: 'operation summary must be a non-empty string with at most 1200 characters',
     attempt: '1/2',
     index: 0,
     code: 'missing-target',
@@ -203,8 +204,8 @@ test('workspace snapshots retain every structured operation diagnostic field', (
     targetId: 'track-missing',
     duplicateId: 'region-duplicate',
     observedType: 'string',
-    observedLength: 241,
-    maxLength: 240,
+    observedLength: 1201,
+    maxLength: 1200,
     outcome: 'retrying',
   };
   const workflow: EditWorkflow = {
@@ -327,6 +328,132 @@ test('every failed approval continuation is retried as a capability-free fresh p
   assert.equal(request.message, context.originalMessage);
 });
 
+test('cancellation recovery preserves style sources and supersedes consumed approvals', () => {
+  const midi = [{
+    id: 'melody',
+    tempo: 120,
+    durationMs: 500,
+    notes: [{ note: 60, velocity: 90, startMs: 0, durationMs: 250 }],
+  }];
+  const history = [{ role: 'user' as const, content: 'Develop the melody.' }];
+  const style = cancelledCompositionRecovery({
+    kind: 'style',
+    sourceText: 'Develop the melody.',
+    snippets: midi,
+    selectedStyle: 'Electronic & Hybrid',
+    history,
+  });
+  assert.match(style.content, /stopped/i);
+  assert.equal(style.retry.message, 'Develop the melody.');
+  assert.deepEqual(style.retry.snippets, midi);
+  assert.equal(style.retry.selectedStyle, 'Electronic & Hybrid');
+  assert.equal(style.retry.phase, 'instrument-approval');
+  assert.equal(style.retry.suppressUserMessage, true);
+
+  const context = {
+    originalMessage: 'Develop the melody.',
+    originalHistory: history,
+    originalMidi: midi,
+    selectedStyle: 'Electronic & Hybrid',
+    adviserRoster: [],
+    adviserConsultations: [],
+    consumedBudget: {
+      adviserConsultationsUsed: 1,
+      trackWriterRoundsUsed: 0,
+      refinementRoundsUsed: 0,
+      operationRepairAttemptsUsed: 0,
+    },
+    checkpointId: 'checkpoint',
+    offeredTrackProposals: [],
+    declinedTrackProposals: [],
+    accumulatedApprovedTrackProposals: [],
+    signature: 'a'.repeat(64),
+  } as Parameters<typeof freshPlanRetryFromApprovalContext>[0];
+  const approval = cancelledCompositionRecovery({ kind: 'approval', approvalContext: context });
+  assert.match(approval.content, /fresh plan/i);
+  assert.equal(approval.retry.freshPlan, true);
+  assert.equal(approval.retry.approvalContext, undefined);
+  assert.equal(approval.retry.approvedTrackProposalIds, undefined);
+  assert.deepEqual(approval.retry.snippets, midi);
+
+  const normal = cancelledCompositionRecovery({
+    kind: 'normal',
+    message: 'Try the original request again.',
+    snippets: midi,
+    phase: 'composition',
+    history,
+  });
+  assert.match(normal.content, /No score material was changed/);
+  assert.equal(normal.retry.message, 'Try the original request again.');
+  assert.equal(normal.retry.phase, 'composition');
+});
+
+test('workspace save and reload preserves signed advisory refs, while fresh retry drops capability context', () => {
+  const context = {
+    originalMessage: 'Develop the attached melody.',
+    originalHistory: [{ role: 'user', content: 'Develop the attached melody.' }],
+    originalMidi: [],
+    projectId: '11111111-1111-4111-8111-111111111111',
+    adviserRoster: [],
+    adviserConsultations: [{
+      agent: 'Texture & Register',
+      group: 'concept',
+      question: 'Advise the register.',
+      insight: 'Leave room around the entrance.',
+      suggestions: [{
+        id: 'idea-1',
+        label: 'Bowed entrance',
+        instructions: ['Use a restrained contour.'],
+        targetTrackIds: ['track'],
+        instrumentId: 'violin',
+        instrumentName: 'Violin',
+        advisoryMidiRef: {
+          id: '22222222-2222-4222-8222-222222222222',
+          objectPath: '/objects/projects/user_test/11111111-1111-4111-8111-111111111111/22222222-2222-4222-8222-222222222222',
+          sha256: '0'.repeat(64),
+          label: 'Bowed entrance',
+          alignment: { startBeat: 0, durationBeats: 2 },
+          targets: { trackIds: ['track'], instrumentIds: ['violin'], instruments: ['Violin'] },
+        },
+      }],
+    }],
+    consumedBudget: { adviserConsultationsUsed: 1, trackWriterRoundsUsed: 0, refinementRoundsUsed: 0, operationRepairAttemptsUsed: 0 },
+    checkpointId: '22222222-2222-4222-8222-222222222222',
+    offeredTrackProposals: [],
+    declinedTrackProposals: [],
+    accumulatedApprovedTrackProposals: [],
+    signature: 'a'.repeat(64),
+  } as Parameters<typeof freshPlanRetryFromApprovalContext>[0];
+  const fallback = {
+    score,
+    scoreRevision: 0,
+    messages: [],
+    undoStack: [],
+    onboarding: { phase: 'ready' as const, originatingMidi: [] },
+    pendingProposals: [],
+  };
+  const restored = parseStoredProject(JSON.stringify({
+    ...fallback,
+    pendingProposals: [{
+      id: 'tracks-1',
+      kind: 'tracks',
+      status: 'pending',
+      sourceMessageId: 'source',
+      sourceText: context.originalMessage,
+      originatingMidi: [],
+      originatingHistory: context.originalHistory,
+      approvalContext: context,
+    }],
+  }), fallback);
+  assert.equal(restored.pendingProposals[0].approvalContext?.projectId, context.projectId);
+  assert.equal(
+    restored.pendingProposals[0].approvalContext?.adviserConsultations[0].suggestions?.[0].advisoryMidiRef?.sha256,
+    '0'.repeat(64),
+  );
+  const retry = freshPlanRetryFromApprovalContext(context);
+  assert.equal(retry.approvalContext, undefined);
+});
+
 test('composition requests preserve the complete selected style description', () => {
   const selectedStyle = 'Minimal melody: Sparse single-line tune with occasional harmonic support, using gentle dynamics and a slow tempo to evoke calm introspection.';
   const request = buildCompositionRequest({
@@ -372,9 +499,9 @@ test('saved onboarding and pending style selections retain bounded descriptions'
       id: 'retry-message',
       role: 'assistant',
       content: 'Retry',
-      retry: { message: 'Compose a cue', snippets: [], selectedStyle: 'x'.repeat(1001) },
+      retry: { message: 'Compose a cue', snippets: [], selectedStyle: 'x'.repeat(5001) },
     }],
-    onboarding: { phase: 'instrument-review', selectedStyle: 'x'.repeat(1001), originatingMidi: [] },
+    onboarding: { phase: 'instrument-review', selectedStyle: 'x'.repeat(5001), originatingMidi: [] },
     pendingProposals: [{
       id: 'oversized-style-proposal',
       kind: 'style',
@@ -382,7 +509,7 @@ test('saved onboarding and pending style selections retain bounded descriptions'
       sourceMessageId: 'source',
       sourceText: 'Compose a cue',
       originatingMidi: [],
-      selectedStyle: 'x'.repeat(1001),
+      selectedStyle: 'x'.repeat(5001),
     }],
   }), fallback);
   assert.equal(oversized.messages[0].retry?.selectedStyle, undefined);
@@ -393,7 +520,7 @@ test('saved onboarding and pending style selections retain bounded descriptions'
 test('approved continuation prompts force composition while retaining the original direction', () => {
   const continuation = buildApprovedCompositionContinuation('Write a four-bar piano ostinato with a quiet ending.');
   assert.match(continuation, /Continue the original composer request after approved instrument membership/);
-  assert.match(continuation, /if it requested playable score material, continue to specialist generation/);
+  assert.match(continuation, /signed initial plan is authoritative: continue to specialist generation only when it bound the original request to playable score material/);
   assert.match(continuation, /Write a four-bar piano ostinato with a quiet ending\./);
 });
 
@@ -706,10 +833,10 @@ test('terminal audit normalization keeps safe categories distinct and bounds inc
     commitStatus: 'not-committed',
   };
   const noOp = { ...valid, evaluatorCategory: 'no-musical-change' };
-  const longReason = { ...valid, reason: 'r'.repeat(2200) };
-  const longConstraint = { ...valid, expected: 'e'.repeat(2200) };
-  const longEvidence = { ...valid, evidence: ['x'.repeat(1200)] };
-  const longCorrection = { ...valid, correctionOutcome: 'c'.repeat(220) };
+  const longReason = { ...valid, reason: 'r'.repeat(10200) };
+  const longConstraint = { ...valid, expected: 'e'.repeat(10200) };
+  const longEvidence = { ...valid, evidence: ['x'.repeat(5200)] };
+  const longCorrection = { ...valid, correctionOutcome: 'c'.repeat(1000) };
   const replacement = { ...valid, reason: 'Server-normalized replacement.' };
   const backendShape = {
     workflowId: 'workflow-backend',
@@ -726,10 +853,10 @@ test('terminal audit normalization keeps safe categories distinct and bounds inc
   assert.equal(normalizeTerminalAudits([noOp])[0]?.evaluatorCategory, 'no-op');
   assert.equal(normalizeTerminalAudits([backendShape])[0]?.evaluatorCategory, 'no-op');
   assert.deepEqual(normalizeTerminalAudits([backendShape])[0]?.affectedScope, ['overall']);
-  assert.equal(normalizeTerminalAudits([longReason])[0]?.reason.length, 2000);
-  assert.equal(normalizeTerminalAudits([longConstraint])[0]?.expected?.length, 2000);
-  assert.equal(normalizeTerminalAudits([longEvidence])[0]?.evidence[0]?.length, 1000);
-  assert.equal(normalizeTerminalAudits([longCorrection])[0]?.correctionOutcome.length, 160);
+  assert.equal(normalizeTerminalAudits([longReason])[0]?.reason.length, 10000);
+  assert.equal(normalizeTerminalAudits([longConstraint])[0]?.expected?.length, 10000);
+  assert.equal(normalizeTerminalAudits([longEvidence])[0]?.evidence[0]?.length, 5000);
+  assert.equal(normalizeTerminalAudits([longCorrection])[0]?.correctionOutcome.length, 800);
   assert.equal(normalizeTerminalAudits([valid, replacement])[0]?.reason, replacement.reason);
   const boundedHistory = Array.from({ length: 21 }, (_, index) => ({
     ...valid,
@@ -883,6 +1010,7 @@ test('approval reload retains original source, adviser context, budget, and reje
     originalHistory: [{ role: 'user' as const, content: 'Develop the attached melody with a restrained strings answer.' }],
     originalMidi: sourceMidi,
     selectedStyle: 'Quiet chamber: a transparent, restrained string palette.',
+    requiresPlayableMaterial: true,
     adviserRoster: [{ agent: 'Texture & Register', group: 'concept' as const, question: 'How should register support the melody?' }],
     adviserConsultations: [{
       agent: 'Texture & Register',
@@ -939,6 +1067,7 @@ test('approval reload retains original source, adviser context, budget, and reje
   assert.deepEqual(restored.pendingProposals[0].originatingMidi, sourceMidi);
   assert.deepEqual(restored.pendingProposals[0].originatingHistory, approvalContext.originalHistory);
   assert.equal(restored.pendingProposals[0].approvalContext?.consumedBudget.operationRepairAttemptsUsed, 1);
+  assert.equal(restored.pendingProposals[0].approvalContext?.requiresPlayableMaterial, true);
   assert.equal(restored.pendingProposals[0].approvalContext?.adviserConsultations[0].insight, 'Keep the answer below the source melody.');
   assert.equal(restored.pendingProposals[1].status, 'rejected');
 });

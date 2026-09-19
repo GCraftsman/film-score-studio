@@ -22,3 +22,8 @@ timeoutMs = 20000
 [nix]
 channel = "stable-25_05"
 packages = ["p7zip"]
+
+[userenv]
+
+[userenv.development]
+TEMP_LOG_REJECTED_ADVISER_TEXT = "true"

@@ -10,6 +10,7 @@ import {
   defaultReadOnlyAdvisers,
   findPlayableInstrument,
   PLAYABLE_INSTRUMENTS,
+  playableInstrumentCatalogPrompt,
   type AdviserSelection,
 } from "./scoring-agents.ts";
 import {
@@ -27,6 +28,14 @@ import {
   type ModelResponseDiagnostic,
   type ProviderCompletionMetadata,
 } from "./model-diagnostics.ts";
+import {
+  normalizeAdviserSuggestions,
+  validateAdvisoryMidiRef,
+  type MaterializedAdvisoryMidi,
+  type AdviserSuggestion,
+  type AdvisoryMidiRef,
+  AdviserSuggestionValidationError,
+} from "./adviser-suggestions.ts";
 
 export type WorkflowIntent = "edit" | "discussion";
 export type WorkflowEvent = {
@@ -102,7 +111,7 @@ export type WorkflowResult = {
   /** Membership proposals are returned both for approval checkpoints and for
    * verified additions that were approved before generation. */
   trackProposals: TrackProposal[];
-  consultations: Array<{ agent: string; group: "instrument" | "style" | "concept"; question: string; insight: string }>;
+  consultations: Array<{ agent: string; group: "instrument" | "style" | "concept"; question: string; insight: string; suggestions?: AdviserSuggestion[] }>;
   /** Present only while a membership proposal is awaiting explicit approval. */
   approvalContext?: CompositionApprovalContext;
 };
@@ -135,6 +144,12 @@ export type CompositionApprovalContext = {
   originalHistory: unknown[];
   originalMidi: unknown[];
   selectedStyle?: string;
+  projectId?: string;
+  /**
+   * Bound by the initial Orchestrator membership plan.  Missing is retained
+   * only for legacy checkpoints; new checkpoints always carry this decision.
+   */
+  requiresPlayableMaterial?: boolean;
   adviserRoster: AdviserSelection[];
   adviserConsultations: WorkflowResult["consultations"];
   consumedBudget: CompositionApprovalBudget;
@@ -192,6 +207,16 @@ export const SPECIALIST_INITIAL_COMPLETION_TOKENS = 16_000;
 export const SPECIALIST_REPAIR_COMPLETION_TOKENS = 32_000;
 export const SPECIALIST_FIRST_REPAIR_COMPLETION_TOKENS = 24_000;
 
+const IMPORTANT_AGENT_CHECKLIST = `
+IMPORTANT — BEFORE RESPONDING, verify every applicable constraint below. Do not print this checklist or claim validation substitutes for server verification.
+1. Follow the composer's requested scope, complete source MIDI, selected style, assigned instruction, and any refinement feedback. Preserve source performance and actionable constraints; do not silently shorten, omit, or replace them.
+2. Respect your role: advisers may inspect all tracks but cannot write executable score edits or membership changes. Instrument writers edit ONLY their assigned track. Only Orchestrator coordinates writers and requests explicit approval for adding/removing tracks. Never treat advice as approval.
+3. Use original neutral musical language, not named references, quoted titles, or imitation requests. Use supported catalog instruments and achievable techniques; explicitly map creative timbres to supported instruments.
+4. Return exactly the requested JSON contract with all required fields, correct types, allowed enum values, valid IDs and targets, bounded arrays and strings, and no forbidden fields. Finish the entire response; never return partial MIDI or placeholder/no-op edits.
+5. If returning MIDI, verify ALL notes and regions: finite timing, valid integer pitch/velocity, valid dynamics/articulation, correct beat coordinate system, allowed counts, duration containment, track ownership, and exact existing removal targets. Check every event, not just the first. Ensure requested playable additions contain real playable material.
+6. During structural repair preserve musical content exactly. Only an explicitly authorized bounded musical regeneration may change invalid musical content; preserve valid siblings and immutable review decisions. Never hide a failed constraint by dropping an operation.
+`;
+
 function specialistRepairCompletionTokens(attempt: number): number {
   return attempt <= 1
     ? SPECIALIST_FIRST_REPAIR_COMPLETION_TOKENS
@@ -199,10 +224,11 @@ function specialistRepairCompletionTokens(attempt: number): number {
 }
 
 const OPERATION_JSON_SCHEMA = `When your response contains an "operations" field, it MUST be an array. Every array item MUST exactly be one of:
-{"id":"unique-operation-id","type":"add-region","trackId":"existing-track-id","summary":"original edit","region":{"id":"unique-region-id","name":"original cue region","startBeat":0,"durationBeats":4,"dynamics":"pp|p|mp|mf|f|ff","articulation":"sustain|legato|staccato|marcato|tremolo|pizzicato","notes":[{"pitch":60,"velocity":80,"startBeat":0,"durationBeats":1,"articulation":"sustain"}]}}
+{"id":"unique-operation-id","type":"add-region","trackId":"existing-track-id","summary":"original edit","region":{"id":"unique-region-id","name":"original cue region","startBeat":0,"durationBeats":4,"dynamics":"mf","articulation":"sustain","notes":[{"pitch":60,"velocity":80,"startBeat":0,"durationBeats":1,"articulation":"sustain"}]}}
 or {"id":"existing-operation-id","type":"remove-region","trackId":"existing-track-id","regionId":"existing-region-id","summary":"original edit"}.
 Every operation "id" is mandatory, and every add-region "region.id" is mandatory. Use non-empty unique IDs within this response; never omit, reuse, or write placeholder values such as "optional-operation-id" or "optional-new-region-id". IDs are metadata, not musical identity, so repairing a duplicate or placeholder ID means replacing only that ID with a fresh unique ID while preserving the operation's type, target, region, and notes. Remove-region always requires the exact provided existing trackId and regionId; never invent, rename, or substitute a target.
-Every operation summary is required, must be a non-empty string, and must be no longer than 240 characters. This is a structural contract, not prose: do not use edits, changes, addRegion, removeRegion, or any envelope other than operations. Never invent music, notes, targets, or fallback edits to fill an omitted field. Never drop an operation because a sibling is malformed; repair the cited field in the complete response or fail closed.
+Every operation summary is required, must be a non-empty string, and must be no longer than 1200 characters. This is a structural contract, not prose: do not use edits, changes, addRegion, removeRegion, or any envelope other than operations. Never invent music, notes, targets, or fallback edits to fill an omitted field. Never drop an operation because a sibling is malformed; repair the cited field in the complete response or fail closed.
+The JSON example contains valid sample values, not pipe-separated alternatives. Region dynamics must be exactly one of: pp, p, mp, mf, f, ff. Region and note articulation must be exactly one of: sustain, legato, staccato, marcato, tremolo, pizzicato. Never put a list such as "pp|p|mp|mf|f|ff" into a JSON field.
 Notes use region-relative, zero-based beat offsets; regions use score-relative, zero-based beat offsets. Four bars in 4/4 means 16 beats, not four beats. Every note startBeat + durationBeats must be <= its region.durationBeats; every region startBeat + durationBeats must be <= score.durationBeats. Use existing track IDs exactly. All displayed fields are required, including note articulation. Notes and regions must fit their durations.`;
 
 const MAX_OPERATION_FORMAT_REPAIRS = 2;
@@ -236,6 +262,20 @@ export class OperationValidationError extends WorkflowFailure {
   }
 }
 
+function diagnosticRequiresMusicalRegeneration(diagnostic: WorkflowOperationDiagnostic): boolean {
+  return diagnostic.fields.some(field =>
+    field === "trackId" ||
+    field === "regionId" ||
+    field === "region" ||
+    field === "region.startBeat" ||
+    field === "region.durationBeats" ||
+    field === "region.dynamics" ||
+    field === "region.articulation" ||
+    field === "region.notes" ||
+    field.startsWith("region.notes[")
+  );
+}
+
 export type PlanDiagnostic = {
   index: number;
   code: string;
@@ -263,6 +303,9 @@ async function completeModel(
   maxTokens: number,
   jsonMode: boolean | undefined,
 ): Promise<ModelCompletion> {
+  messages = messages.map(message => message.role === "system"
+    ? { ...message, content: `${message.content}\n${IMPORTANT_AGENT_CHECKLIST}` }
+    : message);
   const raw = model.completeDetailed
     ? await model.completeDetailed(messages, maxTokens, jsonMode)
     : model.complete
@@ -451,12 +494,12 @@ function publicFile(trackId: string): string { return `${trackId}.mid`; }
 
 function proposalSummary(value: unknown, instrument: string): string {
   const summary = screenMusicText(text(value), `Add ${instrument} for the requested musical material.`);
-  return summary.slice(0, 240) || `Add ${instrument} for the requested musical material.`;
+  return summary.slice(0, 1_200) || `Add ${instrument} for the requested musical material.`;
 }
 
 function proposalReason(value: unknown, instrument: string): string {
   const reason = screenMusicText(text(value), `The requested material needs ${instrument}.`);
-  return reason.slice(0, 500) || `The requested material needs ${instrument}.`;
+  return reason.slice(0, 2_500) || `The requested material needs ${instrument}.`;
 }
 
 /**
@@ -487,7 +530,7 @@ function parseInstrumentNeeds(value: unknown, score: ScoreValue): TrackProposal[
     }
     const suppliedId = text(record.id);
     const id = suppliedId || `instrument-add-${playable.id}`;
-    if (id.length > 74) throw new WorkflowFailure("Instrument addition proposal IDs must leave room for their deterministic track IDs.");
+    if (id.length > 370) throw new WorkflowFailure("Instrument addition proposal IDs must leave room for their deterministic track IDs.");
     if (seen.has(id)) throw new WorkflowFailure("Instrument additions must have unique proposal IDs.");
     seen.add(playable.id);
     seen.add(id);
@@ -1057,6 +1100,8 @@ async function validateWithTwoFormatRepairs(args: {
   requireRevision?: boolean;
   emit: (event: WorkflowEvent) => void;
   onDiagnostic?: DiagnosticEmitter;
+  /** Shared across track writers and refinement: one musical regeneration per run. */
+  musicalRegeneration?: { trackId: string; budget: { used: boolean } };
 }): Promise<{ payload: Record<string, unknown>; operations: Record<string, unknown>[] }> {
   let payload = args.payload;
   let response = args.response ?? JSON.stringify(args.payload);
@@ -1159,11 +1204,11 @@ async function validateWithTwoFormatRepairs(args: {
       });
     }
     const candidateSummary = text(candidate.summary);
-    if (!candidateSummary || candidateSummary.length > 240) {
+    if (!candidateSummary || candidateSummary.length > 1_200) {
       throw new OperationValidationError({
         index: -1,
         code: candidateSummary ? "invalid-field" : "missing-field",
-        reason: candidateSummary ? "summary must be no longer than 240 characters" : "required response field missing",
+        reason: candidateSummary ? "summary must be no longer than 1200 characters" : "required response field missing",
         fields: ["summary"],
       });
     }
@@ -1241,6 +1286,90 @@ async function validateWithTwoFormatRepairs(args: {
       maxLength: "maxLength" in diagnostic ? diagnostic.maxLength : undefined,
       attempt: repairs === 0 ? "initial" : `${repairs}/${MAX_OPERATION_FORMAT_REPAIRS}`,
     });
+    if (
+      failure instanceof OperationValidationError &&
+      diagnosticRequiresMusicalRegeneration(failure.diagnostic)
+    ) {
+      const regeneration = args.musicalRegeneration;
+      const originals = payload?.operations;
+      const regenerableDiagnostic = (diagnostic: WorkflowOperationDiagnostic) =>
+        ["invalid-timing", "invalid-field"].includes(diagnostic.code ?? "") &&
+        diagnostic.fields.length > 0 &&
+        diagnostic.fields.every(field => /^region\.(?:startBeat|durationBeats|dynamics|articulation|notes(?:\[\d+\](?:\.(?:pitch|velocity|startBeat|durationBeats|articulation))?)?)$/.test(field));
+      // Never repair capability violations, missing targets/whole regions, or
+      // uncertain/truncated content by inventing a replacement.
+      const eligible = regeneration && !regeneration.budget.used &&
+        !hasIncompleteTruncatedOperations && !args.initialFailure &&
+        payload && Object.keys(payload).every(key => key === "summary" || key === "operations") &&
+        regenerableDiagnostic(failure.diagnostic) &&
+        Array.isArray(originals) && originals.length > 0 &&
+        originals.every(operation => {
+          // Check every sibling, not only the first failing operation. An
+          // unrelated structural defect must not authorize musical changes.
+          if (fingerprintableRepairOperation(args.base, operation).length) return true;
+          try {
+            validOperations(args.base, [operation]);
+            return true;
+          } catch (error) {
+            return error instanceof OperationValidationError && regenerableDiagnostic(error.diagnostic);
+          }
+        }) &&
+        originals.every(operation => operation && typeof operation === "object" &&
+          operation.trackId === regeneration.trackId &&
+          (operation.type === "remove-region"
+            ? args.base.tracks.find(track => track.id === regeneration.trackId)?.regions.some(region => region.id === operation.regionId)
+            : operation.type === "add-region" && operation.region &&
+              Array.isArray(operation.region.notes) && operation.region.notes.length > 0));
+      if (eligible) {
+        regeneration.budget.used = true;
+        // Also consumes the existing shared recovery budget; it is not an
+        // extra unbounded retry pool or an adviser refinement round.
+        args.emit({
+          stage: "operation-format-repair", agent: args.agent, taskId: args.task.id,
+          attempt: "1/1", code: "musical-regeneration", outcome: "retrying",
+          message: "IMPORTANT: bounded musical regeneration 1/1 started for invalid musical fields. Valid operations and track ownership must remain unchanged.",
+        });
+        try {
+          const replacement = await completeJson(args.model, [
+            {
+              role: "system",
+              content: `You are ${args.agent}. This is the single authorized bounded musical regeneration (1/1), NOT structural repair or a new composition/refinement round. IMPORTANT: regenerate only invalid musical operations to satisfy the original request and ALL constraints. Return complete JSON {"summary":"non-empty <=1200 chars","operations":[...]}. Keep the exact operation count and order, operation types, assigned trackId "${regeneration.trackId}", and existing removal targets. Preserve every already-valid operation's musical content exactly, including all notes and multiplicity. Do not omit, truncate, silently clip, or replace valid siblings. No membership changes or other-track edits. Verify every note and region against the checklist before responding. ${operationSchemaFor(args.base)}`,
+            },
+            { role: "user", content: JSON.stringify({
+              originalContext: args.responseContext, direction: args.direction,
+              completeScore: args.base, completeContext: args.context,
+              rejectedResponse: payload, diagnostic: failure.diagnostic,
+            }) },
+          ], SPECIALIST_FIRST_REPAIR_COMPLETION_TOKENS, { stage: "repair", agent: args.agent, taskId: args.task.id, attempt: "1/1" }, args.onDiagnostic, true);
+          if (Object.keys(replacement.payload).some(key => key !== "summary" && key !== "operations")) {
+            throw new WorkflowFailure("Musical regeneration returned forbidden fields; no changes were applied.");
+          }
+          const operations = ownedOperations(args.base, regeneration.trackId, replacement.payload.operations);
+          if (operations.length !== originals.length || operations.some((operation, index) => {
+            const original = originals[index];
+            const validSibling = fingerprintableRepairOperation(args.base, original)[0];
+            return operation.type !== original.type || operation.trackId !== original.trackId ||
+              (original.type === "remove-region" && operation.regionId !== original.regionId) ||
+              (validSibling && operationContentFingerprint(operation) !== operationContentFingerprint(validSibling));
+          })) throw new WorkflowFailure("Musical regeneration changed a valid sibling, operation count, or target; no changes were applied.");
+          const remainingFingerprints = operations.map(operationContentFingerprint);
+          for (const fingerprint of baselineFingerprints) {
+            const index = remainingFingerprints.indexOf(fingerprint);
+            if (index < 0) throw new WorkflowFailure("Musical regeneration changed a previously valid sibling; no changes were applied.");
+            remainingFingerprints.splice(index, 1);
+          }
+          const summary = text(replacement.payload.summary);
+          if (!summary || summary.length > 1_200) throw new WorkflowFailure("Musical regeneration returned an invalid summary; no changes were applied.");
+          args.emit({ stage: "operation-format-recovered", agent: args.agent, taskId: args.task.id, attempt: "1/1", code: "musical-regeneration", outcome: "recovered", message: "Bounded musical regeneration passed operation validation; final MIDI/timing reconstruction remains required." });
+          return { payload: replacement.payload, operations };
+        } catch (error) {
+          args.emit({ stage: "operation-format-exhausted", agent: args.agent, taskId: args.task.id, attempt: "1/1", code: "musical-regeneration", outcome: "exhausted", message: "The single musical regeneration failed; the score remains unchanged." });
+          throw error;
+        }
+      }
+      failure.message = `Invalid score operation at index ${failure.diagnostic.index}: ${failure.diagnostic.reason}. The cited musical field cannot be structurally repaired without regenerating musical content, so the response was not applied.`;
+      throw failure;
+    }
     if (providerLengthFailure) {
       args.emit({
         stage: "operation-truncation-error",
@@ -1361,7 +1490,7 @@ async function validateWithTwoFormatRepairs(args: {
           : "No certifiable complete musical operation exists from any prior response. Do not establish or regenerate a musical baseline on this attempt; fail closed rather than inventing uncertain musical content."} Do not add an unverified operation, note, target, or fallback edit.`
         : providerTimeoutFailure
         ? `This is bounded provider-request-timeout recovery attempt ${attempt}/${MAX_OPERATION_FORMAT_REPAIRS}; no partial musical response was available because the provider request exceeded its deadline. Return a complete replacement response from the full task and MIDI context. The first complete replacement may establish the musical baseline. Once established, every subsequent replacement must preserve its exact musical operation multiset (including multiplicity): operation notes, pitch, timing, duration, velocity, target, and musical region fields must be unchanged. Do not add an unverified operation, note, target, or fallback edit, and do not invent content from a partial response.`
-        : `This is bounded structural format repair attempt ${attempt}/${MAX_OPERATION_FORMAT_REPAIRS} for your existing response, not a new musical iteration. Return a complete replacement response, not a patch. Preserve the exact musical operation multiset (including multiplicity) of the existing response; repair only the cited structural or envelope field. Metadata operation IDs and add-region region IDs may be replaced, and envelope fields such as summary (required, non-empty, <=240 characters), questions, or revision may change, but do not change notes, pitch, timing, duration, velocity, target, or musical region fields. Do not add an operation or note, and do not drop a valid sibling.`;
+        : `This is bounded structural format repair attempt ${attempt}/${MAX_OPERATION_FORMAT_REPAIRS} for your existing response, not a new musical iteration. Return a complete replacement response, not a patch. Preserve the exact musical operation multiset (including multiplicity) of the existing response; repair only the cited structural or envelope field. Metadata operation IDs and add-region region IDs may be replaced, and envelope fields such as summary (required, non-empty, <=1200 characters), questions, or revision may change, but do not change notes, pitch, timing, duration, velocity, target, dynamics, articulation, or other musical region fields. Do not add an operation or note, and do not drop a valid sibling.`;
       const completion = await completeJson(args.model, [
         {
           role: "system",
@@ -1536,7 +1665,8 @@ export async function relayAgentDialog(
 const MAX_ADVISER_CONSULTATIONS = 16;
 /** At most five distinct track owners may be selected initially. */
 const MAX_INITIAL_TRACK_WRITERS = 5;
-/** One initial writer batch and one feedback-driven refinement batch. */
+/** Kept in the approval-context contract for compatibility with signed
+ * checkpoints created before post-write musical review was removed. */
 const MAX_TRACK_WRITER_ROUNDS = 2;
 const MAX_INSTRUMENT_REFINEMENT_ROUNDS = 1;
 
@@ -1547,9 +1677,10 @@ type AdviserReview = {
   affectedTrackIds: string[];
   /** Expected constraints are claims from the review, not measured evidence. */
   expectedConstraints: string[];
+  suggestions: AdviserSuggestion[];
 };
 
-type AdviserPhase = "initial" | "review";
+export type AdviserPhase = "initial" | "review";
 
 /**
  * Adviser responses are a different contract from writer responses.  In
@@ -1577,7 +1708,27 @@ export class AdviserValidationError extends WorkflowFailure {
 }
 
 const MAX_ADVISER_FORMAT_REPAIRS = 2;
-const MAX_ADVISER_FEEDBACK_LENGTH = 500;
+/** Hard service validator ceiling; providers are given a lower safety margin. */
+export const ADVISER_FEEDBACK_MAX_LENGTH = 4_000;
+export const ADVISER_FEEDBACK_TARGET_LENGTH = 2_250;
+export const ADVISER_COMPLETION_TOKENS = 3_500;
+export const ADVISER_REPAIR_COMPLETION_TOKENS = 4_500;
+export const REJECTED_ADVISER_TEXT_LOG_MAX_LENGTH = 5_000;
+const ADVISER_SAFETY_SCREEN_EMPTY_REASON = "adviser feedback was empty after safety screening";
+
+export type RejectedAdviserTextDiagnostic = {
+  /** Raw adviser insight/feedback, bounded before it leaves the workflow. */
+  text: string;
+  originalLength: number;
+  truncated: boolean;
+  agent: string;
+  phase: AdviserPhase;
+  field: "insight" | "feedback";
+  /** "initial" for the first response, or the bounded repair attempt. */
+  attempt: string;
+  workflowId?: string;
+  requestId?: string;
+};
 
 function adviserObservedType(value: unknown): ScoreOperationObservedType {
   if (value === null) return "null";
@@ -1608,7 +1759,7 @@ function adviserValidation(
     reason,
     fields,
     ...(value !== undefined ? { observedType: adviserObservedType(value) } : {}),
-    ...(typeof value === "string" ? { observedLength: Math.min(value.length, (maxLength ?? MAX_ADVISER_FEEDBACK_LENGTH) + 1) } : {}),
+    ...(typeof value === "string" ? { observedLength: Math.min(value.length, (maxLength ?? ADVISER_FEEDBACK_MAX_LENGTH) + 1) } : {}),
     ...(maxLength !== undefined ? { maxLength } : {}),
   });
 }
@@ -1620,14 +1771,14 @@ function adviserText(value: unknown, field: "insight" | "feedback"): string {
   const raw = text(value);
   if (!raw) throw adviserValidation("missing-field", "required adviser feedback field missing", [field]);
   const screened = screenMusicText(raw, "");
-  if (!screened) throw adviserValidation("invalid-field", "adviser feedback was empty after safety screening", [field]);
-  if (screened.length > MAX_ADVISER_FEEDBACK_LENGTH) {
+  if (!screened) throw adviserValidation("invalid-field", ADVISER_SAFETY_SCREEN_EMPTY_REASON, [field]);
+  if (screened.length > ADVISER_FEEDBACK_MAX_LENGTH) {
     throw adviserValidation(
       "invalid-field",
-      "adviser feedback must be no longer than 500 characters",
+      `adviser feedback must be no longer than ${ADVISER_FEEDBACK_MAX_LENGTH} characters`,
       [field],
       screened,
-      MAX_ADVISER_FEEDBACK_LENGTH,
+      ADVISER_FEEDBACK_MAX_LENGTH,
     );
   }
   return screened;
@@ -1659,8 +1810,8 @@ function hasNonEmptyAdviserPayload(value: unknown): boolean {
 
 function nonEmptyAdviserForbiddenField(value: Record<string, unknown>, phase: AdviserPhase): string | undefined {
   const allowedFields = phase === "initial"
-    ? new Set(["insight"])
-    : new Set(["feedback", "needsRefinement", "affectedTrackIds", "expectedConstraints"]);
+    ? new Set(["insight", "suggestions"])
+    : new Set(["feedback", "needsRefinement", "affectedTrackIds", "expectedConstraints", "suggestions"]);
   return Object.keys(value).find((field) => !allowedFields.has(field) && hasNonEmptyAdviserPayload(value[field]));
 }
 
@@ -1698,8 +1849,8 @@ function validateAdviserPayload(
   score: ScoreValue,
 ): AdviserReview {
   const allowedFields = phase === "initial"
-    ? new Set(["insight"])
-    : new Set(["feedback", "needsRefinement", "affectedTrackIds", "expectedConstraints"]);
+    ? new Set(["insight", "suggestions"])
+    : new Set(["feedback", "needsRefinement", "affectedTrackIds", "expectedConstraints", "suggestions"]);
   const forbiddenFields = Object.keys(value).filter((field) => !allowedFields.has(field));
   if (forbiddenFields.length) {
     // Never echo arbitrary model-controlled keys. Known capability-bearing
@@ -1721,8 +1872,43 @@ function validateAdviserPayload(
     value[phase === "initial" ? "insight" : "feedback"],
     phase === "initial" ? "insight" : "feedback",
   );
+  let suggestions: AdviserSuggestion[];
+  try {
+    suggestions = normalizeAdviserSuggestions(value.suggestions, score, {
+      omitInvalidOptionalMidiClip: true,
+    });
+  } catch (error) {
+    if (!(error instanceof AdviserSuggestionValidationError)) throw error;
+    // Structured suggestions are optional, read-only guidance. Preserve any
+    // independently valid siblings, but never remap an invalid target or let
+    // malformed optional guidance block valid adviser prose.
+    const validRawSuggestions = Array.isArray(value.suggestions)
+      ? value.suggestions.filter((candidate) => {
+        try {
+          normalizeAdviserSuggestions([candidate], score, {
+            omitInvalidOptionalMidiClip: true,
+          });
+          return true;
+        } catch (candidateError) {
+          if (candidateError instanceof AdviserSuggestionValidationError) return false;
+          throw candidateError;
+        }
+      })
+      : [];
+    try {
+      suggestions = normalizeAdviserSuggestions(validRawSuggestions, score, {
+        omitInvalidOptionalMidiClip: true,
+      });
+    } catch (combinedError) {
+      if (!(combinedError instanceof AdviserSuggestionValidationError)) throw combinedError;
+      suggestions = [];
+    }
+  }
   if (phase === "initial") {
-    return { feedback, needsRefinement: false, affectedTrackIds: [], expectedConstraints: [] };
+    return {
+      feedback, needsRefinement: false, affectedTrackIds: [], expectedConstraints: [],
+      suggestions,
+    };
   }
 
   if (typeof value.needsRefinement !== "boolean") {
@@ -1754,14 +1940,15 @@ function validateAdviserPayload(
   if (value.needsRefinement && !affectedTrackIds.length) {
     throw adviserValidation("invalid-affected-track", "an adviser requested refinement without identifying an original writer track", ["affectedTrackIds"]);
   }
-  if (!value.needsRefinement && affectedTrackIds.length) {
-    throw adviserValidation("invalid-affected-track", "affectedTrackIds must be empty when refinement is not requested", ["needsRefinement", "affectedTrackIds"]);
-  }
   return {
     feedback,
     needsRefinement: value.needsRefinement,
-    affectedTrackIds,
+    // The explicit boolean controls whether another writer round is allowed.
+    // Extra valid track IDs on a no-refinement response carry no capability
+    // and are deterministically ignored rather than changing that decision.
+    affectedTrackIds: value.needsRefinement ? affectedTrackIds : [],
     expectedConstraints: normalizeConstraintList(value.expectedConstraints, feedback),
+    suggestions,
   };
 }
 
@@ -1799,6 +1986,9 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
   initialFailure?: ModelResponseError;
   emit: (event: WorkflowEvent) => void;
   onDiagnostic?: DiagnosticEmitter;
+  onRejectedAdviserText?: (diagnostic: RejectedAdviserTextDiagnostic) => void;
+  workflowId?: string;
+  requestId?: string;
 }): Promise<AdviserReview> {
   let payload = args.payload;
   let response = args.response ?? (payload ? JSON.stringify(payload) : "");
@@ -1806,17 +1996,23 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
   let pending: AdviserValidationError | ModelResponseError | undefined = args.initialFailure;
   const adviceField = args.phase === "initial" ? "insight" : "feedback";
   let preservedAdvice: string | undefined;
+  // Readable advice is byte-preserved for ordinary structural defects. An
+  // overlength string is the one deliberate exception: asking the model to
+  // preserve it exactly would make the hard ceiling impossible to satisfy.
+  const initialAdviceText = payload && typeof payload[adviceField] === "string"
+    ? screenMusicText(text(payload[adviceField]), "")
+    : "";
+  const adviceNeedsCompression = initialAdviceText.length > ADVISER_FEEDBACK_MAX_LENGTH;
   const preservedDecision = args.phase === "review" && payload
     ? validAdviserReviewDecision(payload, args.score)
     : undefined;
-  if (payload && typeof payload[adviceField] === "string") {
-    const screened = screenMusicText(text(payload[adviceField]), "");
-    if (screened) preservedAdvice = screened;
+  if (initialAdviceText && !adviceNeedsCompression) {
+    preservedAdvice = initialAdviceText;
   }
 
   const validate = (candidate: Record<string, unknown>): AdviserReview => {
     const result = validateAdviserPayload(candidate, args.phase, args.score);
-    if (preservedAdvice !== undefined && result.feedback !== preservedAdvice) {
+    if (!adviceNeedsCompression && preservedAdvice !== undefined && result.feedback !== preservedAdvice) {
       throw adviserValidation("advice-changed", "structural repair changed the original adviser feedback", [adviceField]);
     }
     if (
@@ -1840,6 +2036,25 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
   };
 
   const reportValidation = (failure: AdviserValidationError, attempt: string): void => {
+    // Keep the ordinary content-free invalid-field diagnostic unchanged; this
+    // exact reason identifies the temporary safety false-positive probe.
+    if (failure.diagnostic.code === "invalid-field" && failure.diagnostic.reason === ADVISER_SAFETY_SCREEN_EMPTY_REASON) {
+      const rejectedText = payload?.[adviceField];
+      if (typeof rejectedText === "string") {
+        const originalLength = rejectedText.length;
+        args.onRejectedAdviserText?.({
+          text: rejectedText.slice(0, REJECTED_ADVISER_TEXT_LOG_MAX_LENGTH),
+          originalLength,
+          truncated: originalLength > REJECTED_ADVISER_TEXT_LOG_MAX_LENGTH,
+          agent: args.adviser.agent,
+          phase: args.phase,
+          field: adviceField,
+          attempt,
+          ...(args.workflowId ? { workflowId: args.workflowId } : {}),
+          ...(args.requestId ? { requestId: args.requestId } : {}),
+        });
+      }
+    }
     args.onDiagnostic?.({
       code: failure.diagnostic.code,
       reason: failure.diagnostic.reason,
@@ -1893,6 +2108,22 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
         failure = error;
       }
     }
+    // Structured adviser material is an optional extension, but once supplied
+    // it is never silently dropped by a prose-only repair. A malformed clip,
+    // target, or catalog id therefore fails closed explicitly.
+    if (failure instanceof AdviserValidationError && failure.diagnostic.fields.includes("suggestions")) {
+      args.emit({
+        stage: "adviser-format-exhausted",
+        message: "Read-only adviser structured suggestions were malformed; no suggestion or score change was accepted.",
+        agent: args.adviser.agent,
+        attempt: repairs === 0 ? "initial" : `${repairs}/${MAX_ADVISER_FORMAT_REPAIRS}`,
+        code: failure.diagnostic.code,
+        fields: failure.diagnostic.fields,
+        reason: failure.diagnostic.reason,
+        outcome: "exhausted",
+      });
+      throw failure;
+    }
 
     const attempt = repairs === 0 ? "initial" : `${repairs}/${MAX_ADVISER_FORMAT_REPAIRS}`;
     if (failure instanceof AdviserValidationError) reportValidation(failure, attempt);
@@ -1930,9 +2161,13 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
     }
 
     const nextAttempt = repairs + 1;
+    const safetyRewrite = failure.diagnostic.reason === ADVISER_SAFETY_SCREEN_EMPTY_REASON;
+    const proseRepairInstruction = safetyRewrite
+      ? `The existing ${adviceField} failed safety screening. Rewrite the rejected text as unquoted neutral musical instructions; do not repeat it verbatim. Remove named references, title-like quotations, and imitation language while preserving actionable musical constraints and supported-instrument mappings. This safety rewrite is permitted in addition to envelope repair; do not change valid review decisions or track targets.`
+      : "Preserve the exact existing actionable advice whenever it is readable. Repair only the response envelope.";
     const responseShape = args.phase === "initial"
-      ? '{"insight":"non-empty actionable advice <=500 chars"}'
-      : '{"feedback":"non-empty actionable feedback <=500 chars","needsRefinement":boolean,"affectedTrackIds":["existing track id"],"expectedConstraints":["specific requested constraint <=240 chars"]}';
+      ? `{"insight":"non-empty actionable advice <=${ADVISER_FEEDBACK_TARGET_LENGTH} chars","suggestions":[{"id":"stable-id","label":"short label","instructions":["bounded instrument instruction"],"targetTrackIds":["exact existing track id"],"instrumentId":"supported catalog id","midiClip":{"tempo":120,"durationBeats":4,"notes":[{"pitch":60,"velocity":80,"startBeat":0,"durationBeats":1}]}}]}`
+      : `{"feedback":"non-empty actionable feedback <=${ADVISER_FEEDBACK_TARGET_LENGTH} chars","needsRefinement":boolean,"affectedTrackIds":["existing track id"],"expectedConstraints":["specific requested constraint <=1200 chars"],"suggestions":[{"id":"stable-id","label":"short label","instructions":["bounded instrument instruction"],"targetTrackIds":["exact existing track id"],"instrumentId":"supported catalog id"}]}`;
     args.emit({
       stage: "adviser-format-repair",
       message: `Read-only adviser structural repair attempt ${nextAttempt}/${MAX_ADVISER_FORMAT_REPAIRS} started after ${failure.diagnostic.reason} (${detail}).`,
@@ -1947,7 +2182,7 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
       const completion = await completeJson(args.model, [
         {
           role: "system",
-          content: `You are ${args.adviser.agent}, ${args.phase === "initial" ? "a read-all/edit-none" : "the same bounded read-only"} ${args.adviser.group} adviser. This is bounded structural repair attempt ${nextAttempt}/${MAX_ADVISER_FORMAT_REPAIRS}, not a new musical iteration. Return JSON only: ${responseShape} Preserve the exact existing actionable advice whenever it is readable. Repair only the response envelope. Remove every unsupported field, including operations even when it is an empty array, membershipProposals, trackProposals, edits, and track changes. Advisers have no write or membership capability; legitimate recommendations are prose for Orchestrator. Do not return empty feedback, invent a no-op, or claim a score edit. ${args.phase === "review" ? "The original valid needsRefinement decision, affectedTrackIds, and expectedConstraints are immutable: return the exact same boolean, track-ID list, and constraint list; the server rejects any attempt to suppress or add refinement." : ""}`,
+          content: `You are ${args.adviser.agent}, ${args.phase === "initial" ? "a read-all/edit-none" : "the same bounded read-only"} ${args.adviser.group} adviser. This is bounded structural repair attempt ${nextAttempt}/${MAX_ADVISER_FORMAT_REPAIRS}, not a new musical iteration. Return JSON only: ${responseShape} ${adviceNeedsCompression ? `The existing ${adviceField} exceeds the hard ceiling of ${ADVISER_FEEDBACK_MAX_LENGTH} characters. Compress it to the safety target of ${ADVISER_FEEDBACK_TARGET_LENGTH} characters or fewer while retaining every independently identifiable actionable constraint and every supported-instrument mapping, including any creative timbre mapping and its achievable technique, articulation, register, dynamics, and texture. Never mechanically slice, truncate, or omit a constraint; rewrite for concision and keep the result actionable.` : proseRepairInstruction} Remove every unsupported field, including operations even when it is an empty array, membershipProposals, trackProposals, edits, and track changes. Advisers have no write or membership capability; legitimate recommendations are prose for Orchestrator. Do not return empty feedback, invent a no-op, or claim a score edit. ${playableInstrumentCatalogPrompt()} ${args.phase === "review" ? "The original valid needsRefinement decision, affectedTrackIds, and expectedConstraints are immutable: return the exact same boolean, track-ID list, and constraint list; the server rejects any attempt to suppress or add refinement." : ""}`,
         },
         {
           role: "user",
@@ -1965,7 +2200,7 @@ async function validateAdviserWithTwoStructuralRepairs(args: {
             latestFailedResponse: response,
           }),
         },
-      ], 900, { stage: "repair", agent: args.adviser.agent, attempt: `${nextAttempt}/${MAX_ADVISER_FORMAT_REPAIRS}` }, args.onDiagnostic);
+      ], ADVISER_REPAIR_COMPLETION_TOKENS, { stage: "repair", agent: args.adviser.agent, attempt: `${nextAttempt}/${MAX_ADVISER_FORMAT_REPAIRS}` }, args.onDiagnostic);
       payload = completion.payload;
       response = completion.raw;
       responseMetadata = completion.metadata;
@@ -2004,8 +2239,9 @@ function approvalBudget(value: unknown): CompositionApprovalBudget {
   const budget = value as Partial<CompositionApprovalBudget> | undefined;
   const fields: Array<[keyof CompositionApprovalBudget, number]> = [
     ["adviserConsultationsUsed", MAX_ADVISER_CONSULTATIONS],
-    // The generated approval contract permits five for compatibility, but the
-    // adviser-first transaction deliberately consumes only two writer rounds.
+    // The generated approval contract permits five for compatibility, while
+    // this transaction consumes one initial writer round. Legacy checkpoints
+    // may still carry the former two-round budget.
     ["trackWriterRoundsUsed", MAX_TRACK_WRITER_ROUNDS],
     ["refinementRoundsUsed", MAX_INSTRUMENT_REFINEMENT_ROUNDS],
     ["operationRepairAttemptsUsed", MAX_OPERATION_FORMAT_REPAIRS],
@@ -2050,11 +2286,42 @@ function resumedApprovalContext(value: unknown): CompositionApprovalContext | un
       !text(consultation.question) || !text(consultation.insight)) {
       throw new WorkflowFailure("Approval context consultations were malformed.");
     }
+    const suggestions = consultation.suggestions === undefined ? [] :
+      (consultation.suggestions as unknown[]).map((raw) => {
+        if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+          throw new WorkflowFailure("Approval context adviser suggestions were malformed.");
+        }
+        const suggestion = raw as Record<string, unknown>;
+        if (suggestion.midiClip !== undefined || !Array.isArray(suggestion.targetTrackIds) ||
+          !Array.isArray(suggestion.instructions) || typeof suggestion.id !== "string" ||
+          typeof suggestion.label !== "string" ||
+          suggestion.instructions.length === 0 ||
+          suggestion.instructions.length > 4 ||
+          suggestion.targetTrackIds.length > 8 ||
+          suggestion.id.length > 400 || suggestion.label.length > 600 ||
+          suggestion.instructions.some((value) => typeof value !== "string") ||
+          suggestion.instructions.some((value) => typeof value === "string" && (!value.trim() || value.length > 2_000)) ||
+          suggestion.targetTrackIds.some((value) => typeof value !== "string" || !value)) {
+          throw new WorkflowFailure("Approval context adviser suggestions were malformed.");
+        }
+        return {
+          id: suggestion.id,
+          label: suggestion.label,
+          instructions: suggestion.instructions as string[],
+          targetTrackIds: suggestion.targetTrackIds as string[],
+          ...(typeof suggestion.instrumentId === "string" ? { instrumentId: suggestion.instrumentId } : {}),
+          ...(typeof suggestion.instrumentName === "string" ? { instrumentName: suggestion.instrumentName } : {}),
+          ...(suggestion.advisoryMidiRef !== undefined
+            ? { advisoryMidiRef: validateAdvisoryMidiRef(suggestion.advisoryMidiRef) }
+            : {}),
+        };
+      });
     return {
       agent: text(consultation.agent),
       group: group as "style" | "concept",
       question: text(consultation.question),
       insight: screenMusicText(text(consultation.insight)),
+      ...(suggestions.length ? { suggestions } : {}),
     };
   });
   const budget = approvalBudget(context.consumedBudget);
@@ -2066,6 +2333,16 @@ function resumedApprovalContext(value: unknown): CompositionApprovalContext | un
     originalHistory: clone(context.originalHistory as unknown[]),
     originalMidi: clone(context.originalMidi as unknown[]),
     ...(text(context.selectedStyle) ? { selectedStyle: text(context.selectedStyle) } : {}),
+    ...(context.projectId === undefined
+      ? {}
+      : typeof context.projectId === "string" && /^[0-9a-f-]{36}$/i.test(context.projectId)
+        ? { projectId: context.projectId }
+        : (() => { throw new WorkflowFailure("Approval context projectId was malformed."); })()),
+    ...(context.requiresPlayableMaterial === undefined
+      ? {}
+      : typeof context.requiresPlayableMaterial === "boolean"
+        ? { requiresPlayableMaterial: context.requiresPlayableMaterial }
+        : (() => { throw new WorkflowFailure("Approval context requiresPlayableMaterial was malformed."); })()),
     adviserRoster,
     adviserConsultations,
     consumedBudget: budget,
@@ -2083,6 +2360,132 @@ function explicitExistingTrack(direction: string, score: ScoreValue): string | u
     return explicitlyQualified && (hasExactToken(track.name) || hasExactToken(track.instrument));
   });
   return matches.length === 1 ? matches[0].id : undefined;
+}
+
+/**
+ * A requested section length is a structural constraint, not a musical
+ * opinion.  Keep this parser intentionally narrow: only explicit numeric
+ * `bar(s)` or `beat(s)` phrases establish a duration.  In particular, the
+ * number after `bar` in "bar 4 louder" is a location, not a four-bar request.
+ *
+ * Bars are converted using the explicit meter when one is present.  The score
+ * model uses quarter-note beats, so 6/8 is three score beats per bar while
+ * the common 4/4 model remains four beats per bar.
+ */
+export type RequestedSectionLength = {
+  durationBeats: number;
+  source: string;
+  meter?: string;
+  beatsPerBar: number;
+  diagnostic?: string;
+};
+
+type ParsedSectionLength = RequestedSectionLength & {
+  values: number[];
+};
+
+const NUMERIC_DURATION = "(\\d+(?:\\.\\d+)?)";
+const BAR_DURATION_PATTERN = new RegExp(`\\b${NUMERIC_DURATION}\\s*(?:[-\\u2013\\u2014])?\\s*bars?\\b`, "gi");
+const BEAT_DURATION_PATTERN = new RegExp(`\\b${NUMERIC_DURATION}\\s*(?:[-\\u2013\\u2014])?\\s*beats?\\b`, "gi");
+const METER_PATTERN = /\b([1-9]|1[0-2])\s*\/\s*(2|4|8|16)\b/g;
+
+function parseRequestedSectionLengthDetails(value: string): ParsedSectionLength | undefined {
+  const input = value.trim();
+  if (!input) return undefined;
+  const meterMatches = [...input.matchAll(METER_PATTERN)];
+  const meter = meterMatches[0] ? `${meterMatches[0][1]}/${meterMatches[0][2]}` : undefined;
+  const beatsPerBar = meter
+    ? Number(meterMatches[0]![1]) * (4 / Number(meterMatches[0]![2]))
+    : 4;
+  const durations: Array<{ value: number; source: string }> = [];
+  for (const match of input.matchAll(BAR_DURATION_PATTERN)) {
+    const bars = Number(match[1]);
+    if (Number.isFinite(bars) && bars > 0) durations.push({ value: bars * beatsPerBar, source: match[0].trim() });
+  }
+  for (const match of input.matchAll(BEAT_DURATION_PATTERN)) {
+    const beats = Number(match[1]);
+    if (Number.isFinite(beats) && beats > 0) durations.push({ value: beats, source: match[0].trim() });
+  }
+  if (!durations.length) return undefined;
+  const values = [...new Set(durations.map(({ value }) => value))];
+  const durationBeats = values[0]!;
+  const diagnostic = values.length > 1
+    ? `The request contains conflicting explicit section lengths (${values.join(" and ")} beats); specify one numeric bar or beat duration.`
+    : undefined;
+  return {
+    durationBeats,
+    source: durations.map(({ source }) => source).join(", "),
+    ...(meter ? { meter } : {}),
+    beatsPerBar,
+    values,
+    ...(diagnostic ? { diagnostic } : {}),
+  };
+}
+
+/**
+ * Public, deterministic length parser for route/unit-test consumers.  A
+ * conflicting request is returned with a diagnostic so callers can surface a
+ * clear failure rather than selecting one of two user constraints.
+ */
+export function parseRequestedSectionLength(value: string): RequestedSectionLength | undefined {
+  const parsed = parseRequestedSectionLengthDetails(value);
+  if (!parsed) return undefined;
+  const { values: _values, ...publicResult } = parsed;
+  return publicResult;
+}
+
+/** Backwards-friendly descriptive alias for callers that prefer noun-first
+ * naming. */
+export function requestedSectionLength(value: string): RequestedSectionLength | undefined {
+  return parseRequestedSectionLength(value);
+}
+
+function requestedSectionLengthPrompt(length: RequestedSectionLength | undefined): string {
+  if (!length) return "";
+  const meter = length.meter ? ` in ${length.meter}` : "";
+  return `The composer explicitly requested a ${length.durationBeats}-beat section${meter} (${length.source}). Every new or replaced section produced for this request must span exactly ${length.durationBeats} score beats from its earliest add-region start to its latest add-region end. Rests are allowed; do not add notes merely to fill the span.`;
+}
+
+/**
+ * Validate only generated/replacement material. Existing regions are
+ * deliberately excluded: score padding and unrelated existing music must not
+ * make a short new section appear to satisfy a longer request. Remove-region
+ * operations are likewise excluded because they identify replaced material;
+ * add-region operations define the new section's span.
+ */
+export function validateRequestedSectionLength(
+  score: ScoreValue,
+  operations: Record<string, unknown>[],
+  length: RequestedSectionLength | undefined,
+): void {
+  if (!length) return;
+  if (length.diagnostic) throw new WorkflowFailure(length.diagnostic);
+  if (length.durationBeats > score.durationBeats) {
+    throw new WorkflowFailure(
+      `Requested section length is ${length.durationBeats} beats, but the existing score is only ${score.durationBeats} beats long; no score-length change was authorized, so the edit was not applied.`,
+    );
+  }
+  const additions = operations
+    .filter((operation) => operation.type === "add-region")
+    .map((operation) => operation.region)
+    .filter((region): region is Record<string, unknown> =>
+      Boolean(region && typeof region === "object" && !Array.isArray(region)),
+    );
+  if (!additions.length) {
+    throw new WorkflowFailure(
+      `Requested section length is ${length.durationBeats} beats, but the generated edit contains no new or replacement region to measure; the score was left unchanged.`,
+    );
+  }
+  const starts = additions.map((region) => Number(region.startBeat));
+  const ends = additions.map((region) => Number(region.startBeat) + Number(region.durationBeats));
+  const startBeat = Math.min(...starts);
+  const endBeat = Math.max(...ends);
+  const span = endBeat - startBeat;
+  if (!Number.isFinite(span) || Math.abs(span - length.durationBeats) > 1e-9) {
+    throw new WorkflowFailure(
+      `Requested section length mismatch: requested ${length.durationBeats} beats, but generated new/replacement regions span ${Number.isFinite(span) ? span : "an invalid"} beats; no score change was applied.`,
+    );
+  }
 }
 
 function parseMembershipProposals(value: unknown, score: ScoreValue): TrackProposal[] {
@@ -2131,14 +2534,77 @@ function parseTrackInstructions(value: unknown, score: ScoreValue): TrackInstruc
     if (!item || typeof item !== "object") throw new WorkflowFailure("A per-track instruction was malformed.");
     const record = item as Record<string, unknown>;
     const trackId = text(record.trackId);
-    const instruction = screenMusicText(text(record.instruction), "");
-    if (!trackId || !instruction || instruction.length > 1000 || seen.has(trackId) ||
+    const rawInstruction = text(record.instruction);
+    const instruction = screenMusicText(rawInstruction, "");
+    if (rawInstruction && !instruction) {
+      throw new WorkflowFailure("A per-track instruction was withheld by music-safety screening; no actionable direction was accepted.");
+    }
+    if (!trackId || !instruction || instruction.length > 5_000 || seen.has(trackId) ||
       !score.tracks.some((track) => track.id === trackId)) {
       throw new WorkflowFailure("A per-track instruction must uniquely target one current track and contain actionable direction.");
     }
     seen.add(trackId);
     return { trackId, instruction };
   });
+}
+
+function trackInstructionContract(score: ScoreValue): string {
+  const mapping = score.tracks.map((track) => ({
+    trackId: track.id,
+    name: track.name,
+    instrument: track.instrument,
+    role: track.role,
+  }));
+  const examples = score.tracks.slice(0, 2).map((track) => ({
+    trackId: track.id,
+    instruction: `Write only the requested material for the assigned ${track.instrument} track; follow the original direction.`,
+  }));
+  return [
+    `AUTHORITATIVE CURRENT TRACK MAPPING (copy trackId exactly; never use a name or placeholder): ${JSON.stringify(mapping)}.`,
+    `Valid per-track output examples using live IDs (the instruction remains the original requested direction, not invented musical content): ${JSON.stringify(examples)}.`,
+    "Each trackInstructions entry must contain exactly one trackId from that mapping, and every trackId may appear at most once. Do not remap names to IDs, merge entries, drop entries, or invent a track.",
+  ].join(" ");
+}
+
+function contentFreePlanRepairDiagnostic(error: WorkflowFailure): string {
+  const screened = error.message.includes("withheld by music-safety screening");
+  return JSON.stringify({
+    code: screened ? "track-instruction-safety-screen" : "track-instruction-structure",
+    fields: ["trackInstructions"],
+    reason: screened
+      ? "A non-empty per-track instruction was removed by the music-safety screen; return safe actionable direction."
+      : "Each per-track instruction must use one unique exact current track ID and contain actionable direction.",
+  });
+}
+
+function assertRequiredTrackInstructions(
+  instructions: TrackInstruction[],
+  requiredTrackIds: Set<string>,
+): void {
+  const missing = [...requiredTrackIds].filter((trackId) =>
+    !instructions.some((instruction) => instruction.trackId === trackId),
+  );
+  if (missing.length) {
+    planError(
+      "required-approved-track-instruction-missing",
+      "every approved playable-material addition must have one writer instruction",
+      -1,
+      ["trackInstructions"],
+    );
+  }
+}
+
+function trackHasPlayableMaterial(score: ScoreValue, trackId: string): boolean {
+  const track = score.tracks.find((candidate) => candidate.id === trackId);
+  return Boolean(track?.regions.some((region) =>
+    Array.isArray(region.notes) && region.notes.some((note) =>
+      Number.isInteger(note.pitch) &&
+      Number.isInteger(note.velocity) &&
+      Number.isFinite(note.startBeat) &&
+      Number.isFinite(note.durationBeats) &&
+      note.durationBeats > 0,
+    ),
+  ));
 }
 
 function ownedOperations(score: ScoreValue, trackId: string, operations: unknown): Record<string, unknown>[] {
@@ -2154,6 +2620,8 @@ function approvalPauseContext(
   originalHistory: unknown[],
   originalMidi: unknown[],
   selectedStyle: string | undefined,
+  projectId: string | undefined,
+  requiresPlayableMaterial: boolean,
   adviserRoster: AdviserSelection[],
   consultations: WorkflowResult["consultations"],
   consumedBudget: CompositionApprovalBudget,
@@ -2163,6 +2631,8 @@ function approvalPauseContext(
     originalHistory: clone(originalHistory),
     originalMidi: clone(originalMidi),
     ...(selectedStyle ? { selectedStyle } : {}),
+    ...(projectId ? { projectId } : {}),
+    requiresPlayableMaterial,
     adviserRoster: clone(adviserRoster),
     adviserConsultations: clone(consultations.filter((consultation) => consultation.group !== "instrument")),
     consumedBudget: clone(consumedBudget),
@@ -2178,6 +2648,7 @@ function approvalPauseContext(
 export async function runCompositionWorkflow(input: {
   model: WorkflowModel; message: string; safeDirection: string; intent?: WorkflowIntent; sanitizeDirection?: () => Promise<string>;
   originalMessage?: string; selectedStyle?: string; history: unknown[]; score: ScoreValue; sourceMidi?: unknown;
+  projectId?: string;
   approvedTrackProposals?: unknown[];
   approvalContext?: unknown;
   /** Correlation is owned by the compose route and copied onto terminal
@@ -2185,10 +2656,18 @@ export async function runCompositionWorkflow(input: {
   workflowId?: string;
   requestId?: string;
   onEvent?: (event: WorkflowEvent) => void; onDiagnostic?: DiagnosticEmitter;
+  onRejectedAdviserText?: (diagnostic: RejectedAdviserTextDiagnostic) => void;
+  /** Server-owned persistence hook. Raw adviser MIDI never leaves this hook. */
+  persistAdvisoryMidiClip?: (suggestion: AdviserSuggestion, score: ScoreValue) => Promise<AdvisoryMidiRef>;
+  loadAdvisoryMidiRef?: (ref: AdvisoryMidiRef, suggestion: AdviserSuggestion) => Promise<MaterializedAdvisoryMidi>;
 }): Promise<WorkflowResult> {
   const events: WorkflowEvent[] = [];
   const resumed = resumedApprovalContext(input.approvalContext);
+  if (resumed?.projectId !== undefined && resumed.projectId !== input.projectId) {
+    throw new WorkflowFailure("The signed approval project cannot be changed during continuation.");
+  }
   const consultations: WorkflowResult["consultations"] = clone(resumed?.adviserConsultations ?? []);
+  const musicalRegenerationBudget = { used: false };
   const budget = approvalBudget(resumed?.consumedBudget ?? {
     adviserConsultationsUsed: 0, trackWriterRoundsUsed: 0, refinementRoundsUsed: 0, operationRepairAttemptsUsed: 0,
   });
@@ -2237,8 +2716,21 @@ export async function runCompositionWorkflow(input: {
   const originalHistory = resumed?.originalHistory ?? input.history;
   const originalMidi = resumed?.originalMidi ?? (Array.isArray(input.sourceMidi) ? input.sourceMidi : []);
   const selectedStyle = resumed?.selectedStyle ?? input.selectedStyle;
+  // The original composer wording is authoritative.  A safety-normalized
+  // direction may paraphrase prose, but it must not be allowed to alter an
+  // explicit requested span.
+  const requestedLength = parseRequestedSectionLength(originalMessage || direction);
+  if (requestedLength?.diagnostic) throw new WorkflowFailure(requestedLength.diagnostic);
+  if (requestedLength && requestedLength.durationBeats > input.score.durationBeats) {
+    throw new WorkflowFailure(
+      `Requested section length is ${requestedLength.durationBeats} beats, but the existing score is only ${input.score.durationBeats} beats long; no score-length change was authorized, so the edit was not applied.`,
+    );
+  }
   const approved = parseMembershipProposals(input.approvedTrackProposals, input.score);
   const approvedAdditions = approved.filter((proposal) => proposal.action === "add");
+  if (approvedAdditions.length > MAX_INITIAL_TRACK_WRITERS) {
+    throw new WorkflowFailure(`The approved membership contains more playable-material additions than the ${MAX_INITIAL_TRACK_WRITERS}-writer safety ceiling; the score was left unchanged.`);
+  }
   let workingScore = applyInstrumentAdditions(input.score, approvedAdditions);
   // A continuation normally arrives with approved deletions already removed
   // from the client score.  Remove them here too when it has not, so the
@@ -2248,13 +2740,18 @@ export async function runCompositionWorkflow(input: {
   if (deleted.size) workingScore = { ...workingScore, tracks: workingScore.tracks.filter((track) => !deleted.has(track.id)) };
 
   const shortcutTrackId = resumed ? undefined : explicitExistingTrack(direction, workingScore);
+  const requiredApprovedTrackIds = new Set(
+    resumed?.requiresPlayableMaterial === true
+      ? approvedAdditions.map((proposal) => proposal.trackId!).filter(Boolean)
+      : [],
+  );
   const adviserRoster = resumed?.adviserRoster ?? (shortcutTrackId ? [] : defaultReadOnlyAdvisers());
-  // Reserve enough read-only capacity for the complete lifecycle before a
-  // writer starts: initial advice, candidate review, and (if needed) final
-  // post-refinement acceptance. The default two-adviser flow reserves six.
-  const reservedAdviserCalls = adviserRoster.length * (resumed ? 2 : 3);
+  // Initial adviser planning remains available, but post-write musical review
+  // is deliberately not part of the commit path. Structural MIDI/timing
+  // validation is the only acceptance gate after track writers return.
+  const reservedAdviserCalls = resumed ? 0 : adviserRoster.length;
   if (budget.adviserConsultationsUsed + reservedAdviserCalls > MAX_ADVISER_CONSULTATIONS) {
-    throw new WorkflowFailure(`The shared adviser budget cannot reserve initial, review, and final acceptance calls within ${MAX_ADVISER_CONSULTATIONS}; the score was left unchanged.`);
+    throw new WorkflowFailure(`The shared adviser budget cannot reserve initial planning calls within ${MAX_ADVISER_CONSULTATIONS}; the score was left unchanged.`);
   }
   const consultAdviser = async (adviser: AdviserSelection, phase: "initial" | "review", candidate?: ScoreValue): Promise<AdviserReview> => {
     if (budget.adviserConsultationsUsed >= MAX_ADVISER_CONSULTATIONS) {
@@ -2265,8 +2762,8 @@ export async function runCompositionWorkflow(input: {
       {
         role: "system",
         content: phase === "initial"
-          ? `You are ${adviser.agent}, a bounded read-all/edit-none ${adviser.group} adviser. You have no write or membership capability. Return JSON only: {"insight":"non-empty actionable advice <=500 chars"}. Do not include operations even when the array would be empty, membershipProposals, trackProposals, edits, track changes, or private copies. Advise only on the composer's requested musical constraints; legitimate recommendations are prose for Orchestrator, not a demand to rewrite the whole arrangement.`
-          : `You are ${adviser.agent}, the same bounded read-only ${adviser.group} adviser. Inspect the complete staged candidate against the composer's requested constraints only. You have no write or membership capability. Return JSON only: {"feedback":"non-empty actionable feedback <=500 chars","needsRefinement":boolean,"affectedTrackIds":["existing track id"],"expectedConstraints":["specific requested constraint <=240 chars"]}. expectedConstraints describes what the candidate is expected to satisfy; do not claim measured note counts, pitches, timings, or other observations there. The service derives observed constraints from the compared score copies. Do not include operations even when the array would be empty, membershipProposals, trackProposals, edits, track changes, or private copies. Identify only original writer tracks that need the one permitted refinement.`,
+           ? `You are ${adviser.agent}, a bounded read-all/edit-none ${adviser.group} adviser. You have no write or membership capability. Return mostly prose as JSON: {"insight":"non-empty actionable advice <=${ADVISER_FEEDBACK_TARGET_LENGTH} chars","suggestions":[{"id":"stable-id","label":"short label","instructions":["bounded instruction"],"targetTrackIds":["exact existing track id"],"instrumentId":"supported catalog id","midiClip":{"tempo":120,"durationBeats":4,"notes":[{"pitch":60,"velocity":80,"startBeat":0,"durationBeats":1}]}}]}. suggestions is optional; each suggestion must have a stable unique id, exact existing track IDs and/or a canonical supported instrument id/name, and no more than four bounded instructions. The optional MIDI clip is advisory only and must use bounded timing, pitch, velocity, and tempo. The server validates it and stores it as an opaque temporary object; it is never a score track. The hard service ceiling is ${ADVISER_FEEDBACK_MAX_LENGTH}; target the lower limit for safety margin. Do not include operations even when the array would be empty, membershipProposals, trackProposals, edits, track changes, or private copies. Advise only on the composer's requested musical constraints; legitimate recommendations are prose for Orchestrator, not a demand to rewrite the whole arrangement. ${playableInstrumentCatalogPrompt()}`
+           : `You are ${adviser.agent}, the same bounded read-only ${adviser.group} adviser. Inspect the complete staged candidate against the composer's requested constraints only. You have no write or membership capability. Return mostly prose as JSON: {"feedback":"non-empty actionable feedback <=${ADVISER_FEEDBACK_TARGET_LENGTH} chars","needsRefinement":boolean,"affectedTrackIds":["existing track id"],"expectedConstraints":["specific requested constraint <=1200 chars"],"suggestions":[{"id":"stable-id","label":"short label","instructions":["bounded instruction"],"targetTrackIds":["exact existing track id"],"instrumentId":"supported catalog id"}]}. suggestions is optional structured advice only. The hard service ceiling for feedback is ${ADVISER_FEEDBACK_MAX_LENGTH}; target the lower limit for safety margin. expectedConstraints describes what the candidate is expected to satisfy; do not claim measured note counts, pitches, timings, or other observations there. The service derives observed constraints from the compared score copies. Do not include operations even when the array would be empty, membershipProposals, trackProposals, edits, track changes, or private copies. Identify only original writer tracks that need the one permitted refinement. ${playableInstrumentCatalogPrompt()}`,
       },
       {
         role: "user",
@@ -2286,7 +2783,7 @@ export async function runCompositionWorkflow(input: {
       const completion = await completeJson(
         input.model,
         adviserMessages,
-        700,
+        ADVISER_COMPLETION_TOKENS,
         { stage: phase === "initial" ? "initial" : "read", agent: adviser.agent },
         reportDiagnostic,
       );
@@ -2300,7 +2797,7 @@ export async function runCompositionWorkflow(input: {
       raw = error.rawResponse ?? "";
       metadata = error.diagnostic.provider;
     }
-    return validateAdviserWithTwoStructuralRepairs({
+    const advice = await validateAdviserWithTwoStructuralRepairs({
       model: input.model,
       adviser,
       phase,
@@ -2317,35 +2814,21 @@ export async function runCompositionWorkflow(input: {
       initialFailure: failure,
       emit,
       onDiagnostic: reportDiagnostic,
+      onRejectedAdviserText: input.onRejectedAdviserText,
+      workflowId: input.workflowId,
+      requestId: input.requestId,
     });
+    for (const suggestion of advice.suggestions) {
+      if (!suggestion.midiClip) continue;
+      if (!input.persistAdvisoryMidiClip) {
+        throw new WorkflowFailure("An advisory MIDI clip was supplied but no server-owned project storage was available; no score change was made.");
+      }
+      const ref = await input.persistAdvisoryMidiClip(suggestion, candidate ?? workingScore);
+      delete suggestion.midiClip;
+      suggestion.advisoryMidiRef = ref;
+    }
+    return advice;
   };
-
-  const evaluationForReview = (review: AdviserReview, before: ScoreValue, after: ScoreValue): EvaluationFeedback => {
-    const trackId = review.affectedTrackIds.length === 1 ? review.affectedTrackIds[0] : undefined;
-    return createEvaluationFeedback({
-      kind: "musical-rejection",
-      scope: trackId ? "track" : "task",
-      original: before,
-      candidate: after,
-      reason: review.feedback,
-      expectedConstraints: review.expectedConstraints,
-      correctionAgents: [trackId ? trackAgent(after.tracks.find((track) => track.id === trackId)!) : ""],
-      trackId,
-    });
-  };
-
-  const malformedReviewFeedback = (
-    error: WorkflowFailure,
-    before: ScoreValue,
-    after: ScoreValue,
-  ): EvaluationFeedback => createEvaluationFeedback({
-    kind: "malformed",
-    scope: "task",
-    original: before,
-    candidate: after,
-    reason: error.message,
-    expectedConstraints: ["A structurally valid review with an actionable musical constraint."],
-  });
 
   const noMusicalChangeFeedback = (
     before: ScoreValue,
@@ -2362,32 +2845,13 @@ export async function runCompositionWorkflow(input: {
     expectedConstraints: ["A playable musical change in notes, timing, duration, pitch, or velocity."],
   });
 
-  const consultReview = async (
-    adviser: AdviserSelection,
-    before: ScoreValue,
-    after: ScoreValue,
-    taskId?: string,
-  ): Promise<AdviserReview> => {
-    try {
-      const review = await consultAdviser(adviser, "review", after);
-      if (review.needsRefinement) {
-        const feedback = evaluationForReview(review, before, after);
-        emitEvaluationFeedback(emit, feedback, taskId);
-      }
-      return review;
-    } catch (error) {
-      if (!(error instanceof WorkflowFailure)) throw error;
-      const feedback = malformedReviewFeedback(error, before, after);
-      emitEvaluationFeedback(emit, feedback, taskId);
-      emitEvaluationRejection(emit, feedback, taskId);
-      throw new WorkflowFailure(error.message, feedback);
-    }
-  };
-
   if (!resumed && !shortcutTrackId) {
     for (const adviser of adviserRoster) {
       const advice = await consultAdviser(adviser, "initial");
-      consultations.push({ agent: adviser.agent, group: adviser.group, question: adviser.question, insight: advice.feedback });
+      consultations.push({
+        agent: adviser.agent, group: adviser.group, question: adviser.question, insight: advice.feedback,
+        ...(advice.suggestions.length ? { suggestions: advice.suggestions } : {}),
+      });
     }
     emit({ stage: "advisers-consulted", message: `${adviserRoster.length} read-only style and concept advisers completed their bounded consultation.`, agent: "Orchestrator" });
   }
@@ -2400,13 +2864,14 @@ export async function runCompositionWorkflow(input: {
     plan = (await completeJson(input.model, [
       {
         role: "system",
-        content: `You are Orchestrator. Convert the read-only adviser advice into specific per-track instructions. Return JSON only: {"trackInstructions":[{"trackId":"existing track id","instruction":"specific actionable direction <=1000 chars"}],"membershipProposals":[{"id":"proposal-id","action":"add|delete","trackId":"required-existing-track-id-for-delete","instrument":"exact supported catalog name","role":"catalog role","midiProgram":0,"summary":"non-empty <=240 chars","reason":"non-empty"}]}. A proposal for either an addition OR deletion requires explicit composer approval before any track writer runs. Never automatically add/remove membership, never return operations, and assign at most ${MAX_INITIAL_TRACK_WRITERS} current tracks. Each instruction must be scoped to the requested constraint, not a whole-arrangement demand. The ONLY supported membership catalog is ${JSON.stringify(PLAYABLE_INSTRUMENTS.map(({ name, role, midiProgram }) => ({ instrument: name, role, midiProgram })))}.`
+          content: `You are Orchestrator. Convert the read-only adviser advice into specific per-track instructions. Return JSON only: {"trackInstructions":[{"trackId":"exact ID from the current track mapping","instruction":"specific actionable direction <=5000 chars"}],"membershipProposals":[{"id":"proposal-id","action":"add|delete","trackId":"required-existing-track-id-for-delete","instrument":"exact supported catalog name","role":"catalog role","midiProgram":0,"summary":"non-empty <=1200 chars","reason":"non-empty"}],"requiresPlayableMaterial":boolean}. A proposal for either an addition OR deletion requires explicit composer approval before any track writer runs. Whenever membershipProposals is non-empty, requiresPlayableMaterial is mandatory and MUST be true when the original composer request asks to create or alter notes, regions, or other playable music after approval; it is false only for membership bookkeeping such as adding or removing an empty track. Bind this decision to the original composer request, not the approval wording. ${requiredApprovedTrackIds.size ? `This is an approval continuation. The signed approved additions require one writer instruction for each of these exact new track IDs: ${JSON.stringify([...requiredApprovedTrackIds])}.` : ""} Never automatically add/remove membership, never return operations, and assign at most ${MAX_INITIAL_TRACK_WRITERS} current tracks. Each instruction must be scoped to the requested constraint, not a whole-arrangement demand. ${trackInstructionContract(workingScore)} ${playableInstrumentCatalogPrompt()}`
       },
       {
         role: "user",
         content: JSON.stringify({
           direction, selectedStyle, originalUserMessage: originalMessage, safetyNormalizedHistory: originalHistory,
           completeSourceMidi: originalMidi, score: workingScore,
+          requiredApprovedTrackIds: [...requiredApprovedTrackIds],
           adviserAdvice: consultations.filter((consultation) => consultation.group !== "instrument"),
         }),
       },
@@ -2414,15 +2879,47 @@ export async function runCompositionWorkflow(input: {
   }
   let membership: TrackProposal[];
   let instructions: TrackInstruction[] | undefined;
+  let requiresPlayableMaterial: boolean | undefined;
+  const priorMembership = plan.membershipProposals ?? plan.instrumentNeeds;
+  const priorMembershipPresent = Array.isArray(priorMembership) && priorMembership.length > 0;
+  const priorRequiresPlayableMaterial = plan.requiresPlayableMaterial;
   const parsePlanDecision = (candidate: Record<string, unknown>) => {
     const proposedMembership = parseMembershipProposals(candidate.membershipProposals ?? candidate.instrumentNeeds, workingScore);
+    if (proposedMembership.length && typeof candidate.requiresPlayableMaterial !== "boolean") {
+      planError(
+        "membership-intent-missing",
+        "requiresPlayableMaterial must be a boolean whenever membershipProposals is non-empty",
+        -1,
+        ["requiresPlayableMaterial"],
+      );
+    }
+    if (
+      priorMembershipPresent !== (proposedMembership.length > 0) ||
+      (priorMembershipPresent &&
+        typeof priorRequiresPlayableMaterial === "boolean" &&
+        candidate.requiresPlayableMaterial !== priorRequiresPlayableMaterial)
+    ) {
+      planError(
+        "membership-intent-changed",
+        "the bounded plan repair changed the original membership decision",
+        -1,
+        ["membershipProposals", "requiresPlayableMaterial"],
+      );
+    }
+    const parsedInstructions = proposedMembership.length
+      ? undefined
+      : parseTrackInstructions(candidate.trackInstructions, workingScore);
+    if (parsedInstructions) assertRequiredTrackInstructions(parsedInstructions, requiredApprovedTrackIds);
     return {
       membership: proposedMembership,
-      instructions: proposedMembership.length ? undefined : parseTrackInstructions(candidate.trackInstructions, workingScore),
+      instructions: parsedInstructions,
+      requiresPlayableMaterial: proposedMembership.length
+        ? candidate.requiresPlayableMaterial as boolean
+        : resumed?.requiresPlayableMaterial,
     };
   };
   try {
-    ({ membership, instructions } = parsePlanDecision(plan));
+    ({ membership, instructions, requiresPlayableMaterial } = parsePlanDecision(plan));
   } catch (error) {
     if (!(error instanceof WorkflowFailure)) throw error;
     if (budget.operationRepairAttemptsUsed >= MAX_OPERATION_FORMAT_REPAIRS) {
@@ -2433,21 +2930,21 @@ export async function runCompositionWorkflow(input: {
     plan = (await completeJson(input.model, [
       {
         role: "system",
-        content: `You are Orchestrator. This is the single bounded structural repair of your existing adviser-informed plan, not a new musical iteration. Return the exact JSON shape {"trackInstructions":[{"trackId":"existing track id","instruction":"specific actionable direction <=1000 chars"}],"membershipProposals":[{"id":"proposal-id","action":"add|delete","trackId":"required for delete","instrument":"exact supported catalog name","role":"catalog role","midiProgram":0,"summary":"non-empty <=240 chars","reason":"non-empty"}]}. Preserve every existing membership decision and every musical instruction; repair only missing/wrong structural fields. Do not silently normalize, drop, add, or reverse a proposal. Supported catalog: ${JSON.stringify(PLAYABLE_INSTRUMENTS.map(({ name, role, midiProgram }) => ({ instrument: name, role, midiProgram })))}.`,
+          content: `You are Orchestrator. This is the single bounded structural repair of your existing adviser-informed plan, not a new musical iteration. Return the exact JSON shape {"trackInstructions":[{"trackId":"exact ID from the current track mapping","instruction":"specific actionable direction <=5000 chars"}],"membershipProposals":[{"id":"proposal-id","action":"add|delete","trackId":"required for delete","instrument":"exact supported catalog name","role":"catalog role","midiProgram":0,"summary":"non-empty <=1200 chars","reason":"non-empty"}],"requiresPlayableMaterial":boolean}. Preserve every existing membership decision, the exact requiresPlayableMaterial decision, and every musical instruction; repair only missing/wrong structural fields. Do not silently normalize, drop, add, or reverse a proposal. ${requiredApprovedTrackIds.size ? `The signed approval requires one writer instruction for each approved added track: ${JSON.stringify([...requiredApprovedTrackIds])}.` : ""} ${trackInstructionContract(workingScore)} Content-free validator diagnostic: ${contentFreePlanRepairDiagnostic(error)} ${playableInstrumentCatalogPrompt()}`,
       },
       {
         role: "user",
-        content: JSON.stringify({ direction, selectedStyle, score: workingScore, adviserAdvice: consultations.filter((consultation) => consultation.group !== "instrument"), priorPlan: plan }),
+        content: JSON.stringify({ direction, selectedStyle, score: workingScore, requiredApprovedTrackIds: [...requiredApprovedTrackIds], adviserAdvice: consultations.filter((consultation) => consultation.group !== "instrument"), priorPlan: plan }),
       },
     ], 1200, { stage: "repair", agent: "Orchestrator", attempt: "1/1" }, reportDiagnostic)).payload;
-    ({ membership, instructions } = parsePlanDecision(plan));
+    ({ membership, instructions, requiresPlayableMaterial } = parsePlanDecision(plan));
   }
   if (membership.length) {
     emit({ stage: "membership-approval-needed", message: "Track additions or removals require explicit composer approval; no staged candidate was applied.", agent: "Orchestrator" });
     return {
       intent, status: "discussion", summary: "Track membership proposals are waiting for explicit approval.",
       tasks: [], events, changedFiles: [], operations: [], trackProposals: membership, consultations,
-      approvalContext: approvalPauseContext(originalMessage, originalHistory, originalMidi, selectedStyle, adviserRoster, consultations, budget),
+      approvalContext: approvalPauseContext(originalMessage, originalHistory, originalMidi, selectedStyle, input.projectId, requiresPlayableMaterial === true, adviserRoster, consultations, budget),
     };
   }
   if (!instructions) throw new WorkflowFailure("The Orchestrator did not produce track instructions after membership review.");
@@ -2461,16 +2958,47 @@ export async function runCompositionWorkflow(input: {
     const track = base.tracks.find((candidate) => candidate.id === instruction.trackId);
     if (!track) throw new WorkflowFailure("A server-assigned writer track no longer exists.");
     const agent = trackAgent(track);
+    const relevantSuggestions = consultations
+      .flatMap((consultation) => consultation.suggestions ?? [])
+      .filter((suggestion) => suggestion.targetTrackIds.length > 0
+        ? suggestion.targetTrackIds.includes(track.id)
+        : Boolean(
+          suggestion.instrumentId &&
+          findPlayableInstrument(track.instrument ?? "")?.id === suggestion.instrumentId,
+        ));
+    const materializedSuggestions = await Promise.all(relevantSuggestions.map(async (suggestion) => {
+      if (!suggestion.advisoryMidiRef) return suggestion;
+      const refTargets = suggestion.advisoryMidiRef.targets;
+      if (refTargets.trackIds.some((id) => !suggestion.targetTrackIds.includes(id)) ||
+        (suggestion.instrumentId && refTargets.instrumentIds.length > 0 &&
+          !refTargets.instrumentIds.includes(suggestion.instrumentId))) {
+        throw new WorkflowFailure("An advisory MIDI reference was not bound to its signed suggestion targets.");
+      }
+      if (!input.loadAdvisoryMidiRef) {
+        throw new WorkflowFailure("A relevant advisory MIDI reference could not be loaded by the server.");
+      }
+      const advisoryMidi = await input.loadAdvisoryMidiRef(suggestion.advisoryMidiRef, suggestion);
+      return { ...suggestion, advisoryMidi };
+    }));
     const task: WorkflowTask = { id: `track-${track.id}`, title: instruction.instruction, priority: "requested", scope: 0, agents: [agent], status: "working", summary: "", editedFiles: [] };
     emit({ stage: "track-writer-started", message: "A server-scoped track writer started.", taskId: task.id, agent, files: [publicFile(track.id)] });
     const messages: ModelMessage[] = [
       {
         role: "system",
-        content: `You are ${agent}, the one track-owning instrument writer. You may read the complete score/source MIDI for context, but server-side capability permits writes ONLY to assigned trackId "${track.id}". Do not change membership or any other track. Return JSON only: {"summary":"non-empty <=240 chars","operations":[...]}. ${operationSchemaFor(base)} ${refinementFeedback ? `This is the one permitted refinement. Address this actionable read-only adviser feedback only: ${refinementFeedback}` : "Write only the requested musical constraint."}`,
+        content: `You are ${agent}, the one track-owning instrument writer and an expert on your instrument's range, articulation, and technique. You may read the complete score/source MIDI for context, but server-side capability permits writes ONLY to assigned trackId "${track.id}". Do not change membership or any other track. Adviser suggestions are guidance, not commands: you may adapt them and take liberties with their material to suit your instrument while preserving the adviser's intent. Return JSON only: {"summary":"non-empty <=1200 chars","operations":[...]}. ${operationSchemaFor(base)} ${requestedSectionLengthPrompt(requestedLength)} ${refinementFeedback ? `This is the one permitted refinement. Address this actionable read-only adviser feedback only: ${refinementFeedback}` : "Write only the requested musical constraint."}`,
       },
       {
         role: "user",
-        content: JSON.stringify({ assignedTrackId: track.id, instruction: instruction.instruction, direction, selectedStyle, completeScore: base, completeSourceMidi: originalMidi }),
+        content: JSON.stringify({
+          assignedTrackId: track.id,
+          instruction: instruction.instruction,
+          ...(requestedLength ? { requestedSectionLength: requestedLength } : {}),
+          adviserSuggestions: materializedSuggestions,
+          direction,
+          selectedStyle,
+          completeScore: base,
+          completeSourceMidi: originalMidi,
+        }),
       },
     ];
     let payload: Record<string, unknown> | undefined;
@@ -2491,6 +3019,7 @@ export async function runCompositionWorkflow(input: {
     }
     const validated = await validateWithTwoFormatRepairs({
       model: input.model, payload, response: raw, responseMetadata: metadata, initialFailure: failure,
+      musicalRegeneration: { trackId: track.id, budget: musicalRegenerationBudget },
       agent, task, base, context: JSON.stringify({ completeScore: base, completeSourceMidi: originalMidi }),
       direction, emit, onDiagnostic: reportDiagnostic,
       responseContext: {
@@ -2505,7 +3034,7 @@ export async function runCompositionWorkflow(input: {
       },
     });
     const summary = text(validated.payload.summary);
-    if (!summary || summary.length > 240) throw new WorkflowFailure("A track writer returned an invalid summary.");
+    if (!summary || summary.length > 1_200) throw new WorkflowFailure("A track writer returned an invalid summary.");
     const operations = ownedOperations(base, track.id, validated.operations);
     if (!operations.length) {
       const feedback = noMusicalChangeFeedback(base, base, track.id);
@@ -2524,59 +3053,26 @@ export async function runCompositionWorkflow(input: {
   const operations = reserveOperationIds([], writtenOperations);
   if (operations.length > MAX_WORKFLOW_OPERATIONS) throw new WorkflowFailure(`The workflow exceeds the ${MAX_WORKFLOW_OPERATIONS}-operation safety ceiling; the score was left unchanged.`);
   let candidate = applyOperations(workingScore, operations);
-  const reviewFeedback: AdviserReview[] = [];
-  for (const adviser of adviserRoster) {
-    const review = await consultReview(adviser, workingScore, candidate);
-    reviewFeedback.push(review);
-    consultations.push({ agent: adviser.agent, group: adviser.group, question: "Review the complete staged candidate.", insight: review.feedback });
-  }
-  if (adviserRoster.length) emit({ stage: "adviser-review", message: "The original read-only advisers reviewed the complete staged candidate.", agent: "Orchestrator" });
-  const affected = [...new Set(reviewFeedback.filter((review) => review.needsRefinement).flatMap((review) => review.affectedTrackIds))];
-  if (affected.length) {
-    if (budget.refinementRoundsUsed >= MAX_INSTRUMENT_REFINEMENT_ROUNDS) {
-      throw new WorkflowFailure("The one permitted instrument refinement round was already consumed; the score was left unchanged.");
-    }
-    budget.refinementRoundsUsed += 1;
-    consumeWriterRound();
-    const byTrack = new Map(instructions.map((instruction) => [instruction.trackId, instruction]));
-    const feedbackByTrack = new Map<string, string[]>();
-    for (const review of reviewFeedback.filter((candidate) => candidate.needsRefinement)) {
-      for (const trackId of review.affectedTrackIds) {
-        const entries = feedbackByTrack.get(trackId) ?? [];
-        const feedback = evaluationForReview(review, workingScore, candidate);
-        entries.push([
-          review.feedback,
-          `Expected constraints: ${feedback.expectedConstraints.join(" | ")}.`,
-          `Observed constraints: ${feedback.observedConstraints.join(" | ")}.`,
-          `Candidate revision: ${feedback.candidateRevision}.`,
-        ].join(" "));
-        feedbackByTrack.set(trackId, entries);
+  if (resumed?.requiresPlayableMaterial === true && approvedAdditions.length) {
+    for (const addition of approvedAdditions) {
+      const trackId = addition.trackId!;
+      const targeted = operations.some((operation) => operation.trackId === trackId);
+      if (!targeted || !trackHasPlayableMaterial(candidate, trackId)) {
+        const feedback = noMusicalChangeFeedback(workingScore, candidate, trackId, "track");
+        emitEvaluationFeedback(emit, feedback);
+        emitEvaluationRejection(emit, feedback);
+        throw new WorkflowFailure(
+          `Approved playable-material addition ${trackId} did not receive valid playable MIDI; no membership or score change was committed.`,
+          feedback,
+        );
       }
     }
-    for (const trackId of affected) {
-      const instruction = byTrack.get(trackId);
-      if (!instruction) throw new WorkflowFailure("Read-only adviser feedback attempted to refine a track without an original writer.");
-      const feedback = feedbackByTrack.get(trackId)?.join(" ");
-      if (!feedback) throw new WorkflowFailure("An affected track had no actionable adviser feedback.");
-      const refinement = reserveOperationIds(operations, await write(instruction, candidate, feedback));
-      operations.push(...refinement);
-      candidate = applyOperations(candidate, refinement);
-    }
-    emit({ stage: "instrument-refinement", message: "Affected track owners completed the one permitted refinement round.", agent: "Orchestrator" });
-    const finalReviews: AdviserReview[] = [];
-    for (const adviser of adviserRoster) {
-      const review = await consultReview(adviser, workingScore, candidate);
-      finalReviews.push(review);
-      consultations.push({ agent: adviser.agent, group: adviser.group, question: "Final acceptance of the refined staged candidate.", insight: review.feedback });
-    }
-    if (finalReviews.some((review) => review.needsRefinement)) {
-      const failedReview = finalReviews.find((review) => review.needsRefinement)!;
-      const feedback = evaluationForReview(failedReview, workingScore, candidate);
-      emitEvaluationRejection(emit, feedback, undefined, "failed-after-correction");
-      throw new WorkflowFailure("The original read-only advisers still require refinement after the one permitted writer round; the score was left unchanged.", feedback);
-    }
-    emit({ stage: "adviser-final-acceptance", message: "The original advisers accepted the refined complete staged candidate without another writer round.", agent: "Orchestrator" });
   }
+  // No post-write adviser review or refinement loop is allowed to veto a
+  // structurally valid candidate. Requested length is checked against only
+  // the new/replacement regions; existing score padding and rests do not
+  // count as generated coverage.
+  validateRequestedSectionLength(workingScore, operations, requestedLength);
   if (operations.length > MAX_WORKFLOW_OPERATIONS) {
     throw new WorkflowFailure(`The workflow exceeds the ${MAX_WORKFLOW_OPERATIONS}-operation safety ceiling; the score was left unchanged.`);
   }
@@ -2585,6 +3081,22 @@ export async function runCompositionWorkflow(input: {
     emitEvaluationFeedback(emit, feedback);
     emitEvaluationRejection(emit, feedback);
     throw new WorkflowFailure("The staged candidate did not produce a valid requested musical change; the score was left unchanged.", feedback);
+  }
+  // Re-check the signed approved-addition postcondition immediately before
+  // technical reconstruction.
+  if (resumed?.requiresPlayableMaterial === true && approvedAdditions.length) {
+    for (const addition of approvedAdditions) {
+      const trackId = addition.trackId!;
+      if (!trackHasPlayableMaterial(candidate, trackId)) {
+        const feedback = noMusicalChangeFeedback(workingScore, candidate, trackId, "track");
+        emitEvaluationFeedback(emit, feedback);
+        emitEvaluationRejection(emit, feedback);
+        throw new WorkflowFailure(
+          `Approved playable-material addition ${trackId} no longer contains valid playable MIDI before commit; no membership or score change was committed.`,
+          feedback,
+        );
+      }
+    }
   }
   // Final validation is deliberately local and atomic: no evaluator asks any
   // individual writer to satisfy unrelated whole-arrangement constraints.
@@ -2600,7 +3112,7 @@ export async function runCompositionWorkflow(input: {
   emit({ stage: "technical-validation", message: "The single staged candidate passed final server-side technical validation.", agent: "Orchestrator", files: changedFiles });
   emit({ stage: "verified", message: "The validated staged candidate is ready for one atomic saved-score commit and Undo.", agent: "Orchestrator", files: changedFiles });
   return {
-    intent, status: "verified", summary: "Read-only advisers and server-scoped track owners produced a technically validated staged candidate.",
+    intent, status: "verified", summary: "Server-scoped track owners produced a technically validated MIDI/timing candidate; no subjective musical review was required.",
     tasks: instructions.map((instruction) => ({ id: `track-${instruction.trackId}`, title: instruction.instruction, priority: "requested", status: "verified", summary: "Server-scoped track write verified.", editedFiles: [publicFile(instruction.trackId)] })),
     events, changedFiles, operations, trackProposals: approved, consultations,
   };
@@ -2738,7 +3250,8 @@ function operationSchemaFor(score?: ScoreValue, mode: OperationPromptMode = "can
   const inventory = score
     ? `\nThis batch's complete valid target inventory is authoritative; do not address any other track or region. Empty tracks may receive add-region only because they have no removable regions. ${operationTargetInventory(score)}`
     : "";
-  return `${modeGuidance}\n${OPERATION_JSON_SCHEMA}${inventory}`;
+  return `${modeGuidance}\n${OPERATION_JSON_SCHEMA}${inventory}
+IMPORTANT — MIDI pre-response checks: IDs <=400 characters; region names <=600; summaries <=1200. Each region has 1–512 notes. Pitch must be an integer 0–127 and suit the assigned instrument; velocity an integer 1–127. All beat values must be finite. Region and note starts are zero-based, nonnegative, and <=512. Region durations must be >0 and <=128 beats; note durations must be >0 and <=64 beats. ${score ? `This score ends at beat ${score.durationBeats}; each region must satisfy startBeat + durationBeats <= ${score.durationBeats}.` : ""} Notes use REGION-RELATIVE beats: note.startBeat + note.durationBeats <= region.durationBeats. Do not use score-absolute offsets inside notes. Split longer passages into valid regions, retaining all requested musical material. Verify all required fields, exact dynamics/articulation enums, unique IDs, existing removal targets, assigned-track ownership, supported instrument technique, requested scope/style/source performance, and playable changes before returning complete JSON.`;
 }
 
 function operationTargetInventory(score: ScoreValue): string {
@@ -2991,8 +3504,8 @@ function normalizeConstraintList(value: unknown, fallback: string): string[] {
   const values = Array.isArray(value) ? value : value === undefined ? [] : [value];
   const normalized = values
     .filter((item): item is string => typeof item === "string")
-    .map((item) => screenMusicText(item.trim(), "").slice(0, 240))
+    .map((item) => screenMusicText(item.trim(), "").slice(0, 1_200))
     .filter(Boolean)
     .slice(0, 8);
-  return normalized.length ? normalized : [screenMusicText(fallback.slice(0, 240), "A requested musical constraint.")];
+  return normalized.length ? normalized : [screenMusicText(fallback.slice(0, 1_200), "A requested musical constraint.")];
 }

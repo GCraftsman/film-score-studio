@@ -1,0 +1,241 @@
+[
+  {
+    "stage": "global-plan-completed",
+    "sections": 4,
+    "sectionBeats": 32,
+    "tracks": [
+      "track-piano",
+      "track-strings",
+      "track-horn"
+    ],
+    "sourceHash": "2a8c42fc0180bf0f46047a9f963b4a9bc04f9b90636859c9e4fc71a52d41002e"
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 0,
+    "trackId": "track-piano",
+    "startBeat": 0,
+    "endBeat": 32,
+    "ownedSlot": "0:track-piano",
+    "completedOwnedSlots": 0
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 0,
+    "trackId": "track-piano",
+    "startBeat": 0,
+    "endBeat": 32,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 1
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 0,
+    "trackId": "track-strings",
+    "startBeat": 0,
+    "endBeat": 32,
+    "ownedSlot": "0:track-strings",
+    "completedOwnedSlots": 1
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 0,
+    "trackId": "track-strings",
+    "startBeat": 0,
+    "endBeat": 32,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 2
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 0,
+    "trackId": "track-horn",
+    "startBeat": 0,
+    "endBeat": 32,
+    "ownedSlot": "0:track-horn",
+    "completedOwnedSlots": 2
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 0,
+    "trackId": "track-horn",
+    "startBeat": 0,
+    "endBeat": 32,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 3
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 1,
+    "trackId": "track-piano",
+    "startBeat": 32,
+    "endBeat": 64,
+    "ownedSlot": "1:track-piano",
+    "completedOwnedSlots": 3
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 1,
+    "trackId": "track-piano",
+    "startBeat": 32,
+    "endBeat": 64,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 4
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 1,
+    "trackId": "track-strings",
+    "startBeat": 32,
+    "endBeat": 64,
+    "ownedSlot": "1:track-strings",
+    "completedOwnedSlots": 4
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 1,
+    "trackId": "track-strings",
+    "startBeat": 32,
+    "endBeat": 64,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 5
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 1,
+    "trackId": "track-horn",
+    "startBeat": 32,
+    "endBeat": 64,
+    "ownedSlot": "1:track-horn",
+    "completedOwnedSlots": 5
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 1,
+    "trackId": "track-horn",
+    "startBeat": 32,
+    "endBeat": 64,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 6
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 2,
+    "trackId": "track-piano",
+    "startBeat": 64,
+    "endBeat": 96,
+    "ownedSlot": "2:track-piano",
+    "completedOwnedSlots": 6
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 2,
+    "trackId": "track-piano",
+    "startBeat": 64,
+    "endBeat": 96,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 7
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 2,
+    "trackId": "track-strings",
+    "startBeat": 64,
+    "endBeat": 96,
+    "ownedSlot": "2:track-strings",
+    "completedOwnedSlots": 7
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 2,
+    "trackId": "track-strings",
+    "startBeat": 64,
+    "endBeat": 96,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 8
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 2,
+    "trackId": "track-horn",
+    "startBeat": 64,
+    "endBeat": 96,
+    "ownedSlot": "2:track-horn",
+    "completedOwnedSlots": 8
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 2,
+    "trackId": "track-horn",
+    "startBeat": 64,
+    "endBeat": 96,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 9
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 3,
+    "trackId": "track-piano",
+    "startBeat": 96,
+    "endBeat": 128,
+    "ownedSlot": "3:track-piano",
+    "completedOwnedSlots": 9
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 3,
+    "trackId": "track-piano",
+    "startBeat": 96,
+    "endBeat": 128,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 10
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 3,
+    "trackId": "track-strings",
+    "startBeat": 96,
+    "endBeat": 128,
+    "ownedSlot": "3:track-strings",
+    "completedOwnedSlots": 10
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 3,
+    "trackId": "track-strings",
+    "startBeat": 96,
+    "endBeat": 128,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 11
+  },
+  {
+    "stage": "section-attempt-started",
+    "sectionIndex": 3,
+    "trackId": "track-horn",
+    "startBeat": 96,
+    "endBeat": 128,
+    "ownedSlot": "3:track-horn",
+    "completedOwnedSlots": 11
+  },
+  {
+    "stage": "section-staged",
+    "sectionIndex": 3,
+    "trackId": "track-horn",
+    "startBeat": 96,
+    "endBeat": 128,
+    "repairs": 0,
+    "operationCount": 1,
+    "stagedSiblingCount": 12
+  }
+]

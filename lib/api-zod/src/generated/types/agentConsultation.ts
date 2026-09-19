@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AdviserSuggestion } from './adviserSuggestion';
 import type { AgentConsultationGroup } from './agentConsultationGroup';
 
 export interface AgentConsultation {
@@ -12,4 +13,6 @@ export interface AgentConsultation {
   group: AgentConsultationGroup;
   question: string;
   insight: string;
+  /** @maxItems 8 */
+  suggestions?: AdviserSuggestion[];
 }

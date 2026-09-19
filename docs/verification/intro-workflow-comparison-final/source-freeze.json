@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "source": "experiment.ts",
+  "snapshot": "experiment.executed.ts",
+  "sha256": "c8efeb144ac7c93cfbd0c51a64c867aff48063e9ab415c98067742358cd114b9",
+  "bytes": 110250,
+  "frozenAt": "2026-09-15T23:10:00Z",
+  "productionModuleHashes": "production-module-hashes.json",
+  "priorPilotSourceHash": null,
+  "priorPilotSourceHashNote": "The first pilot source was not frozen before launch; its exact bytes cannot be reconstructed.",
+  "priorCorrectedAttempt": "../intro-workflow-comparison-corrected/",
+  "priorCorrectedAttemptNote": "Immutable recorded setup-failure evidence; not architecture evidence and not rerun.",
+  "provenance": "Final adapter source frozen after schema, identity, diagnostics, loader, incremental-context, shared-repair-pool, strict-verifier, and offline-fixture repairs; exactly one explicitly authorized live paired run occurred after the freeze, with no rerun."
+}

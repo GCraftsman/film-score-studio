@@ -1,0 +1,18 @@
+{
+  "harness": "docs/verification/intro-workflow-comparison-final/experiment.ts",
+  "status": "completed-one-shot-pair",
+  "liveProviderCallsMade": true,
+  "offlineFixtureCommand": "node --experimental-strip-types docs/verification/intro-workflow-comparison-final/experiment.ts --offline-fixture",
+  "offlineFixtureResult": "docs/verification/intro-workflow-comparison-final/offline-fixture.json",
+  "sourceSnapshot": "docs/verification/intro-workflow-comparison-final/experiment.executed.ts",
+  "sourceFreeze": "docs/verification/intro-workflow-comparison-final/source-freeze.json",
+  "sourceSha256": "c8efeb144ac7c93cfbd0c51a64c867aff48063e9ab415c98067742358cd114b9",
+  "productionModuleHashes": "docs/verification/intro-workflow-comparison-final/production-module-hashes.json",
+  "report": "docs/verification/intro-workflow-comparison-final/report.md",
+  "launch": "Completed exactly one explicitly authorized final paired run; no provider rerun permitted.",
+  "outcome": "docs/verification/intro-workflow-comparison-final/outcome.json",
+  "runLock": "docs/verification/intro-workflow-comparison-final/run-lock.json",
+  "callMetrics": "docs/verification/intro-workflow-comparison-final/call-metrics.json",
+  "priorCorrectedAttempt": "docs/verification/intro-workflow-comparison-corrected/",
+  "architectureEvidencePolicy": "Earlier comparison failures are harness limitations, not evidence for or against either architecture."
+}

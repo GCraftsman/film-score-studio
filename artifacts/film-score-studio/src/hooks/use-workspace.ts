@@ -29,6 +29,7 @@ import {
   matchesWorkflowAgent,
   setOperationStatus,
   buildApprovedCompositionContinuation,
+  cancelledCompositionRecovery,
   dedupeWorkflowEvents,
    freshPlanRetryFromApprovalContext,
   hideWorkflowRoutingEvents,
@@ -36,6 +37,7 @@ import {
   normalizeTerminalAudits,
   type TerminalAudit,
   type PendingWorkflowProposal,
+  type CompositionCancellationTransition,
   type StoredProject,
   type WorkspaceOnboarding,
   type WorkspaceSnapshot,
@@ -109,6 +111,12 @@ class CompositionTerminalError extends Error {
     this.diagnostics = diagnostics;
   }
 }
+
+type ActiveCompositionCancellation = {
+  requestId: number;
+  transition: CompositionCancellationTransition;
+  proposalId?: string;
+};
 
 const INITIAL_SCORE: Score = {
   tempo: 96,
@@ -220,7 +228,7 @@ function workflowDiagnosticFields(value: Record<string, unknown>): Pick<
     ...(typeof value.observedLength === 'number' && Number.isInteger(value.observedLength) &&
       value.observedLength >= 0 && value.observedLength <= 241
       ? { observedLength: value.observedLength } : {}),
-    ...(value.maxLength === 240 ? { maxLength: 240 } : {}),
+    ...(value.maxLength === 1200 ? { maxLength: 1200 } : {}),
     ...(typeof value.outcome === 'string' ? { outcome: value.outcome } : {}),
   };
 }
@@ -345,9 +353,11 @@ function workflowFailureAudit(
 async function composeWithProgress(
   request: CompositionRequest,
   onEvent: (event: CompositionStreamEvent) => void,
+  signal?: AbortSignal,
 ): Promise<CompositionResponse> {
   const response = await streamCompositionProgress(request, {
     responseType: 'stream',
+    signal,
     headers: {
       Accept: 'application/x-ndjson',
     },
@@ -357,12 +367,20 @@ async function composeWithProgress(
   }
 
   const reader = response.body.getReader();
+  const cancelReader = () => {
+    void reader.cancel().catch(() => {
+      // Aborting fetch already rejects the pending read in compliant
+      // browsers; cancellation is best-effort for older stream readers.
+    });
+  };
+  signal?.addEventListener('abort', cancelReader, { once: true });
+  if (signal?.aborted) cancelReader();
   const decoder = new TextDecoder();
   let buffer = '';
   let result: CompositionResponse | undefined;
 
   const consumeLine = (line: string) => {
-    if (!line.trim()) return;
+    if (signal?.aborted || !line.trim()) return;
     const event = JSON.parse(line) as CompositionStreamEvent | CompositionTerminalErrorPayload;
     onEvent(event);
     if (event.type === 'result') result = event.result;
@@ -374,17 +392,21 @@ async function composeWithProgress(
     }
   };
 
-  while (true) {
-    const { done, value } = await reader.read();
-    buffer += decoder.decode(value, { stream: !done });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
-    lines.forEach(consumeLine);
-    if (done) break;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value, { stream: !done });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      lines.forEach(consumeLine);
+      if (done) break;
+    }
+    consumeLine(buffer);
+    if (!result) throw new Error('Composition stream ended without a result');
+    return result;
+  } finally {
+    signal?.removeEventListener('abort', cancelReader);
   }
-  consumeLine(buffer);
-  if (!result) throw new Error('Composition stream ended without a result');
-  return result;
 }
 
 function loadStoredProject(userId?: string | null): StoredProject {
@@ -459,6 +481,8 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
   const undoStackRef = useRef<Score[]>(initialProject.undoStack);
   const composingRef = useRef(false);
   const requestIdRef = useRef(0);
+  const requestAbortControllerRef = useRef<AbortController | undefined>(undefined);
+  const activeCompositionRef = useRef<ActiveCompositionCancellation | undefined>(undefined);
   const scoreRevisionRef = useRef(initialProject.scoreRevision);
   const scoreRef = useRef(initialProject.score);
   const onboardingRef = useRef(initialProject.onboarding);
@@ -469,6 +493,89 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
   const messagesRef = useRef(initialProject.messages);
   const workflowProgressRef = useRef<EditWorkflowEvent[]>([]);
   const approvedContinuationsRef = useRef<Set<string>>(new Set());
+
+  // Invalidate first, then abort transport. The generation check is the
+  // synchronous guard that keeps a result/error already queued on the
+  // microtask queue from touching score, messages, or approvals.
+  const invalidateComposition = useCallback(() => {
+    requestIdRef.current += 1;
+    composingRef.current = false;
+    activeCompositionRef.current = undefined;
+    const controller = requestAbortControllerRef.current;
+    requestAbortControllerRef.current = undefined;
+    controller?.abort();
+  }, []);
+
+  const stopComposition = useCallback(() => {
+    const active = activeCompositionRef.current;
+    const wasCurrent = Boolean(active && active.requestId === requestIdRef.current);
+    invalidateComposition();
+    workflowProgressRef.current = [];
+    setWorkflowProgress([]);
+    setAgents((current) => current.map((agent) => ({
+      ...agent,
+      status: 'idle',
+      insight: undefined,
+    })));
+    setIsComposing(false);
+    if (!active || !wasCurrent) return;
+
+    const recovery = cancelledCompositionRecovery(active.transition);
+    const transition = active.transition;
+    if (transition.kind === 'style' && active.proposalId) {
+      // Restore the style gate itself so the composer can select the same
+      // style again (or use the retry on the cancellation message) without
+      // losing the original MIDI source.
+      setPendingProposals((current) => {
+        const next = current.map((proposal) => proposal.id === active.proposalId
+          ? {
+            ...proposal,
+            status: 'pending' as const,
+            selectedStyle: transition.selectedStyle,
+          }
+          : proposal);
+        pendingProposalsRef.current = next;
+        return next;
+      });
+      setOnboarding((current) => ({
+        ...current,
+        phase: 'style-review',
+        selectedStyle: transition.selectedStyle,
+        originatingMidi: [...transition.snippets],
+      }));
+    } else if (transition.kind === 'approval' && active.proposalId) {
+      // A server checkpoint is single-use and may have been claimed before
+      // disconnect. Hide/supersede that capability and offer only a fresh
+      // plan; replaying its approval context could otherwise authorize a
+      // second continuation incorrectly.
+      approvedContinuationsRef.current.delete(active.proposalId);
+      setPendingProposals((current) => {
+        const next = current.map((proposal) => proposal.id === active.proposalId
+          ? { ...proposal, status: 'failed' as const }
+          : proposal);
+        pendingProposalsRef.current = next;
+        return next;
+      });
+      setOnboarding((current) => ({
+        ...current,
+        phase: 'ready',
+        selectedStyle: transition.approvalContext.selectedStyle ?? current.selectedStyle,
+      }));
+    }
+    setMessages((current) => [...current, {
+      id: `${Date.now()}-cancelled`,
+      role: 'assistant',
+      content: recovery.content,
+      retry: recovery.retry,
+    }]);
+  }, [invalidateComposition]);
+
+  // A workspace instance can be replaced when the signed-in user or project
+  // changes. Never let the previous project's provider work apply to the new
+  // instance.
+  useEffect(() => () => {
+    invalidateComposition();
+  }, [invalidateComposition, projectId, userId]);
 
   useEffect(() => {
     scoreRef.current = score;
@@ -642,6 +749,8 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
 
     composingRef.current = true;
     const requestId = ++requestIdRef.current;
+    const requestAbortController = new AbortController();
+    requestAbortControllerRef.current = requestAbortController;
     const baseScoreRevision = scoreRevisionRef.current;
     const currentScore = scoreRef.current;
     const userMsg: LocalMessage = {
@@ -684,10 +793,30 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
       history: requestHistory,
       score: currentScore,
     });
+    activeCompositionRef.current = {
+      requestId,
+      proposalId: options.approvalProposalId,
+      transition: options.approvalContext
+        ? {
+          kind: 'approval',
+          approvalContext: options.approvalContext,
+        }
+        : {
+          kind: 'normal',
+          message: sourceText,
+          snippets: combinedSnippets,
+          selectedStyle,
+          phase: requestPhase,
+          suppressUserMessage: options.suppressUserMessage,
+          history: requestHistory,
+        },
+    };
 
     try {
+        const isCurrentRequest = () =>
+          requestIdRef.current === requestId && !requestAbortController.signal.aborted;
         const res = await composeWithProgress(request, (event) => {
-          if (requestIdRef.current !== requestId) return;
+          if (!isCurrentRequest()) return;
           if (event.type === 'specialists-selected') {
             setAgents(prev => prev.map(agent => ({
               ...agent,
@@ -720,7 +849,10 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
               })));
             }
           }
-        });
+        }, requestAbortController.signal);
+        // Stop can invalidate the generation while the stream's final chunk
+        // is already queued. Never evaluate or apply that late result.
+        if (!isCurrentRequest()) return;
              const editWorkflow = withWorkflowAudit(res.editWorkflow, workflowProgressRef.current);
              let operationStatus: LocalMessage['operationStatus'];
               const verifiedTrackMembership = isVerifiedEditWorkflow(editWorkflow)
@@ -824,6 +956,10 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
             ]);
               if (options.approvalProposalId) setPendingProposalStatus(options.approvalProposalId, 'approved');
     } catch (error) {
+               if (
+                 requestIdRef.current !== requestId ||
+                 requestAbortController.signal.aborted
+               ) return;
                const terminalAudit = error instanceof CompositionTerminalError
                  ? terminalAuditFromDiagnostics(error.diagnostics)
                  : undefined;
@@ -861,6 +997,12 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
               if (options.approvalProposalId) setPendingProposalStatus(options.approvalProposalId, 'failed');
     } finally {
       if (requestIdRef.current === requestId) {
+        if (activeCompositionRef.current?.requestId === requestId) {
+          activeCompositionRef.current = undefined;
+        }
+        if (requestAbortControllerRef.current === requestAbortController) {
+          requestAbortControllerRef.current = undefined;
+        }
         setAgents(prev => prev.map(a => ({ ...a, status: 'idle', insight: undefined })));
         setIsComposing(false);
         composingRef.current = false;
@@ -895,6 +1037,8 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
     if (!proposal || !style.trim() || composingRef.current) return;
     composingRef.current = true;
     const requestId = ++requestIdRef.current;
+    const requestAbortController = new AbortController();
+    requestAbortControllerRef.current = requestAbortController;
     const baseScoreRevision = scoreRevisionRef.current;
     const selectionMessage: LocalMessage = {
       id: Date.now().toString(),
@@ -913,6 +1057,8 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
       .map((message) => ({ role: message.role, content: message.content }))
       .slice(-12);
     try {
+      const isCurrentRequest = () =>
+        requestIdRef.current === requestId && !requestAbortController.signal.aborted;
       const request = buildCompositionRequest({
         message: proposal.sourceText,
         phase: 'instrument-approval',
@@ -922,8 +1068,19 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
          history: requestHistory,
         score: scoreRef.current,
       });
+      activeCompositionRef.current = {
+        requestId,
+        proposalId,
+        transition: {
+          kind: 'style',
+          sourceText: proposal.sourceText,
+          snippets: proposal.originatingMidi,
+          selectedStyle: style,
+          history: requestHistory,
+        },
+      };
       const result = await composeWithProgress(request, (event) => {
-        if (requestIdRef.current !== requestId) return;
+        if (!isCurrentRequest()) return;
         if (event.type === 'specialists-selected') {
           setAgents((current) => current.map((agent) => ({ ...agent, status: 'idle', insight: undefined })));
         } else if (event.type === 'specialist-started') {
@@ -943,7 +1100,8 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
               : agent));
           }
         }
-      });
+      }, requestAbortController.signal);
+      if (!isCurrentRequest()) return;
       const editWorkflow = withWorkflowAudit(result.editWorkflow, workflowProgressRef.current);
       let operationStatus: LocalMessage['operationStatus'];
         const verifiedTrackMembership = isVerifiedEditWorkflow(editWorkflow)
@@ -1007,6 +1165,10 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
       };
       setPendingProposals((current) => [...current, workflowProposal]);
     } catch (error) {
+       if (
+         requestIdRef.current !== requestId ||
+         requestAbortController.signal.aborted
+       ) return;
        const terminalAudit = error instanceof CompositionTerminalError
          ? terminalAuditFromDiagnostics(error.diagnostics)
          : undefined;
@@ -1029,6 +1191,12 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
       }]);
     } finally {
       if (requestIdRef.current === requestId) {
+        if (activeCompositionRef.current?.requestId === requestId) {
+          activeCompositionRef.current = undefined;
+        }
+        if (requestAbortControllerRef.current === requestAbortController) {
+          requestAbortControllerRef.current = undefined;
+        }
         setAgents((current) => current.map((agent) => ({ ...agent, status: 'idle', insight: undefined })));
         setIsComposing(false);
         composingRef.current = false;
@@ -1166,6 +1334,7 @@ export function useWorkspace(userId?: string | null, projectId?: string | null) 
     pendingProposals,
     terminalAudits,
     sendMessage,
+    stopComposition,
     retryMessage,
     selectStyle,
     approveTrackProposals,

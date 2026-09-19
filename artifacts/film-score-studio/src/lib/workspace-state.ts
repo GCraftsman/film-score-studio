@@ -21,11 +21,15 @@ export type WorkspaceOnboardingPhase =
 
 export type PendingProposalStatus = 'pending' | 'approved' | 'rejected' | 'failed';
 
-export const SELECTED_STYLE_MAX_LENGTH = 1000;
-const STYLE_SUGGESTION_ID_MAX_LENGTH = 80;
-const STYLE_SUGGESTION_NAME_MAX_LENGTH = 120;
-const STYLE_SUGGESTION_DESCRIPTION_MAX_LENGTH = 500;
-const STYLE_SUGGESTION_AGENT_MAX_LENGTH = 120;
+export const SELECTED_STYLE_MAX_LENGTH = 5000;
+const STYLE_SUGGESTION_ID_MAX_LENGTH = 400;
+const STYLE_SUGGESTION_NAME_MAX_LENGTH = 600;
+const STYLE_SUGGESTION_DESCRIPTION_MAX_LENGTH = 2500;
+const STYLE_SUGGESTION_AGENT_MAX_LENGTH = 600;
+const ADVISER_SUGGESTION_ID_MAX_LENGTH = 400;
+const ADVISER_SUGGESTION_LABEL_MAX_LENGTH = 600;
+const ADVISER_SUGGESTION_INSTRUCTION_MAX_LENGTH = 2000;
+const ADVISER_SUGGESTION_MAX_INSTRUCTIONS = 4;
 
 export type PendingWorkflowProposal = {
   id: string;
@@ -85,14 +89,14 @@ export type TerminalAudit = {
 };
 
 const MAX_TERMINAL_AUDITS = 20;
-const TERMINAL_AUDIT_ID_MAX_LENGTH = 160;
-const TERMINAL_AUDIT_REASON_MAX_LENGTH = 2000;
+const TERMINAL_AUDIT_ID_MAX_LENGTH = 800;
+const TERMINAL_AUDIT_REASON_MAX_LENGTH = 10000;
 const TERMINAL_AUDIT_EVIDENCE_MAX_ITEMS = 8;
-const TERMINAL_AUDIT_EVIDENCE_MAX_LENGTH = 1000;
+const TERMINAL_AUDIT_EVIDENCE_MAX_LENGTH = 5000;
 const TERMINAL_AUDIT_SCOPE_MAX_ITEMS = 16;
-const TERMINAL_AUDIT_SCOPE_MAX_LENGTH = 160;
-const TERMINAL_AUDIT_CONSTRAINT_MAX_LENGTH = 2000;
-const TERMINAL_AUDIT_CORRECTION_MAX_LENGTH = 160;
+const TERMINAL_AUDIT_SCOPE_MAX_LENGTH = 800;
+const TERMINAL_AUDIT_CONSTRAINT_MAX_LENGTH = 10000;
+const TERMINAL_AUDIT_CORRECTION_MAX_LENGTH = 800;
 
 export type StoredProject = {
   score: Score;
@@ -117,7 +121,7 @@ export function buildApprovedCompositionContinuation(sourceText: string): string
   const original = sourceText.trim() || '(MIDI-only composer request)';
   return [
     'Continue the original composer request after approved instrument membership.',
-    'Treat the approval itself as complete membership bookkeeping, not as a request to alter notes or regions. Re-evaluate the original direction semantically: if it requested playable score material, continue to specialist generation; if it requested membership only, record the approved membership without inventing notes.',
+    'Treat the approval itself as complete membership bookkeeping, not as a request to alter notes or regions. The signed initial plan is authoritative: continue to specialist generation only when it bound the original request to playable score material; otherwise record the approved membership without inventing notes.',
     'Original composer direction:',
     original,
   ].join('\n\n');
@@ -136,6 +140,72 @@ export function freshPlanRetryFromApprovalContext(
     history: approvalContext.originalHistory,
     // Deliberately omit all approval IDs and the approval context itself.
     freshPlan: true,
+  };
+}
+
+export type CompositionCancellationTransition =
+  | {
+    kind: 'normal';
+    message: string;
+    snippets: MidiSnippet[];
+    selectedStyle?: string;
+    phase: CompositionRequest['phase'];
+    suppressUserMessage?: boolean;
+    history?: ConversationMessage[];
+  }
+  | {
+    kind: 'style';
+    sourceText: string;
+    snippets: MidiSnippet[];
+    selectedStyle: string;
+    history: ConversationMessage[];
+  }
+  | {
+    kind: 'approval';
+    approvalContext: CompositionApprovalContext;
+  };
+
+/**
+ * Cancellation is a local terminal state, not a provider failure. Keep the
+ * score untouched while making every interrupted consultation recoverable.
+ * Approval continuations deliberately become fresh-plan retries because the
+ * server may have atomically consumed their one-time checkpoint.
+ */
+export function cancelledCompositionRecovery(
+  transition: CompositionCancellationTransition,
+): {
+  content: string;
+  retry: NonNullable<LocalMessage['retry']>;
+} {
+  if (transition.kind === 'approval') {
+    return {
+      content: 'Instrument approval consultation stopped. No score material was changed. The approval checkpoint may already be consumed; create a fresh plan to continue safely.',
+      retry: freshPlanRetryFromApprovalContext(transition.approvalContext),
+    };
+  }
+  if (transition.kind === 'style') {
+    return {
+      content: 'Style consultation stopped. No score material was changed. The selected style is still available to retry.',
+      retry: {
+        message: transition.sourceText,
+        snippets: transition.snippets,
+        selectedStyle: transition.selectedStyle,
+        phase: 'instrument-approval',
+        suppressUserMessage: true,
+        history: transition.history,
+      },
+    };
+  }
+  return {
+    content: 'Consultation stopped. No score material was changed. You can retry the original request.',
+    retry: {
+      message: transition.message,
+      snippets: transition.snippets,
+      selectedStyle: transition.selectedStyle,
+      phase: transition.phase,
+      suppressUserMessage: transition.suppressUserMessage,
+      history: transition.history,
+    },
   };
 }
 
@@ -607,7 +677,7 @@ function isConversationMessage(value: unknown): value is ConversationMessage {
   if (typeof value !== 'object' || value === null) return false;
   const message = value as ConversationMessage;
   return (message.role === 'user' || message.role === 'assistant') &&
-    typeof message.content === 'string' && message.content.length <= 4000;
+    typeof message.content === 'string' && message.content.length <= 20000;
 }
 
 function isApprovalContext(value: unknown): value is CompositionApprovalContext {
@@ -615,13 +685,15 @@ function isApprovalContext(value: unknown): value is CompositionApprovalContext 
   const context = value as CompositionApprovalContext;
   return typeof context.originalMessage === 'string' &&
     context.originalMessage.length > 0 &&
-    context.originalMessage.length <= 4000 &&
+    context.originalMessage.length <= 20000 &&
     Array.isArray(context.originalHistory) &&
     context.originalHistory.length <= 12 &&
     context.originalHistory.every(isConversationMessage) &&
     Array.isArray(context.originalMidi) &&
     context.originalMidi.every(isMidiSnippet) &&
     (context.selectedStyle === undefined || isSelectedStyle(context.selectedStyle)) &&
+    (context.projectId === undefined || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(context.projectId)) &&
+    (context.requiresPlayableMaterial === undefined || typeof context.requiresPlayableMaterial === 'boolean') &&
     Array.isArray(context.adviserRoster) &&
     context.adviserRoster.length <= 16 &&
      context.adviserRoster.every((item: unknown) => {
@@ -633,7 +705,9 @@ function isApprovalContext(value: unknown): value is CompositionApprovalContext 
      context.adviserConsultations.every((item: unknown) => {
        const candidate = item as Record<string, unknown>;
        return typeof candidate?.agent === 'string' && typeof candidate?.group === 'string' &&
-         typeof candidate?.question === 'string' && typeof candidate?.insight === 'string';
+         typeof candidate?.question === 'string' && typeof candidate?.insight === 'string' &&
+         (!candidate.suggestions || (Array.isArray(candidate.suggestions) &&
+           candidate.suggestions.length <= 8 && candidate.suggestions.every(isAdviserSuggestion)));
      }) &&
     typeof context.consumedBudget === 'object' && context.consumedBudget !== null &&
     Number.isInteger(context.consumedBudget.adviserConsultationsUsed) &&
@@ -653,6 +727,50 @@ function isApprovalContext(value: unknown): value is CompositionApprovalContext 
     context.accumulatedApprovedTrackProposals.every(isTrackProposal) &&
     typeof context.signature === 'string' &&
     /^[a-f0-9]{64}$/.test(context.signature);
+}
+
+function isAdviserSuggestion(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const suggestion = value as Record<string, unknown>;
+  const instrumentId = typeof suggestion.instrumentId === 'string' ? findInstrument(suggestion.instrumentId) : undefined;
+  const instrumentName = typeof suggestion.instrumentName === 'string' ? findInstrument(suggestion.instrumentName) : undefined;
+  return typeof suggestion.id === 'string' && suggestion.id.length > 0 && suggestion.id.length <= ADVISER_SUGGESTION_ID_MAX_LENGTH &&
+    typeof suggestion.label === 'string' && suggestion.label.length > 0 && suggestion.label.length <= ADVISER_SUGGESTION_LABEL_MAX_LENGTH &&
+    Array.isArray(suggestion.instructions) && suggestion.instructions.length > 0 &&
+    suggestion.instructions.length <= ADVISER_SUGGESTION_MAX_INSTRUCTIONS &&
+    suggestion.instructions.every((item) => typeof item === 'string' && item.length > 0 && item.length <= ADVISER_SUGGESTION_INSTRUCTION_MAX_LENGTH) &&
+    Array.isArray(suggestion.targetTrackIds) && suggestion.targetTrackIds.length <= 8 &&
+    suggestion.targetTrackIds.every((item) => typeof item === 'string' && item.length > 0 && item.length <= 400) &&
+    (suggestion.instrumentId === undefined || Boolean(instrumentId)) &&
+    (suggestion.instrumentName === undefined || Boolean(instrumentName)) &&
+    (!(suggestion.instrumentId && suggestion.instrumentName) || instrumentId?.id === instrumentName?.id) &&
+    (suggestion.advisoryMidiRef === undefined || isAdvisoryMidiRef(suggestion.advisoryMidiRef));
+}
+
+function isAdvisoryMidiRef(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const ref = value as Record<string, unknown>;
+  const alignment = ref.alignment as Record<string, unknown> | undefined;
+  const targets = ref.targets as Record<string, unknown> | undefined;
+  const instrumentIds = Array.isArray(targets?.instrumentIds) ? targets.instrumentIds.map((id) => findInstrument(typeof id === 'string' ? id : '')) : [];
+  const instruments = Array.isArray(targets?.instruments) ? targets.instruments.map((name) => findInstrument(typeof name === 'string' ? name : '')) : [];
+  return typeof ref.id === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(ref.id) &&
+    typeof ref.objectPath === 'string' && ref.objectPath.length > 0 && ref.objectPath.length <= 1500 &&
+    /^\/objects\/projects\/[A-Za-z0-9_-]+\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(ref.objectPath) &&
+    typeof ref.sha256 === 'string' && /^[a-f0-9]{64}$/.test(ref.sha256) &&
+    typeof ref.label === 'string' && ref.label.length > 0 && ref.label.length <= 600 &&
+    Boolean(alignment) && typeof alignment?.startBeat === 'number' && typeof alignment?.durationBeats === 'number' &&
+    alignment.startBeat >= 0 && alignment.startBeat <= 512 && alignment.durationBeats > 0 && alignment.durationBeats <= 512 &&
+    Boolean(targets) && Array.isArray(targets?.trackIds) && targets.trackIds.length <= 8 &&
+    Array.isArray(targets?.instrumentIds) && targets.instrumentIds.length <= 2 &&
+    Array.isArray(targets?.instruments) && targets.instruments.length <= 2 &&
+    targets.trackIds.every((id) => typeof id === 'string' && id.length > 0 && id.length <= 400) &&
+    targets.instrumentIds.every((id) => typeof id === 'string' && Boolean(findInstrument(id))) &&
+    targets.instruments.every((name) => typeof name === 'string' && Boolean(findInstrument(name))) &&
+    (instrumentIds.length === 0 || instruments.length === 0 ||
+      (instrumentIds.length === instruments.length &&
+        instrumentIds.every((instrument, index) => instrument?.id === instruments[index]?.id)));
 }
 
 function isTrackProposal(value: unknown): value is TrackProposal {

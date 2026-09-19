@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "runId": "0e23673b-946d-4568-8f54-75c982f09cf4",
+  "pid": 617,
+  "startedAt": "2026-09-16T02:54:00.749Z",
+  "provider": "xai",
+  "modelPreference": "grok-4.20-0309-non-reasoning",
+  "experiment": "isolated-32-bar-section-intro",
+  "sections": [
+    {
+      "index": 0,
+      "startBeat": 0,
+      "endBeat": 32,
+      "bars": 8
+    },
+    {
+      "index": 1,
+      "startBeat": 32,
+      "endBeat": 64,
+      "bars": 8
+    },
+    {
+      "index": 2,
+      "startBeat": 64,
+      "endBeat": 96,
+      "bars": 8
+    },
+    {
+      "index": 3,
+      "startBeat": 96,
+      "endBeat": 128,
+      "bars": 8
+    }
+  ],
+  "repairCyclesAfterInitialPerFailedSection": 4,
+  "finiteGuards": {
+    "maxProviderCalls": 96,
+    "maxWallMs": 1500000
+  },
+  "note": "Exactly one bounded live run after passing offline full-flow gate; no rerun without explicit approval."
+}

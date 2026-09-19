@@ -10,18 +10,18 @@ import type { ScoreRegion } from './scoreRegion';
 export interface AddRegionOperation {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   type: 'add-region';
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   trackId: string;
   /**
      * @minLength 1
-     * @maxLength 240
+     * @maxLength 1200
      */
   summary: string;
   region: ScoreRegion;

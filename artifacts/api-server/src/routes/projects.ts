@@ -30,7 +30,7 @@ const documentSchema = z.object({
   onboarding: z.unknown().optional(),
   pendingProposals: z.array(z.unknown()).optional(),
 }).passthrough();
-const nameSchema = z.string().trim().min(1).max(160);
+const nameSchema = z.string().trim().min(1).max(800);
 
 function authUser(req: Request): string {
   return (req as AuthenticatedRequest).userId;
@@ -248,7 +248,7 @@ router.delete("/projects/:projectId", async (req, res) => {
 
 router.post("/projects/:projectId/audio/upload-url", async (req, res) => {
   const id = projectIdSchema.safeParse(req.params.projectId);
-  const contentType = z.string().regex(/^audio\//).max(120).safeParse(req.body?.contentType);
+  const contentType = z.string().regex(/^audio\//).max(600).safeParse(req.body?.contentType);
   const byteSize = z.number().int().positive().max(25 * 1024 * 1024).safeParse(req.body?.byteSize);
   const durationMs = z.number().int().positive().max(10 * 60 * 1000).optional().safeParse(req.body?.durationMs);
   const requestedAudioId = req.body?.audioId === undefined ? randomUUID() : z.string().uuid().safeParse(req.body.audioId);
@@ -349,7 +349,7 @@ router.get("/projects/:projectId/audio/:audioId", async (req, res) => {
 
 router.get("/projects/:projectId/midi/:trackId", async (req, res) => {
   const projectId = projectIdSchema.safeParse(req.params.projectId);
-  const trackId = z.string().min(1).max(80).safeParse(req.params.trackId);
+  const trackId = z.string().min(1).max(400).safeParse(req.params.trackId);
   if (!projectId.success || !trackId.success) {
     res.status(400).json({ error: "Invalid MIDI path" });
     return;

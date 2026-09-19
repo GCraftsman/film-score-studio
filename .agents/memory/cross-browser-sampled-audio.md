@@ -15,6 +15,12 @@ An exposed AudioWorklet API does not prove that processor registration works in 
 
 **How to apply:** Bound worklet startup and provide an explicit compatibility path using the same MIDI/SoundFont synthesis, not a return to single-sample playback. Test output signal, not just API presence or a Ready label.
 
+Start directly with the real ScriptProcessor-based SpessaSynth compatibility renderer on localhost and `.replit.dev`; reserve AudioWorklet registration for published or other compatible hosts.
+
+**Why:** Even a bounded `Promise.race` could leave Replit preview Chromium visibly stuck while its underlying `audioWorklet.addModule()` never settled. Immediate compatibility startup reached ready audio in about one second.
+
+**How to apply:** Keep synchronous gesture unlock before all awaits. Treat the ScriptProcessor deprecation warning as expected in development preview, but continue testing published hosts with AudioWorklet and preserve the same SF2 banks and MIDI behavior in both modes.
+
 For microphone features that need both playback and signal analysis, retain the MediaRecorder blob for playback/storage but analyze PCM captured directly from the live stream rather than decoding the compressed blob afterward.
 
 **Why:** Opus-in-OGG decoded in desktop Chromium but can fail on iPad Safari. AAC-in-M4A targets Safari but failed to decode in the Replit Chromium runtime. PCM WAV passed browser decoding and playback-source checks in the same implementation. Chromium also accepted a native MediaRecorder WebM for playback while rejecting the same blob through `decodeAudioData`; live PCM avoided that inconsistent codec path.

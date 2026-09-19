@@ -6,6 +6,9 @@ export type ApprovalContextValue = {
   originalHistory: unknown[];
   originalMidi: MidiSnippet[];
   selectedStyle?: string;
+  projectId?: string;
+  /** Bound at the initial membership plan; omitted only by legacy checkpoints. */
+  requiresPlayableMaterial?: boolean;
   adviserRoster: unknown[];
   adviserConsultations: unknown[];
   consumedBudget: {

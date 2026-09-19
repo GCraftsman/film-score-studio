@@ -74,12 +74,12 @@ export interface ScoreNote {
 export interface ScoreRegion {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   name: string;
   /**
@@ -104,22 +104,22 @@ export interface ScoreRegion {
 export interface ScoreTrack {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   name: string;
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   role: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   instrument: string;
   /**
@@ -179,7 +179,7 @@ export type Project = ProjectSummary & {
 export interface CreateProjectRequest {
   /**
      * @minLength 1
-     * @maxLength 160
+     * @maxLength 800
      */
   name: string;
   document: WorkspaceDocument;
@@ -190,7 +190,7 @@ export interface UpdateProjectRequest {
   expectedVersion: number;
   /**
      * @minLength 1
-     * @maxLength 160
+     * @maxLength 800
      */
   name?: string;
   document?: WorkspaceDocument;
@@ -199,7 +199,7 @@ export interface UpdateProjectRequest {
 export interface AudioUploadRequest {
   audioId?: string;
   /**
-     * @maxLength 120
+     * @maxLength 600
      * @pattern ^audio/
      */
   contentType: string;
@@ -239,7 +239,7 @@ export interface MidiNote {
 }
 
 export interface MidiSnippet {
-  /** @maxLength 80 */
+  /** @maxLength 400 */
   id: string;
   /**
      * @minimum 30
@@ -264,7 +264,7 @@ export const ConversationMessageRole = {
 
 export interface ConversationMessage {
   role: ConversationMessageRole;
-  /** @maxLength 4000 */
+  /** @maxLength 20000 */
   content: string;
 }
 
@@ -291,20 +291,20 @@ export const TrackProposalAction = {
 export interface TrackProposal {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   action: TrackProposalAction;
-  /** @maxLength 80 */
+  /** @maxLength 400 */
   trackId?: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   instrument: string;
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   role: string;
   /**
@@ -314,12 +314,12 @@ export interface TrackProposal {
   midiProgram: number;
   /**
      * @minLength 1
-     * @maxLength 240
+     * @maxLength 1200
      */
   summary: string;
   /**
      * @minLength 1
-     * @maxLength 500
+     * @maxLength 2500
      */
   reason: string;
 }
@@ -348,11 +348,100 @@ export const AgentConsultationGroup = {
   concept: 'concept',
 } as const;
 
+export type AdvisoryMidiRefAlignment = {
+  /**
+     * @minimum 0
+     * @maximum 512
+     */
+  startBeat: number;
+  /**
+     * @maximum 512
+     * @exclusiveMinimum 0
+     */
+  durationBeats: number;
+};
+
+export type AdvisoryMidiRefTargets = {
+  /**
+     * @maxItems 8
+     * @items.minLength 1
+     * @items.maxLength 400
+     */
+  trackIds: string[];
+  /**
+     * @maxItems 2
+     * @items.minLength 1
+     * @items.maxLength 400
+     */
+  instrumentIds: string[];
+  /**
+     * @maxItems 2
+     * @items.minLength 1
+     * @items.maxLength 600
+     */
+  instruments: string[];
+};
+
+/**
+ * Immutable server-owned reference to advisory MIDI; opaque and never auto-applied.
+ */
+export interface AdvisoryMidiRef {
+  id: string;
+  /**
+     * @minLength 1
+     * @maxLength 1500
+     * @pattern ^/objects/projects/[A-Za-z0-9_-]+/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+     */
+  objectPath: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  sha256: string;
+  /**
+     * @minLength 1
+     * @maxLength 600
+     */
+  label: string;
+  alignment: AdvisoryMidiRefAlignment;
+  targets: AdvisoryMidiRefTargets;
+}
+
+export interface AdviserSuggestion {
+  /**
+     * @minLength 1
+     * @maxLength 400
+     */
+  id: string;
+  /**
+     * @minLength 1
+     * @maxLength 600
+     */
+  label: string;
+  /**
+     * @minItems 1
+     * @maxItems 4
+     * @items.minLength 1
+     * @items.maxLength 2000
+     */
+  instructions: string[];
+  /**
+     * @maxItems 8
+     * @items.minLength 1
+     * @items.maxLength 400
+     */
+  targetTrackIds: string[];
+  /** @maxLength 400 */
+  instrumentId?: string;
+  /** @maxLength 600 */
+  instrumentName?: string;
+  advisoryMidiRef?: AdvisoryMidiRef;
+}
+
 export interface AgentConsultation {
   agent: string;
   group: AgentConsultationGroup;
   question: string;
   insight: string;
+  /** @maxItems 8 */
+  suggestions?: AdviserSuggestion[];
 }
 
 /**
@@ -387,14 +476,18 @@ export interface CompositionApprovalBudget {
 export interface CompositionApprovalContext {
   /**
      * @minLength 1
-     * @maxLength 4000
+     * @maxLength 20000
      */
   originalMessage: string;
   /** @maxItems 12 */
   originalHistory: ConversationMessage[];
   originalMidi: MidiSnippet[];
-  /** @maxLength 1000 */
+  /** @maxLength 5000 */
   selectedStyle?: string;
+  /** Authenticated owner/project scope bound into the approval signature. */
+  projectId?: string;
+  /** Server-signed initial Orchestrator decision that the original request requires playable notes or regions after membership approval. Omitted only for legacy checkpoints. */
+  requiresPlayableMaterial?: boolean;
   /** @maxItems 16 */
   adviserRoster: SpecialistSelection[];
   /** @maxItems 16 */
@@ -425,15 +518,17 @@ export interface CompositionApprovalContext {
 }
 
 export interface CompositionRequest {
-  /** @maxLength 4000 */
+  /** @maxLength 20000 */
   message: string;
+  /** Optional authenticated project owner scope for temporary advisory MIDI objects. */
+  projectId?: string;
   /** For a score with no tracks, omission is inferred as style-intake (or instrument-approval when selectedStyle is supplied). */
   phase?: CompositionRequestPhase;
-  /** @maxLength 1000 */
+  /** @maxLength 5000 */
   selectedStyle?: string;
   /**
      * @maxItems 32
-     * @items.maxLength 80
+     * @items.maxLength 400
      */
   approvedTrackProposalIds?: string[];
   /**
@@ -451,41 +546,85 @@ export interface CompositionRequest {
 export interface StyleSuggestion {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   name: string;
   /**
      * @minLength 1
-     * @maxLength 500
+     * @maxLength 2500
      */
   description: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   agent: string;
+}
+
+export interface AdvisoryMidiNote {
+  /**
+     * @minimum 0
+     * @maximum 127
+     */
+  pitch: number;
+  /**
+     * @minimum 1
+     * @maximum 127
+     */
+  velocity: number;
+  /**
+     * @minimum 0
+     * @maximum 512
+     */
+  startBeat: number;
+  /**
+     * @maximum 512
+     * @exclusiveMinimum 0
+     */
+  durationBeats: number;
+}
+
+/**
+ * Bounded MIDI-like adviser material. It is validated and persisted as an opaque temporary object and is never a score track.
+ */
+export interface AdvisoryMidiClip {
+  /**
+     * @minimum 30
+     * @maximum 300
+     */
+  tempo: number;
+  /**
+     * @maximum 512
+     * @exclusiveMinimum 0
+     */
+  durationBeats: number;
+  /**
+     * @minItems 1
+     * @maxItems 512
+     */
+  notes: AdvisoryMidiNote[];
 }
 
 export interface AddRegionOperation {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   type: 'add-region';
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   trackId: string;
   /**
      * @minLength 1
-     * @maxLength 240
+     * @maxLength 1200
      */
   summary: string;
   region: ScoreRegion;
@@ -494,23 +633,23 @@ export interface AddRegionOperation {
 export interface RemoveRegionOperation {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   type: 'remove-region';
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   trackId: string;
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   regionId: string;
   /**
      * @minLength 1
-     * @maxLength 240
+     * @maxLength 1200
      */
   summary: string;
 }
@@ -580,10 +719,10 @@ export interface EditWorkflowEvent {
   observedType?: EditWorkflowEventObservedType;
   /**
      * @minimum 0
-     * @maximum 241
+     * @maximum 1201
      */
   observedLength?: number;
-  maxLength?: 240;
+  maxLength?: 1200;
   outcome?: string;
 }
 
@@ -600,7 +739,7 @@ export interface EditWorkflow {
 export interface CompositionResponse {
   response: string;
   workflow: CompositionResponseWorkflow;
-  /** @maxLength 1000 */
+  /** @maxLength 5000 */
   selectedStyle?: string;
   /** @maxItems 6 */
   styleSuggestions: StyleSuggestion[];
@@ -632,10 +771,10 @@ export type CompositionStreamEvent = {
   observedType?: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null' | 'unknown';
   /**
      * @minimum 0
-     * @maximum 241
+     * @maximum 1201
      */
   observedLength?: number;
-  maxLength?: 240;
+  maxLength?: 1200;
   outcome?: string;
 } | {
   type: 'specialists-selected';

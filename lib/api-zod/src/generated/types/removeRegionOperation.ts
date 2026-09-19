@@ -9,23 +9,23 @@
 export interface RemoveRegionOperation {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   type: 'remove-region';
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   trackId: string;
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   regionId: string;
   /**
      * @minLength 1
-     * @maxLength 240
+     * @maxLength 1200
      */
   summary: string;
 }

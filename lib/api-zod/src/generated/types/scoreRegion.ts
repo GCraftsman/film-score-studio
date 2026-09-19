@@ -12,12 +12,12 @@ import type { ScoreRegionDynamics } from './scoreRegionDynamics';
 export interface ScoreRegion {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   name: string;
   /**

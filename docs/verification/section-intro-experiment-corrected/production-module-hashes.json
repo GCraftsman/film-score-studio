@@ -1,0 +1,40 @@
+{
+  "modules": [
+    {
+      "path": "artifacts/api-server/src/lib/ai-music-safety.ts",
+      "sha256": "eb79d73ee5a20c0db127d08cd36bd4837dae867e94b334b3aab47566a8c61d8c"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/chat-limiter.ts",
+      "sha256": "4cdb6f392e2bb42714e3d758c6f74b33de5a0a2be812a4bdd1f983c5be7a227f"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/model-diagnostics.ts",
+      "sha256": "cfc0f7f198f60aaebdb35a544bc858700535d89182fd4738699f285868e5d407"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/scoring-agents.ts",
+      "sha256": "a228f648df75581624337bf923b3b68a53e37236347691e3fb224cc9cd64d9f0"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/composition-workflow.ts",
+      "sha256": "806d53b61610db11ba6f287dd55994b84f250abaebb6189b1b09bf9a2976970b"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/adviser-suggestions.ts",
+      "sha256": "322d0b90327dd95b963c96068cee3907dead55802ed7ca6f0d3672a0b3afb74b"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/track-midi.ts",
+      "sha256": "4d4f6b3b33ee79bff9776b335b371d47bfeac49fe17aa1bfd338d2e02d249ed9"
+    },
+    {
+      "path": "artifacts/api-server/src/lib/score-operations.ts",
+      "sha256": "06339819ffad2abc8e0d972f625f508fbc20c3a12014a59357136a096d0c2b59"
+    },
+    {
+      "path": "package.json",
+      "sha256": "77e477005072c25a989437c19fd62223ad36a1037cbc6b84189607e2341f7f57"
+    }
+  ]
+}

@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 1,
+  "status": "paired-run-failed-or-unapproved",
+  "startedAt": "2026-09-15T22:31:55.336Z",
+  "completedAt": "2026-09-15T22:33:05.815Z",
+  "provider": "xai",
+  "model": "grok-4.20-0309-non-reasoning",
+  "modelLimits": {
+    "selectedModel": "grok-4.20-0309-non-reasoning",
+    "selectedMetadata": {
+      "id": "grok-4.20-0309-non-reasoning"
+    },
+    "observedMaxInputChars": 34337,
+    "observedMaxInputBytes": 34359,
+    "observedMaxMessageChars": 32083,
+    "observedMaxMessageBytes": 32105
+  },
+  "sourceFreeze": {
+    "schemaVersion": 1,
+    "source": "experiment.ts",
+    "snapshot": "experiment.executed.ts",
+    "sha256": "bf0976c834a958e6f9365dc3b53347a996b7239108d89a68d4bab0b6b53423cc",
+    "bytes": 81292,
+    "frozenAt": "2026-09-15T22:40:00Z",
+    "priorPilotSourceHash": null,
+    "priorPilotSourceHashNote": "The first pilot source was not frozen before launch; its exact bytes cannot be reconstructed.",
+    "provenance": "Corrected experiment-only source copied from the prior adapter, then modified only in this separate evidence directory.",
+    "currentSourceSha256": "bf0976c834a958e6f9365dc3b53347a996b7239108d89a68d4bab0b6b53423cc"
+  },
+  "fixtureResult": {
+    "checks": {
+      "sparseRestsDoNotFailSectionSpan": true,
+      "everyRetainedTrackNeedsNewMaterial": true,
+      "refusalFailsClosed": true,
+      "nonStopFailsClosed": true
+    },
+    "sparseRubric": {
+      "pass": true,
+      "failures": [],
+      "baselineUnchangedBeforeApply": true,
+      "retainedMembership": true,
+      "playableCatalogMembership": true,
+      "retainedRegionsPreserved": true,
+      "operationOwnership": true,
+      "allOperationsValidated": true,
+      "segmentBounds": true,
+      "durationBeats": 256,
+      "sectionStartBeat": 0,
+      "sectionEndBeat": 256,
+      "sectionSpanBeats": 256,
+      "actualMaxNoteEndBeat": 256,
+      "coverageBeats": 14,
+      "coverageFraction": 0.0546875,
+      "coverageDensityBeats": 14,
+      "coverageDensityFraction": 0.0546875,
+      "barsWithAnyNote": 7,
+      "noteCount": 30,
+      "tracksWithNotes": [
+        "track-piano",
+        "track-strings",
+        "track-horn"
+      ],
+      "tracksWithNewMaterial": [
+        "track-horn",
+        "track-piano",
+        "track-strings"
+      ],
+      "allRetainedTracksHaveNewMaterial": true,
+      "semanticChanged": true,
+      "fullSectionSpan": true
+    },
+    "missingTrackRubric": {
+      "pass": false,
+      "failures": [
+        "New material is missing from retained tracks: track-horn."
+      ],
+      "baselineUnchangedBeforeApply": true,
+      "retainedMembership": true,
+      "playableCatalogMembership": true,
+      "retainedRegionsPreserved": true,
+      "operationOwnership": true,
+      "allOperationsValidated": true,
+      "segmentBounds": true,
+      "durationBeats": 256,
+      "sectionStartBeat": 0,
+      "sectionEndBeat": 256,
+      "sectionSpanBeats": 256,
+      "actualMaxNoteEndBeat": 256,
+      "coverageBeats": 14,
+      "coverageFraction": 0.0546875,
+      "coverageDensityBeats": 14,
+      "coverageDensityFraction": 0.0546875,
+      "barsWithAnyNote": 7,
+      "noteCount": 28,
+      "tracksWithNotes": [
+        "track-piano",
+        "track-strings",
+        "track-horn"
+      ],
+      "tracksWithNewMaterial": [
+        "track-piano",
+        "track-strings"
+      ],
+      "allRetainedTracksHaveNewMaterial": false,
+      "semanticChanged": true,
+      "fullSectionSpan": true
+    },
+    "refusalCode": "provider-refusal",
+    "nonStopCode": "provider-token-limit"
+  },
+  "completionBudget": {
+    "currentAdviserStages": 16000,
+    "consolidatedSkillPlanWriterVerification": 16000,
+    "sharedEvaluator": 16000,
+    "normalProductionWorkflowChanged": false
+  },
+  "request": {
+    "message": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 64-bar introduction in 4/4 (exactly 256 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. The intro is exactly 64 bars in 4/4, or 256 score beats. Because one region may be at most 128 beats, split every track's full passage into multiple score-relative regions; two 128-beat regions per track is the recommended layout, with smaller regions allowed. Every region may contain at most 512 notes, every region startBeat must be <=512, and the complete response may contain at most 60 operations. Notes use region-relative startBeat values; each region and note must remain inside its declared duration. Do not shorten the 256-beat request to fit one region; sparse rests are allowed, but playable material must span from the opening to the final section beat. The final candidate must span the full 256-beat intro with real playable notes; sparse rests are allowed and continuous sound coverage is not required. Keep the writing sparse enough to remain legible, vary register and density across the arc, and leave the last phrase suitable for a later cue transition. Write sparse playable material with intentional rests; do not fill every beat. Use 2-4 added regions per retained track, each <=128 beats, and make the last added region reach the 256-beat section end. Use a small number of notes per phrase and leave rests between phrases so the response remains manageable while the section span reaches the final beat.",
+    "safeDirection": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 64-bar introduction in 4/4 (exactly 256 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. The intro is exactly 64 bars in 4/4, or 256 score beats. Because one region may be at most 128 beats, split every track's full passage into multiple score-relative regions; two 128-beat regions per track is the recommended layout, with smaller regions allowed. Every region may contain at most 512 notes, every region startBeat must be <=512, and the complete response may contain at most 60 operations. Notes use region-relative startBeat values; each region and note must remain inside its declared duration. Do not shorten the 256-beat request to fit one region; sparse rests are allowed, but playable material must span from the opening to the final section beat. The final candidate must span the full 256-beat intro with real playable notes; sparse rests are allowed and continuous sound coverage is not required. Keep the writing sparse enough to remain legible, vary register and density across the arc, and leave the last phrase suitable for a later cue transition. Write sparse playable material with intentional rests; do not fill every beat. Use 2-4 added regions per retained track, each <=128 beats, and make the last added region reach the 256-beat section end. Use a small number of notes per phrase and leave rests between phrases so the response remains manageable while the section span reaches the final beat.",
+    "selectedStyle": "Original neutral cinematic"
+  },
+  "segmentRules": {
+    "introBars": 64,
+    "timeSignature": "4/4",
+    "durationBeats": 256,
+    "maxRegionBeats": 128,
+    "maxNotesPerRegion": 512,
+    "maxOperations": 60,
+    "sameRulesInBothArms": true
+  },
+  "baseline": {
+    "path": "baseline.json",
+    "sha256": "1677525fdba6fe058886cd636fb6bd4b6777c5e22006dd6cdb24f6d00e0b10e1",
+    "durationBeats": 256,
+    "coverage": {
+      "minStart": 0,
+      "maxEnd": 15.5,
+      "span": 15.5,
+      "coveredBeats": 12,
+      "fraction": 0.046875,
+      "barsWithAnyNote": 4
+    },
+    "trackIds": [
+      "track-piano",
+      "track-strings",
+      "track-horn"
+    ],
+    "catalog": [
+      {
+        "id": "track-piano",
+        "instrument": "Piano",
+        "midiProgram": 0
+      },
+      {
+        "id": "track-strings",
+        "instrument": "String Ensemble",
+        "midiProgram": 48
+      },
+      {
+        "id": "track-horn",
+        "instrument": "French Horn",
+        "midiProgram": 60
+      }
+    ]
+  },
+  "arms": [
+    {
+      "arm": "current-adviser-first",
+      "status": "failed",
+      "approved": false,
+      "startedAt": "2026-09-15T22:31:55.725Z",
+      "completedAt": "2026-09-15T22:32:25.228Z",
+      "wallMs": 29503,
+      "model": "grok-4.20-0309-non-reasoning",
+      "operations": [],
+      "events": [
+        {
+          "stage": "advisers-consulted",
+          "message": "2 read-only style and concept advisers completed their bounded consultation.",
+          "agent": "Orchestrator"
+        }
+      ],
+      "errors": [
+        {
+          "message": "A relevant advisory MIDI reference could not be loaded by the server."
+        }
+      ],
+      "repairs": 0,
+      "privateMidi": [
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "piano-development-1",
+          "label": "Piano sparse lift",
+          "path": "private-midi/current-adviser-8159016b-9d6e-4e25-9ddf-e32f6c5a13d4.mid",
+          "bytes": 76,
+          "sha256": "e63d13810b57c3568e6a6e4489c6e767ca212236e84c02af1ce8d8c4958db418",
+          "durationBeats": 4,
+          "noteCount": 2,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "strings-development-1",
+          "label": "Strings pad swell",
+          "path": "private-midi/current-adviser-da613e95-9d4f-4329-95f4-33856348c81e.mid",
+          "bytes": 66,
+          "sha256": "ecd118e9024441f3cbff3fdb1e951997c486a0959b04a3c355f1af5f9171137f",
+          "durationBeats": 4,
+          "noteCount": 1,
+          "targets": [
+            "track-strings"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "horn-development-1",
+          "label": "Horn melodic arc",
+          "path": "private-midi/current-adviser-bb9b43c1-9f39-4614-af71-7107b924a91c.mid",
+          "bytes": 75,
+          "sha256": "7a3bfa331bada318e57ae90e1b6a793944a2083ae46aba09cc2d33b1d944687f",
+          "durationBeats": 4,
+          "noteCount": 2,
+          "targets": [
+            "track-horn"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "piano-development",
+          "label": "Extend piano arc",
+          "path": "private-midi/current-adviser-6676b995-2f2b-42ab-88ec-f1d564645ec0.mid",
+          "bytes": 95,
+          "sha256": "fb5ecd5b50181990513d5a8961f22f639bbe8b675144e9774d2a4b21703cf981",
+          "durationBeats": 8,
+          "noteCount": 4,
+          "targets": [
+            "track-piano"
+          ]
+        }
+      ],
+      "objectiveRubric": {
+        "pass": false,
+        "failures": [
+          "No safely applied candidate score was available."
+        ],
+        "baselineUnchangedBeforeApply": true,
+        "retainedMembership": false,
+        "playableCatalogMembership": false,
+        "retainedRegionsPreserved": false,
+        "operationOwnership": false,
+        "allOperationsValidated": false,
+        "segmentBounds": false,
+        "durationBeats": 0,
+        "sectionStartBeat": 0,
+        "sectionEndBeat": 0,
+        "sectionSpanBeats": 0,
+        "actualMaxNoteEndBeat": 0,
+        "coverageBeats": 0,
+        "coverageFraction": 0,
+        "coverageDensityBeats": 0,
+        "coverageDensityFraction": 0,
+        "barsWithAnyNote": 0,
+        "noteCount": 0,
+        "tracksWithNotes": [],
+        "tracksWithNewMaterial": [],
+        "allRetainedTracksHaveNewMaterial": false,
+        "semanticChanged": false,
+        "fullSectionSpan": false
+      },
+      "baselineUnchanged": true,
+      "writerPromptChecks": {
+        "writerCalls": 0,
+        "callsWithSegmentBounds": 0,
+        "allWriterCallsHadSegmentBounds": false,
+        "note": "The production writer schema itself includes 128-beat, 512-note, 512-startBeat, and 60-operation limits; this arm also received the same explicit segment rules and sparse-writing direction in safeDirection. The experiment adapter lifted adviser-stage completion budgets to 16000 tokens; normal production behavior is unchanged."
+      }
+    },
+    {
+      "arm": "consolidated-orchestrator",
+      "status": "failed",
+      "approved": false,
+      "startedAt": "2026-09-15T22:32:25.229Z",
+      "completedAt": "2026-09-15T22:33:05.813Z",
+      "wallMs": 40584,
+      "model": "grok-4.20-0309-non-reasoning",
+      "operations": [],
+      "events": [
+        {
+          "stage": "orchestrator-started",
+          "message": "Consolidated Orchestrator started a sequential on-demand skill flow."
+        },
+        {
+          "stage": "on-demand-skills-completed",
+          "message": "Style then concept skills completed sequentially; advisory MIDI remained private."
+        },
+        {
+          "stage": "retained-track-plan-completed",
+          "message": "Orchestrator assigned all retained tracks without changing membership."
+        }
+      ],
+      "errors": [
+        {
+          "message": "The instrument writer operations failed atomic score validation."
+        }
+      ],
+      "repairs": 0,
+      "privateMidi": [
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "piano-development",
+          "label": "Piano continuation",
+          "path": "private-midi/consolidated-orchestrator-style-piano-development-df92dcb3-7344-4583-903b-77cfe252c1e3.mid",
+          "bytes": 97,
+          "sha256": "aeb413d14d950bb5f264c311a2d1f7ac98b8f411af4ebb981b526820f2bdbc34",
+          "durationBeats": 16,
+          "noteCount": 4,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "strings-development",
+          "label": "Strings continuation",
+          "path": "private-midi/consolidated-orchestrator-style-strings-development-b132705d-4a7a-43d5-b5a7-e2c118f0d7e6.mid",
+          "bytes": 89,
+          "sha256": "202e6177f0234fbbe2dcecaeb21c6ecdfb310753e9af54382cfc78e4085edfd0",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-strings"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "horn-development",
+          "label": "Horn continuation",
+          "path": "private-midi/consolidated-orchestrator-style-horn-development-11a4e94f-7107-4b9a-b38b-9aa1676c7664.mid",
+          "bytes": 87,
+          "sha256": "6a47fbda61a7da9c699e5ac75d277210d3ce3d678f585d1d501347baf63c0b21",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-horn"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "concept",
+          "suggestionId": "piano-dev-1",
+          "label": "Piano mid build",
+          "path": "private-midi/consolidated-orchestrator-concept-piano-dev-1-c9442897-5205-4508-b543-692b95237ae9.mid",
+          "bytes": 84,
+          "sha256": "035346f543e0f77604e7cb548b1247d20a6e7d8408acf655d48fdbf0f9d7b5be",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "concept",
+          "suggestionId": "strings-dev-1",
+          "label": "Strings harmonic lift",
+          "path": "private-midi/consolidated-orchestrator-concept-strings-dev-1-5e19319e-5e91-4201-a9eb-e4493dcc947d.mid",
+          "bytes": 90,
+          "sha256": "f0486c6a38f3a7dbe691494a0cb28f8d50193a22505eacf997da2149359a2e4e",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-strings"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "concept",
+          "suggestionId": "horn-dev-1",
+          "label": "Horn melodic calls",
+          "path": "private-midi/consolidated-orchestrator-concept-horn-dev-1-75498fcc-c19f-4c13-8312-daade1cc3e66.mid",
+          "bytes": 88,
+          "sha256": "39b69b72e69e0a848f8028dfdff33d30544cd49a00d584ba339fa7fcd693a7bb",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-horn"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "plan",
+          "suggestionId": "piano-dev-1",
+          "label": "Piano mid build",
+          "path": "private-midi/consolidated-orchestrator-plan-piano-dev-1-9aededce-6882-41c4-a3eb-41a674c32165.mid",
+          "bytes": 84,
+          "sha256": "035346f543e0f77604e7cb548b1247d20a6e7d8408acf655d48fdbf0f9d7b5be",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-piano"
+          ]
+        }
+      ],
+      "objectiveRubric": {
+        "pass": false,
+        "failures": [
+          "No safely applied candidate score was available."
+        ],
+        "baselineUnchangedBeforeApply": true,
+        "retainedMembership": false,
+        "playableCatalogMembership": false,
+        "retainedRegionsPreserved": false,
+        "operationOwnership": false,
+        "allOperationsValidated": false,
+        "segmentBounds": false,
+        "durationBeats": 0,
+        "sectionStartBeat": 0,
+        "sectionEndBeat": 0,
+        "sectionSpanBeats": 0,
+        "actualMaxNoteEndBeat": 0,
+        "coverageBeats": 0,
+        "coverageFraction": 0,
+        "coverageDensityBeats": 0,
+        "coverageDensityFraction": 0,
+        "barsWithAnyNote": 0,
+        "noteCount": 0,
+        "tracksWithNotes": [],
+        "tracksWithNewMaterial": [],
+        "allRetainedTracksHaveNewMaterial": false,
+        "semanticChanged": false,
+        "fullSectionSpan": false
+      },
+      "baselineUnchanged": true,
+      "writerPromptChecks": {
+        "writerCalls": 2,
+        "callsWithSegmentBounds": 2,
+        "allWriterCallsHadSegmentBounds": true,
+        "note": "Both launched consolidated writer requests contained the explicit 128-beat, 512-note, startBeat <=512, 60-operation, region-relative, and sparse-writing rules. The original metric detector missed the literal '60 operations' wording; the post-run detector fix is unexecuted."
+      }
+    }
+  ],
+  "sharedEvaluator": {
+    "status": "not-run-no-candidates",
+    "reason": "Both arms produced no candidate score; blind evaluation was skipped."
+  },
+  "callTotals": {
+    "totalProviderCalls": 9,
+    "byArm": {
+      "provider": 1,
+      "current-adviser-first": 3,
+      "consolidated-orchestrator": 5
+    },
+    "totalRepairs": 0,
+    "wallMsByArm": {
+      "current-adviser-first": 29503,
+      "consolidated-orchestrator": 40584
+    },
+    "providerTokenUsageByArm": {
+      "current-adviser-first": {
+        "inputTokens": 12646,
+        "outputTokens": 2148,
+        "totalTokens": 14794,
+        "maxInputTokens": 5617,
+        "maxOutputTokens": 987,
+        "maxTotalTokens": 6193
+      },
+      "consolidated-orchestrator": {
+        "inputTokens": 29933,
+        "outputTokens": 3485,
+        "totalTokens": 33418,
+        "maxInputTokens": 8116,
+        "maxOutputTokens": 902,
+        "maxTotalTokens": 8681
+      }
+    }
+  },
+  "segmentBoundPromptAudit": {
+    "currentWriterPrompt": {
+      "writerCalls": 0,
+      "callsWithSegmentBounds": 0,
+      "allWriterCallsHadSegmentBounds": false,
+      "note": "The production writer schema itself includes 128-beat, 512-note, 512-startBeat, and 60-operation limits; this arm also received the same explicit segment rules and sparse-writing direction in safeDirection. The experiment adapter lifted adviser-stage completion budgets to 16000 tokens; normal production behavior is unchanged."
+    },
+    "consolidatedWriterPrompt": {
+      "writerCalls": 2,
+      "callsWithSegmentBounds": 2,
+      "allWriterCallsHadSegmentBounds": true,
+      "note": "Both launched consolidated writer requests contained the explicit 128-beat, 512-note, startBeat <=512, 60-operation, region-relative, and sparse-writing rules. The original metric detector missed the literal '60 operations' wording; the post-run detector fix is unexecuted."
+    },
+    "sameExplicitRulesRequested": true,
+    "omissionStatus": "current-writer-not-observable-because-production-arm-failed-before-writer; consolidated-writer-bounds-observed"
+  },
+  "callsPath": "call-metrics.json",
+  "rootCauses": {
+    "currentAdviserFirst": "Three matched 16000-token adviser/planner calls completed and private MIDI was retained, but the reused production workflow requested an advisory-MIDI loader that the experiment adapter did not provide.",
+    "consolidatedOrchestrator": "Style, concept, plan, and two bounded 16000-token writer requests completed; the writer response and its bounded replacement failed atomic operation validation, so no operation was applied.",
+    "sharedEvaluator": "Skipped intentionally because neither arm produced a candidate score."
+  },
+  "postRunWorkingSourceSha256": "1eed26f1191624ad5adfda345ca0bb8d6ecc36fb1ed9dfdb43179090e4752275",
+  "postRunWorkingSourceNote": "An advisory-MIDI loader and writer-bound detector fix were made after the authorized run; they are not represented as executed evidence.",
+  "smallSampleLimitation": "One corrected paired run for one long prompt is directional evidence only; both arms remained unapproved and incomplete, and no repeated live run was made after the measured root causes.",
+  "savedProjectTouched": false,
+  "normalProductionWorkflowChanged": false
+}

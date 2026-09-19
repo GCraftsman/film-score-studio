@@ -8,7 +8,7 @@
 import type { MidiNote } from './midiNote';
 
 export interface MidiSnippet {
-  /** @maxLength 80 */
+  /** @maxLength 400 */
   id: string;
   /**
      * @minimum 30

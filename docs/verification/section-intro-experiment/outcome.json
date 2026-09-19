@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "mode": "one-bounded-live-run",
+  "model": "grok-4.20-0309-non-reasoning",
+  "modelMetadata": {
+    "id": "grok-4.20-0309-non-reasoning"
+  },
+  "sourceFreeze": {
+    "schemaVersion": 1,
+    "source": "experiment.ts",
+    "snapshot": "experiment.executed.ts",
+    "sha256": "bea9e40281e4fee6ab4802754b36209dbdd0b21e761c2570a4f5dec0364c379d",
+    "bytes": 73191,
+    "frozenAt": "2026-09-16T02:53:54.855Z",
+    "productionModuleHashes": "production-module-hashes.json",
+    "immutablePriorBaseline": "../intro-workflow-comparison-final/baseline.json",
+    "note": "Generated before offline fixture; live run refuses changed source or imported production modules.",
+    "productionModuleHashesVerified": true
+  },
+  "source": {
+    "path": "baseline.json",
+    "sha256": "2a8c42fc0180bf0f46047a9f963b4a9bc04f9b90636859c9e4fc71a52d41002e",
+    "durationBeats": 128,
+    "trackIds": [
+      "track-piano",
+      "track-strings",
+      "track-horn"
+    ],
+    "originalRegionCount": 3
+  },
+  "request": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 32-bar introduction in 4/4 (exactly 128 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. This is section-based generation: divide the complete 128-beat request into exactly 4 sequential sections of 8 bars (32 beats) and call one owning instrument writer per retained track in every section. Sparse rests are allowed, but every section and every retained track must receive new playable material. Each section writer may add only regions inside its absolute score-relative window. Regions are <=128 beats, notes are region-relative, and every region must fit both the 128-beat score and its assigned 32-beat section. Keep all original regions and original source notes.",
+  "sectionRules": {
+    "totalBars": 32,
+    "totalBeats": 128,
+    "sectionCount": 4,
+    "sectionBars": 8,
+    "sectionBeats": 32,
+    "timeSignature": "4/4",
+    "tempo": 72
+  },
+  "repairPolicy": {
+    "maxRepairsAfterInitialPerFailedSection": 4,
+    "noSilentSectionDrop": true
+  },
+  "result": {
+    "status": "failed",
+    "approved": false,
+    "operations": [],
+    "errors": [
+      {
+        "reason": "Global Orchestrator plan must assign one instruction per retained track."
+      }
+    ],
+    "events": [],
+    "progress": [],
+    "objective": {
+      "pass": false,
+      "failures": [
+        "No complete candidate was staged."
+      ],
+      "durationBeats": 0,
+      "sectionCoverage": []
+    },
+    "privateMidi": [],
+    "advisoryMidiLoads": 0,
+    "writerAttempts": 0,
+    "writerRepairs": 0,
+    "repairCountsBySection": {},
+    "wallMs": 47060
+  },
+  "callMetrics": [
+    {
+      "arm": "provider",
+      "stage": "skill-style",
+      "attempt": 1,
+      "maxTokens": 0,
+      "inputChars": 0,
+      "inputBytes": 0,
+      "messageChars": 0,
+      "messageBytes": 0,
+      "outputChars": 4836,
+      "outputBytes": 4836,
+      "providerModel": "grok-4.20-0309-non-reasoning",
+      "wallMs": 418,
+      "status": "success"
+    }
+  ],
+  "callTotals": {
+    "count": 1,
+    "cumulativeInputChars": 0,
+    "cumulativeInputBytes": 0,
+    "cumulativeProviderInputTokens": 0,
+    "cumulativeProviderOutputTokens": 0,
+    "cumulativeProviderTotalTokens": 0,
+    "peakInputBytes": 0
+  },
+  "savedProjectTouched": false,
+  "normalProductionWorkflowChanged": false
+}

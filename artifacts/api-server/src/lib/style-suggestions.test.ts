@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { ComposeWithOrchestratorResponse } from "../../../../lib/api-zod/src/generated/api.ts";
-import { normalizeStyleSuggestions } from "./style-suggestions.ts";
+import { normalizeStyleSuggestions, styleSuggestionSystemPrompt } from "./style-suggestions.ts";
+
+test("style suggestions are grounded in the playable catalog and timbre mapping rule", () => {
+  const prompt = styleSuggestionSystemPrompt();
+  assert.match(prompt, /Upright Piano \(keyboards, program 0\)/);
+  assert.match(prompt, /Violin \(strings, program 40\)/);
+  assert.match(prompt, /explicitly map it to the closest supported catalog instrument/);
+  assert.match(prompt, /achievable technique, articulation, register, dynamics, and texture/);
+});
 
 test("neutral musical title-case names remain distinct rather than sharing a safety fallback", () => {
   const styles = normalizeStyleSuggestions([
@@ -49,6 +57,6 @@ test("bounded labels still parse as a response without shortening the musical de
     operations: [],
   });
   assert.equal(response.success, true);
-  assert.ok(style.name.length <= 120);
+  assert.ok(style.name.length <= 600);
   assert.equal(style.description, description);
 });

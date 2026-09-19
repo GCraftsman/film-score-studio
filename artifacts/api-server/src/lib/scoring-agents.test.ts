@@ -8,6 +8,7 @@ import {
   instrumentAgentForTrack,
   midiMillisecondsToBeats,
   PLAYABLE_INSTRUMENTS,
+  playableInstrumentCatalogPrompt,
 } from "./scoring-agents.ts";
 
 test("converts source MIDI milliseconds using the source BPM", () => {
@@ -35,6 +36,15 @@ test("catalogues only browser-playable proposal instruments", () => {
   assert.equal(findPlayableInstrument("Bass Clarinet"), undefined);
   assert.equal(findPlayableInstrument("Digital Pluck"), undefined);
   assert.equal(findPlayableInstrument(118), undefined);
+});
+
+test("grounds early prompts in the canonical playable catalog and mapping rule", () => {
+  const prompt = playableInstrumentCatalogPrompt();
+  assert.match(prompt, /Upright Piano \(keyboards, program 0\)/);
+  assert.match(prompt, /Violin \(strings, program 40\)/);
+  assert.match(prompt, /Atmospheric Pad \(synths, program 89\)/);
+  assert.match(prompt, /explicitly map it to the closest supported catalog instrument/);
+  assert.match(prompt, /achievable technique, articulation, register, dynamics, and texture/);
 });
 
 test("keeps the drum bank/program distinct from melodic program zero", () => {

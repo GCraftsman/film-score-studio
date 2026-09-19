@@ -6,3 +6,5 @@
 - [Live composition testing](live-composition-testing.md) — collect long streams across short browser calls; a runner timeout does not imply server processing stopped.
 - [Provider truncation recovery](provider-truncation-recovery.md) — larger bounded replacements, complete consultation context, and lossless edit preservation within two repairs.
 - [Adviser repair safety](adviser-repair-safety.md) — reject actual write payloads; structural repairs must preserve review decisions, not just feedback text.
+- [Temporary character limit policy](temporary-character-limit-policy.md) — keep text ceilings generous until real usage supports tightening them.
+- [Composition experiment design](composition-experiment-design.md) — validate complete adapters offline; distinguish context size, output limits, and musical success.

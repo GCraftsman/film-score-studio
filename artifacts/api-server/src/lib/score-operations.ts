@@ -10,12 +10,12 @@ type ScoreLike = {
  * operations. This remains a hard server-side safety bound, independent of UI. */
 export const MAX_WORKFLOW_OPERATIONS = 60;
 
-const MAX_ID_LENGTH = 80;
+const MAX_ID_LENGTH = 400;
 
 /** Operation summaries are metadata only; keep them bounded and non-empty. */
-export const MAX_SUMMARY_LENGTH = 240;
+export const MAX_SUMMARY_LENGTH = 1_200;
 export const INVALID_SUMMARY_REASON =
-  "operation summary must be a non-empty string with at most 240 characters";
+  "operation summary must be a non-empty string with at most 1200 characters";
 
 export function hasDuplicateScoreIds(score: ScoreLike): boolean {
   const trackIds = score.tracks.map((track) => track.id);
@@ -54,7 +54,7 @@ export type ScoreOperationValidation = {
   diagnostics: ScoreOperationDiagnostic[];
 };
 
-const MAX_REGION_NAME_LENGTH = 120;
+const MAX_REGION_NAME_LENGTH = 600;
 
 const ARTICULATIONS = new Set(["sustain", "legato", "staccato", "marcato", "tremolo", "pizzicato"]);
 

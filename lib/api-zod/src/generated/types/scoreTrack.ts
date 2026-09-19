@@ -10,22 +10,22 @@ import type { ScoreRegion } from './scoreRegion';
 export interface ScoreTrack {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   name: string;
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   role: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   instrument: string;
   /**

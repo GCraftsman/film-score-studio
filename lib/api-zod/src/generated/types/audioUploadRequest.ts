@@ -9,7 +9,7 @@
 export interface AudioUploadRequest {
   audioId?: string;
   /**
-     * @maxLength 120
+     * @maxLength 600
      * @pattern ^audio/
      */
   contentType: string;

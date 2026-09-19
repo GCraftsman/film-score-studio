@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "source": "experiment.ts",
+  "snapshot": "experiment.executed.ts",
+  "sha256": "bea9e40281e4fee6ab4802754b36209dbdd0b21e761c2570a4f5dec0364c379d",
+  "bytes": 73191,
+  "frozenAt": "2026-09-16T02:53:54.855Z",
+  "productionModuleHashes": "production-module-hashes.json",
+  "immutablePriorBaseline": "../intro-workflow-comparison-final/baseline.json",
+  "note": "Generated before offline fixture; live run refuses changed source or imported production modules."
+}

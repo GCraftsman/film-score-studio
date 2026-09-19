@@ -1,0 +1,14 @@
+[
+  {
+    "stage": "orchestrator-started",
+    "message": "Consolidated Orchestrator started a sequential on-demand skill flow."
+  },
+  {
+    "stage": "on-demand-skills-completed",
+    "message": "Style then concept skills completed sequentially; advisory MIDI remained private."
+  },
+  {
+    "stage": "retained-track-plan-completed",
+    "message": "Orchestrator assigned all retained tracks without changing membership."
+  }
+]

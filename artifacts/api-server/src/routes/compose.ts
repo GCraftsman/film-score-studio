@@ -10,6 +10,7 @@ import {
   findPlayableInstrument,
   fullMidiMaterial,
   PLAYABLE_INSTRUMENTS,
+  playableInstrumentCatalogPrompt,
 } from "../lib/scoring-agents";
 import {
   normalizeMusicDirection,
@@ -17,7 +18,7 @@ import {
 } from "../lib/ai-music-safety";
 import { hasDuplicateScoreIds } from "../lib/score-operations";
 import { reuseExistingInstruments } from "../lib/instrument-proposals";
-import { normalizeStyleSuggestions } from "../lib/style-suggestions";
+import { normalizeStyleSuggestions, styleSuggestionSystemPrompt } from "../lib/style-suggestions";
 import {
   classifyIntent,
   runCompositionWorkflow,
@@ -25,6 +26,8 @@ import {
   type WorkflowIntent,
   type WorkflowModel,
   type WorkflowEvent,
+  type RejectedAdviserTextDiagnostic,
+  type ScoreValue,
   WorkflowFailure,
   OperationValidationError,
   type WorkflowDiagnostic,
@@ -65,9 +68,15 @@ import {
   providerRequestTimeoutMs,
 } from "../lib/xai-chat-completion";
 import { xaiLaunchLimiter } from "../lib/chat-limiter";
+import { logTemporaryRejectedAdviserText } from "../lib/temporary-rejected-adviser-text";
+import { ObjectStorageService } from "../lib/objectStorage";
+import { loadAdvisoryMidiRef, persistAdvisoryMidiClip } from "../lib/adviser-suggestions";
+import type { AdviserSuggestion, AdvisoryMidiRef } from "../lib/adviser-suggestions";
+import { composeRequestAbortController } from "../lib/compose-cancellation";
 
 const router: IRouter = Router();
 router.use(requireAuth);
+const advisoryMidiStorage = new ObjectStorageService();
 
 // Keep the timeout sizing helper available to route-level callers and tests.
 export { providerRequestTimeoutMs };
@@ -82,8 +91,12 @@ function safetyNormalizedHistory(history: unknown[]): unknown[] {
   });
 }
 
-async function getModel(connectors: ReplitConnectors): Promise<string> {
-  const response = await xaiLaunchLimiter.schedule(() => connectors.proxy("xai", "/v1/language-models", { method: "GET" }));
+async function getModel(connectors: ReplitConnectors, signal?: AbortSignal): Promise<string> {
+  const proxyFetch = connectors.createProxyFetch("xai");
+  const response = await xaiLaunchLimiter.schedule(
+    () => proxyFetch("/v1/language-models", { method: "GET", signal }),
+    signal,
+  );
   if (!response.ok) throw new Error(`xAI model discovery failed (${response.status})`);
   const payload = await response.json() as { models?: Array<{ id?: string }>; data?: Array<{ id?: string }> };
   const models = payload.models ?? payload.data ?? [];
@@ -99,8 +112,9 @@ async function chat(
   messages: ModelMessage[],
   maxTokens: number,
   jsonMode = false,
+  signal?: AbortSignal,
 ): Promise<string> {
-  const completion = await chatDetailed(connectors, model, messages, maxTokens, jsonMode);
+  const completion = await chatDetailed(connectors, model, messages, maxTokens, jsonMode, undefined, signal);
   throwForCompletionFailure(normalizeModelCompletion(completion));
   return completion.content;
 }
@@ -196,7 +210,7 @@ function normalizeApprovedMembership(
     const playable = findPlayableInstrument(typeof value.instrument === "string" ? value.instrument : "");
     const id = typeof value.id === "string" ? value.id.trim() : "";
     const action = value.action;
-    if (!playable || (action !== "add" && action !== "delete") || !id || id.length > 74 || seen.has(id) || !approvedIdSet.has(id)) {
+    if (!playable || (action !== "add" && action !== "delete") || !id || id.length > 370 || seen.has(id) || !approvedIdSet.has(id)) {
       throw new WorkflowFailure("Approved instrument membership was unsupported, duplicated, or not selected.");
     }
     seen.add(id);
@@ -220,8 +234,8 @@ function normalizeApprovedMembership(
       instrument: playable.name,
       role: playable.role,
       midiProgram: playable.midiProgram,
-      summary: screenMusicText(typeof value.summary === "string" ? value.summary.slice(0, 240) : "", `${action === "add" ? "Add" : "Remove"} ${playable.name}.`),
-      reason: screenMusicText(typeof value.reason === "string" ? value.reason.slice(0, 500) : "", "Explicit composer approval."),
+      summary: screenMusicText(typeof value.summary === "string" ? value.summary.slice(0, 1_200) : "", `${action === "add" ? "Add" : "Remove"} ${playable.name}.`),
+      reason: screenMusicText(typeof value.reason === "string" ? value.reason.slice(0, 2_500) : "", "Explicit composer approval."),
     };
   });
   if (seen.size !== approvedIdSet.size) throw new WorkflowFailure("Approved instrument membership was missing a selected proposal.");
@@ -237,7 +251,7 @@ async function styleGate(
 ): Promise<Record<string, unknown>> {
   if (!selectedStyle) {
     const plan = await modelJson(model, [
-      { role: "system", content: "You are the style specialist. Return JSON only: {\"response\":\"...\",\"styleSuggestions\":[{\"id\":\"...\",\"name\":\"...\",\"description\":\"...\",\"agent\":\"...\"}]}. Offer up to three distinct original musical directions relevant to the request, not differently described copies of the same option. Each must have a unique concise sentence-case name describing neutral musical attributes (for example Intimate piano or Rhythmic strings), a distinct description, and a unique id. Respect explicitly requested instrumentation and mood. Do not use title case, creator names, work titles, create tracks, or score operations." },
+       { role: "system", content: styleSuggestionSystemPrompt() },
       { role: "user", content: JSON.stringify({ direction, completeSourceMidi: sourceMidi }) },
     ], 1200, { stage: "initial", agent: "Style specialist" }, onDiagnostic);
     const styles = normalizeStyleSuggestions(plan.styleSuggestions);
@@ -249,7 +263,7 @@ async function styleGate(
     };
   }
   const proposal = await modelJson(model, [
-    { role: "system", content: `You are the instrument-approval specialist. Return JSON only: {"response":"...","trackProposals":[{"id":"...","action":"add","instrument":"exact catalog instrument","role":"...","midiProgram":0,"summary":"...","reason":"..."}]}. These are pending approval only: do not create score operations. Use only: ${PLAYABLE_INSTRUMENTS.map((instrument) => instrument.name).join(", ")}.` },
+    { role: "system", content: `You are the instrument-approval specialist. Return JSON only: {"response":"...","trackProposals":[{"id":"...","action":"add","instrument":"exact catalog instrument","role":"...","midiProgram":0,"summary":"...","reason":"..."}]}. These are pending approval only: do not create score operations. ${playableInstrumentCatalogPrompt()}` },
     { role: "user", content: JSON.stringify({ direction, selectedStyle, completeSourceMidi: sourceMidi }) },
   ], 1200, { stage: "initial", agent: "Instrument approval specialist" }, onDiagnostic);
   const rawTrackProposals = proposal.trackProposals;
@@ -265,7 +279,7 @@ async function styleGate(
     return {
       id: value.id,
       action: "add" as const, instrument: playable.name, role: playable.role, midiProgram: playable.midiProgram,
-       summary: screenMusicText(value.summary, `Pending ${playable.name} approval`).slice(0, 240),
+       summary: screenMusicText(value.summary, `Pending ${playable.name} approval`).slice(0, 1_200),
       reason: screenMusicText(value.reason, "Pending explicit approval."),
     };
   });
@@ -294,7 +308,7 @@ async function instrumentAudit(
          "Propose only deletions here. Every membership change requires explicit user approval. Never output score operations or claim a track changed.",
         "Reuse existing score.tracks by default, including empty saved tracks. A request to compose, generate, or play piano uses the existing Piano; it is NOT a request to add another Piano.",
         "Return an empty trackProposals array when the existing instruments can perform the request. This editor reuses one track per catalog instrument; melody and accompaniment can share one piano track.",
-         `Existing instruments may be deleted only when necessary. Any separately proposed additions must use this supported catalog: ${PLAYABLE_INSTRUMENTS.map((instrument) => instrument.name).join(", ")}.`,
+          `Existing instruments may be deleted only when necessary. Any separately proposed additions must use this supported catalog. ${playableInstrumentCatalogPrompt()}`,
       ].join("\n"),
     },
     { role: "user", content: JSON.stringify({ direction, score, completeSourceMidi: sourceMidi }) },
@@ -320,7 +334,7 @@ async function instrumentAudit(
       if (!track) throw new WorkflowFailure("Instrument audit proposed deleting an unknown track.");
       return {
         id, action, trackId: track.id, instrument: track.instrument, role: track.role, midiProgram: track.midiProgram,
-        summary: screenMusicText(summary, "Pending instrument removal").slice(0, 240),
+        summary: screenMusicText(summary, "Pending instrument removal").slice(0, 1_200),
         reason: screenMusicText(reason, "Pending explicit approval."),
       };
     });
@@ -367,13 +381,29 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
     return;
   }
   const terminalEvents: WorkflowEvent[] = [];
+  const createdAdvisoryObjectPaths: string[] = [];
   const streaming = req.path.endsWith("/stream");
+  const workflowId = randomUUID();
+  const requestId = composeRequestId(req.id);
+  const requestCancellation = composeRequestAbortController(
+    req,
+    res,
+  );
+  const requestSignal = requestCancellation.signal;
+  const throwIfRequestAborted = () => {
+    if (!requestSignal.aborted) return;
+    const error = new Error("The composition request was disconnected.");
+    error.name = "AbortError";
+    throw error;
+  };
   const emit = (event: ComposeProgressEvent) => {
     if (event.type === "workflow-progress") {
       terminalEvents.push(event as WorkflowEvent);
       if (terminalEvents.length > 100) terminalEvents.shift();
     }
-    if (streaming && !res.writableEnded && !res.destroyed) res.write(`${JSON.stringify(event)}\n`);
+    if (!requestSignal.aborted && streaming && !res.writableEnded && !res.destroyed) {
+      res.write(`${JSON.stringify(event)}\n`);
+    }
   };
   if (streaming) {
     res.status(200).set({
@@ -383,8 +413,6 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
     });
     res.flushHeaders();
   }
-  const workflowId = randomUUID();
-  const requestId = composeRequestId(req.id);
   try {
     if (hasDuplicateScoreIds(parsed.data.score)) throw new WorkflowFailure("Score track and region IDs must be unique.");
     const approvedMembership = parsed.data.approvedTrackProposalIds !== undefined ||
@@ -398,6 +426,9 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
     const verifiedCheckpoint = parsed.data.approvalContext
       ? verifyApprovalContext(parsed.data.approvalContext, userId, parsed.data.score)
       : undefined;
+    if (verifiedCheckpoint && verifiedCheckpoint.context.projectId !== projectId) {
+      throw new ApprovalContextIntegrityError("The saved approval checkpoint is bound to a different project.");
+    }
     if (approvedMembership) {
       assertApprovedProposalSubset(
         parsed.data.approvedTrackProposals,
@@ -455,10 +486,12 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
     const sourceMidi = verifiedCheckpoint?.context.originalMidi ?? parsed.data.midiSnippets;
     const sourceStyle = verifiedCheckpoint?.context.selectedStyle ?? parsed.data.selectedStyle;
     const connectors = new ReplitConnectors();
-    const modelId = await getModel(connectors);
+    const modelId = await getModel(connectors, requestSignal);
     const model: WorkflowModel = {
-      complete: (messages, maxTokens, jsonMode) => chat(connectors, modelId, messages, maxTokens, jsonMode),
-      completeDetailed: (messages, maxTokens, jsonMode) => chatDetailed(connectors, modelId, messages, maxTokens, jsonMode),
+      complete: (messages, maxTokens, jsonMode) =>
+        chat(connectors, modelId, messages, maxTokens, jsonMode, requestSignal),
+      completeDetailed: (messages, maxTokens, jsonMode) =>
+        chatDetailed(connectors, modelId, messages, maxTokens, jsonMode, undefined, requestSignal),
     };
     const logDiagnostic = (
       diagnostic: WorkflowDiagnostic,
@@ -521,16 +554,25 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
         sourceMidi,
         emitDiagnostic,
       ));
+      throwIfRequestAborted();
       if (streaming) { emit({ type: "result", result }); res.end(); } else res.json(result);
       return;
     }
-    const membershipOnly = approvedMembership && !await hasRemainingNoteEdit(
-      model,
-      sourceMessage,
-      sourceHistory,
-      parsed.data.score,
-      sourceStyle,
-      emitDiagnostic,
+    // New checkpoints bind this decision in the initial Orchestrator plan and
+    // therefore never reclassify the mutable approval continuation. Legacy
+    // checkpoints lack the field and retain the bounded compatibility
+    // classifier until they are replaced by a fresh plan.
+    const membershipOnly = approvedMembership && (
+      verifiedCheckpoint?.context.requiresPlayableMaterial !== undefined
+        ? !verifiedCheckpoint.context.requiresPlayableMaterial
+        : !await hasRemainingNoteEdit(
+          model,
+          sourceMessage,
+          sourceHistory,
+          parsed.data.score,
+          sourceStyle,
+          emitDiagnostic,
+        )
     );
     // Track membership is audited before any region-edit specialists run.
     // Returned additions/deletions are proposals only; the workflow never
@@ -555,6 +597,7 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
         },
       });
       emit(workflowProgress({ stage: "instrument-approval", message: "Track membership proposals are waiting for explicit approval.", agent: "Orchestrator" }));
+      throwIfRequestAborted();
       if (streaming) { emit({ type: "result", result }); res.end(); } else res.json(result);
       return;
     }
@@ -579,6 +622,7 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
         },
       });
       emit(workflowProgress({ stage: "membership-verified", message: "Approved track membership was recorded; no region MIDI was changed.", agent: "Orchestrator" }));
+      throwIfRequestAborted();
       if (streaming) { emit({ type: "result", result }); res.end(); } else res.json(result);
       return;
     }
@@ -595,7 +639,10 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
       intent,
       score: parsed.data.score,
        sourceMidi,
+      projectId,
         approvedTrackProposals: accumulatedApprovedMembershipProposals,
+      workflowId,
+      requestId,
       originalMessage: safeOriginalMessage,
        selectedStyle: sourceStyle,
       history: safeHistory,
@@ -603,6 +650,36 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
          emit(workflowProgress(event));
        },
       onDiagnostic: logDiagnostic,
+      // TEMPORARY SENSITIVE DIAGNOSTIC: this callback is gated and production
+      // hard-disabled; remove it with the helper after false positives are diagnosed.
+      onRejectedAdviserText: (diagnostic: RejectedAdviserTextDiagnostic) => {
+        logTemporaryRejectedAdviserText(req.log, diagnostic);
+      },
+      persistAdvisoryMidiClip: projectId
+        ? async (suggestion: AdviserSuggestion, score: ScoreValue) => {
+          if (!suggestion.midiClip) {
+            throw new WorkflowFailure("Advisory MIDI persistence was requested without a validated clip.");
+          }
+          const ref = await persistAdvisoryMidiClip({
+            ownerId: userId,
+            projectId,
+            suggestion,
+            clip: suggestion.midiClip,
+            score,
+            storage: advisoryMidiStorage,
+          });
+          createdAdvisoryObjectPaths.push(ref.objectPath);
+          return ref;
+        }
+        : undefined,
+      loadAdvisoryMidiRef: projectId
+        ? async (ref: AdvisoryMidiRef) => loadAdvisoryMidiRef({
+          ownerId: userId,
+          projectId,
+          ref,
+          storage: advisoryMidiStorage,
+        })
+        : undefined,
       ...(verifiedCheckpoint ? { approvalContext: verifiedCheckpoint.context } : {}),
       };
      const workflow = await runCompositionWorkflow(workflowInput);
@@ -684,8 +761,24 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
          changedFiles: safeWorkflow.changedFiles,
       },
     });
+    throwIfRequestAborted();
     if (streaming) { emit({ type: "result", result }); res.end(); } else res.json(result);
   } catch (error) {
+    // Advisory clips are temporary and are never score material. Remove
+    // objects created by a failed transaction on a best-effort basis; if the
+    // provider/storage is unavailable they remain private under the
+    // authenticated owner/project prefix and can never be loaded elsewhere.
+    await Promise.all(createdAdvisoryObjectPaths.map(async (objectPath) => {
+      try {
+        await advisoryMidiStorage.delete(objectPath);
+      } catch {
+        // Failure cleanup must not mask the original composition diagnostic.
+      }
+    }));
+    // Disconnects are expected cancellation, not workflow failures. In
+    // particular, do not persist a terminal audit or attempt to write an
+    // error after the composer has stopped listening.
+    if (requestSignal.aborted) return;
     if (error instanceof OperationValidationError) {
       // Operation diagnostics are already content-free. Preserve the exact
       // safe reason and bounded schema observations for audit/debugging,
@@ -735,6 +828,8 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
       emit({ type: "error", error: terminalMessage, diagnostics });
       res.end();
     } else res.status(error instanceof WorkflowFailure || error instanceof ApprovalContextIntegrityError || error instanceof ModelResponseError ? 422 : 502).json({ error: terminalMessage, diagnostics });
+  } finally {
+    requestCancellation.dispose();
   }
 });
 

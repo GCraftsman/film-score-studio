@@ -10,20 +10,20 @@ import type { TrackProposalAction } from './trackProposalAction';
 export interface TrackProposal {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   action: TrackProposalAction;
-  /** @maxLength 80 */
+  /** @maxLength 400 */
   trackId?: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   instrument: string;
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   role: string;
   /**
@@ -33,12 +33,12 @@ export interface TrackProposal {
   midiProgram: number;
   /**
      * @minLength 1
-     * @maxLength 240
+     * @maxLength 1200
      */
   summary: string;
   /**
      * @minLength 1
-     * @maxLength 500
+     * @maxLength 2500
      */
   reason: string;
 }

@@ -220,7 +220,7 @@ export function EditWorkflowSummary({ workflow }: { workflow: EditWorkflow }) {
             ? <AlertTriangle className="h-3.5 w-3.5 text-amber-300" />
             : <MessageCircle className="h-3.5 w-3.5 text-primary" />}
         <span className={`text-[9px] font-bold uppercase tracking-widest ${verifiedEdit ? 'text-emerald-400' : repairExhausted ? 'text-amber-300' : 'text-primary'}`}>
-          {verifiedEdit ? 'Verified score modification' : repairExhausted ? timeoutExhausted ? 'Edit timeout error' : truncationExhausted ? 'Edit completion error' : 'Edit format error' : workflow.events.some((event) => event.stage === 'workflow-error') ? 'Score edit failed' : 'Routed discussion'}
+           {verifiedEdit ? 'MIDI/timing validated modification' : repairExhausted ? timeoutExhausted ? 'Edit timeout error' : truncationExhausted ? 'Edit completion error' : 'Edit format error' : workflow.events.some((event) => event.stage === 'workflow-error') ? 'Score edit failed' : 'Routed discussion'}
         </span>
       </div>
       <p className="text-[11px] leading-relaxed text-muted-foreground">{workflow.summary}</p>

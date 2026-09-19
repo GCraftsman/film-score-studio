@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { EventEmitter } from "node:events";
+import { composeRequestAbortController } from "../lib/compose-cancellation.ts";
 import {
   composeRequestId,
   createComposeDiagnosticSink,
@@ -68,20 +70,32 @@ test("compose diagnostics retain numeric request correlation and emit exactly on
   assert.equal(events[1].taskId, "task-1");
 });
 
+test("compose request cancellation follows a disconnected response", () => {
+  const request = Object.assign(new EventEmitter(), { complete: true });
+  const response = Object.assign(new EventEmitter(), { writableEnded: false });
+  const cancellation = composeRequestAbortController(request as never, response as never);
+  response.emit("close");
+  assert.equal(cancellation.signal.aborted, true);
+  cancellation.dispose();
+  // Disposal is idempotent and removes listeners even after cancellation.
+  assert.equal(request.listenerCount("aborted"), 0);
+  assert.equal(response.listenerCount("close"), 0);
+});
+
 test("compose diagnostic sink forwards only safe operation reason and constraints", () => {
   const diagnostic: WorkflowDiagnostic = {
     stage: "initial",
     agent: "Continuity & Transitions (instrument, track track-1)",
     taskId: "task-1",
     code: "invalid-field",
-    reason: "operation summary must be a non-empty string with at most 240 characters",
-    responseChars: 241,
+    reason: "operation summary must be a non-empty string with at most 1200 characters",
+    responseChars: 1201,
     envelope: { keys: ["operations"], types: { operations: "array" }, unknownKeyCount: 0 },
     index: 0,
     fields: ["summary"],
     observedType: "string",
-    observedLength: 241,
-    maxLength: 240,
+    observedLength: 1201,
+    maxLength: 1200,
   };
   let emitted: unknown;
   let logged: WorkflowDiagnostic | undefined;
@@ -98,13 +112,13 @@ test("compose diagnostic sink forwards only safe operation reason and constraint
   assert.equal(logged?.index, 0);
   assert.deepEqual(logged?.fields, ["summary"]);
   assert.equal(logged?.observedType, "string");
-  assert.equal(logged?.observedLength, 241);
-  assert.equal(logged?.maxLength, 240);
+  assert.equal(logged?.observedLength, 1201);
+  assert.equal(logged?.maxLength, 1200);
   assert.doesNotMatch(JSON.stringify(logged), /private-summary|pitch|velocity|notes/);
   assert.deepEqual(emitted, {
     type: "workflow-progress",
     stage: "agent-response-error",
-    message: "Specialist Continuity & Transitions (instrument, track track-1) returned invalid-field during initial: operation summary must be a non-empty string with at most 240 characters",
+    message: "Specialist Continuity & Transitions (instrument, track track-1) returned invalid-field during initial: operation summary must be a non-empty string with at most 1200 characters",
     reason: diagnostic.reason,
     agent: diagnostic.agent,
     taskId: diagnostic.taskId,
@@ -112,8 +126,8 @@ test("compose diagnostic sink forwards only safe operation reason and constraint
     index: 0,
     fields: ["summary"],
     observedType: "string",
-    observedLength: 241,
-    maxLength: 240,
+    observedLength: 1201,
+    maxLength: 1200,
   });
   assert.doesNotMatch(JSON.stringify(emitted), /private-summary|pitch|velocity|notes/);
 });
@@ -229,4 +243,48 @@ test("chatDetailed normalizes a timeout while decoding an ok response", async ()
       error.diagnostic.responseChars === 0,
   );
   assert.equal(calls, 1);
+});
+
+test("chatDetailed forwards caller abort to the provider without retrying", async () => {
+  const controller = new AbortController();
+  let calls = 0;
+  let providerSignal: AbortSignal | undefined;
+  const provider = async (_input: string, init?: RequestInit): Promise<Response> => {
+    calls += 1;
+    providerSignal = init?.signal as AbortSignal | undefined;
+    await new Promise<never>((_resolve, reject) => {
+      providerSignal?.addEventListener("abort", () => {
+        reject(Object.assign(new Error("disconnected"), { name: "AbortError" }));
+      }, { once: true });
+    });
+    throw new Error("unreachable");
+  };
+  const request = chatDetailed(
+    {} as never,
+    "grok-4-fast",
+    [{ role: "user", content: "cancel this" }],
+    16_000,
+    true,
+    provider,
+    controller.signal,
+  );
+  // Let the shared limiter launch the injected provider before disconnecting.
+  await new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      clearInterval(started);
+      reject(new Error("injected provider did not launch"));
+    }, 1_000);
+    const started = setInterval(() => {
+      if (providerSignal) {
+        clearInterval(started);
+        clearTimeout(timeout);
+        resolve();
+      }
+    }, 10);
+  });
+  controller.abort();
+  await assert.rejects(request, (error: unknown) =>
+    error instanceof Error && error.name === "AbortError");
+  assert.equal(calls, 1);
+  assert.equal(providerSignal?.aborted, true);
 });

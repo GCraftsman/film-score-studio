@@ -1,0 +1,1144 @@
+{
+  "schemaVersion": 1,
+  "status": "paired-run-failed-or-unapproved",
+  "startedAt": "2026-09-15T22:47:43.199Z",
+  "completedAt": "2026-09-15T22:50:16.741Z",
+  "provider": "xai",
+  "model": "grok-4.20-0309-non-reasoning",
+  "modelLimits": {
+    "selectedModel": "grok-4.20-0309-non-reasoning",
+    "selectedMetadata": {
+      "id": "grok-4.20-0309-non-reasoning"
+    },
+    "observedMaxInputChars": 53106,
+    "observedMaxInputBytes": 53124,
+    "observedMaxMessageChars": 47591,
+    "observedMaxMessageBytes": 47609
+  },
+  "sourceFreeze": {
+    "schemaVersion": 1,
+    "source": "experiment.ts",
+    "snapshot": "experiment.executed.ts",
+    "sha256": "c8efeb144ac7c93cfbd0c51a64c867aff48063e9ab415c98067742358cd114b9",
+    "bytes": 110250,
+    "frozenAt": "2026-09-15T23:10:00Z",
+    "productionModuleHashes": "production-module-hashes.json",
+    "priorPilotSourceHash": null,
+    "priorPilotSourceHashNote": "The first pilot source was not frozen before launch; its exact bytes cannot be reconstructed.",
+    "priorCorrectedAttempt": "../intro-workflow-comparison-corrected/",
+    "priorCorrectedAttemptNote": "Immutable recorded setup-failure evidence; not architecture evidence and not rerun.",
+    "provenance": "Final adapter source frozen after schema, identity, diagnostics, loader, and offline fixture repairs; no live provider call has occurred from this directory.",
+    "currentSourceSha256": "c8efeb144ac7c93cfbd0c51a64c867aff48063e9ab415c98067742358cd114b9",
+    "productionModuleHashesVerified": true,
+    "productionModuleHashesPath": "production-module-hashes.json"
+  },
+  "fixtureResult": {
+    "checks": {
+      "sparseRestsDoNotFailSectionSpan": true,
+      "everyRetainedTrackNeedsNewMaterial": true,
+      "refusalFailsClosed": true,
+      "emptyRefusalFailsClosed": true,
+      "nonStopFailsClosed": true
+    },
+    "sparseRubric": {
+      "pass": true,
+      "failures": [],
+      "baselineUnchangedBeforeApply": true,
+      "retainedMembership": true,
+      "playableCatalogMembership": true,
+      "retainedRegionsPreserved": true,
+      "operationOwnership": true,
+      "allOperationsValidated": true,
+      "segmentBounds": true,
+      "durationBeats": 256,
+      "sectionStartBeat": 0,
+      "sectionEndBeat": 256,
+      "sectionSpanBeats": 256,
+      "actualMaxNoteEndBeat": 256,
+      "coverageBeats": 14,
+      "coverageFraction": 0.0546875,
+      "coverageDensityBeats": 14,
+      "coverageDensityFraction": 0.0546875,
+      "barsWithAnyNote": 7,
+      "noteCount": 30,
+      "tracksWithNotes": [
+        "track-piano",
+        "track-strings",
+        "track-horn"
+      ],
+      "tracksWithNewMaterial": [
+        "track-horn",
+        "track-piano",
+        "track-strings"
+      ],
+      "allRetainedTracksHaveNewMaterial": true,
+      "semanticChanged": true,
+      "fullSectionSpan": true
+    },
+    "missingTrackRubric": {
+      "pass": false,
+      "failures": [
+        "New material is missing from retained tracks: track-horn."
+      ],
+      "baselineUnchangedBeforeApply": true,
+      "retainedMembership": true,
+      "playableCatalogMembership": true,
+      "retainedRegionsPreserved": true,
+      "operationOwnership": true,
+      "allOperationsValidated": true,
+      "segmentBounds": true,
+      "durationBeats": 256,
+      "sectionStartBeat": 0,
+      "sectionEndBeat": 256,
+      "sectionSpanBeats": 256,
+      "actualMaxNoteEndBeat": 256,
+      "coverageBeats": 14,
+      "coverageFraction": 0.0546875,
+      "coverageDensityBeats": 14,
+      "coverageDensityFraction": 0.0546875,
+      "barsWithAnyNote": 7,
+      "noteCount": 28,
+      "tracksWithNotes": [
+        "track-piano",
+        "track-strings",
+        "track-horn"
+      ],
+      "tracksWithNewMaterial": [
+        "track-piano",
+        "track-strings"
+      ],
+      "allRetainedTracksHaveNewMaterial": false,
+      "semanticChanged": true,
+      "fullSectionSpan": true
+    },
+    "refusalCode": "provider-refusal",
+    "emptyRefusalCode": "provider-refusal",
+    "nonStopCode": "provider-token-limit"
+  },
+  "completionBudget": {
+    "currentAdviserStages": 16000,
+    "consolidatedSkillPlanWriterVerification": 16000,
+    "sharedEvaluator": 16000,
+    "normalProductionWorkflowChanged": false
+  },
+  "request": {
+    "message": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 64-bar introduction in 4/4 (exactly 256 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. The intro is exactly 64 bars in 4/4, or 256 score beats. Because one region may be at most 128 beats, split every track's full passage into multiple score-relative regions; two 128-beat regions per track is the recommended layout, with smaller regions allowed. Every region may contain at most 512 notes, every region startBeat must be <=512, and the complete response may contain at most 60 operations. Notes use region-relative startBeat values; each region and note must remain inside its declared duration. Do not shorten the 256-beat request to fit one region; sparse rests are allowed, but playable material must span from the opening to the final section beat. The final candidate must span the full 256-beat intro with real playable notes; sparse rests are allowed and continuous sound coverage is not required. Keep the writing sparse enough to remain legible, vary register and density across the arc, and leave the last phrase suitable for a later cue transition. Write sparse playable material with intentional rests; do not fill every beat. Use 2-4 added regions per retained track, each <=128 beats, and make the last added region reach the 256-beat section end. Use a small number of notes per phrase and leave rests between phrases so the response remains manageable while the section span reaches the final beat.",
+    "safeDirection": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 64-bar introduction in 4/4 (exactly 256 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. The intro is exactly 64 bars in 4/4, or 256 score beats. Because one region may be at most 128 beats, split every track's full passage into multiple score-relative regions; two 128-beat regions per track is the recommended layout, with smaller regions allowed. Every region may contain at most 512 notes, every region startBeat must be <=512, and the complete response may contain at most 60 operations. Notes use region-relative startBeat values; each region and note must remain inside its declared duration. Do not shorten the 256-beat request to fit one region; sparse rests are allowed, but playable material must span from the opening to the final section beat. The final candidate must span the full 256-beat intro with real playable notes; sparse rests are allowed and continuous sound coverage is not required. Keep the writing sparse enough to remain legible, vary register and density across the arc, and leave the last phrase suitable for a later cue transition. Write sparse playable material with intentional rests; do not fill every beat. Use 2-4 added regions per retained track, each <=128 beats, and make the last added region reach the 256-beat section end. Use a small number of notes per phrase and leave rests between phrases so the response remains manageable while the section span reaches the final beat.",
+    "selectedStyle": "Original neutral cinematic"
+  },
+  "segmentRules": {
+    "introBars": 64,
+    "timeSignature": "4/4",
+    "durationBeats": 256,
+    "maxRegionBeats": 128,
+    "maxNotesPerRegion": 512,
+    "maxOperations": 60,
+    "sameRulesInBothArms": true
+  },
+  "baseline": {
+    "path": "baseline.json",
+    "sha256": "1677525fdba6fe058886cd636fb6bd4b6777c5e22006dd6cdb24f6d00e0b10e1",
+    "durationBeats": 256,
+    "coverage": {
+      "minStart": 0,
+      "maxEnd": 15.5,
+      "span": 15.5,
+      "coveredBeats": 12,
+      "fraction": 0.046875,
+      "barsWithAnyNote": 4
+    },
+    "trackIds": [
+      "track-piano",
+      "track-strings",
+      "track-horn"
+    ],
+    "catalog": [
+      {
+        "id": "track-piano",
+        "instrument": "Piano",
+        "midiProgram": 0
+      },
+      {
+        "id": "track-strings",
+        "instrument": "String Ensemble",
+        "midiProgram": 48
+      },
+      {
+        "id": "track-horn",
+        "instrument": "French Horn",
+        "midiProgram": 60
+      }
+    ]
+  },
+  "arms": [
+    {
+      "arm": "current-adviser-first",
+      "status": "failed",
+      "approved": false,
+      "startedAt": "2026-09-15T22:47:43.657Z",
+      "completedAt": "2026-09-15T22:49:04.734Z",
+      "wallMs": 81077,
+      "model": "grok-4.20-0309-non-reasoning",
+      "operations": [],
+      "events": [
+        {
+          "stage": "agent-response-error",
+          "message": "Specialist Harmony & Voice Leading returned invalid-field during initial: adviser feedback was empty after safety screening",
+          "reason": "adviser feedback was empty after safety screening",
+          "agent": "Harmony & Voice Leading",
+          "code": "invalid-field",
+          "fields": [
+            "insight"
+          ],
+          "evaluatorCategory": "unknown",
+          "affectedScope": [
+            "unknown"
+          ],
+          "evidence": [],
+          "correctionOutcome": "not-attempted",
+          "commitStatus": "not-committed"
+        },
+        {
+          "stage": "adviser-format-error",
+          "message": "Initial adviser validation failed: adviser feedback was empty after safety screening (code invalid-field, fields insight).",
+          "agent": "Harmony & Voice Leading",
+          "attempt": "initial",
+          "code": "invalid-field",
+          "fields": [
+            "insight"
+          ],
+          "reason": "adviser feedback was empty after safety screening"
+        },
+        {
+          "stage": "adviser-format-repair",
+          "message": "Read-only adviser structural repair attempt 1/2 started after adviser feedback was empty after safety screening (code invalid-field, fields insight).",
+          "agent": "Harmony & Voice Leading",
+          "attempt": "1/2",
+          "code": "invalid-field",
+          "fields": [
+            "insight"
+          ],
+          "reason": "adviser feedback was empty after safety screening",
+          "outcome": "retrying"
+        },
+        {
+          "stage": "adviser-format-recovered",
+          "message": "Read-only adviser response recovered on structural repair attempt 1/2.",
+          "agent": "Harmony & Voice Leading",
+          "attempt": "1/2",
+          "code": "recovered",
+          "fields": [
+            "insight"
+          ],
+          "reason": "adviser response envelope is valid",
+          "outcome": "recovered"
+        },
+        {
+          "stage": "advisers-consulted",
+          "message": "2 read-only style and concept advisers completed their bounded consultation.",
+          "agent": "Orchestrator"
+        },
+        {
+          "stage": "track-writer-started",
+          "message": "A server-scoped track writer started.",
+          "taskId": "track-track-piano",
+          "agent": "Piano (instrument, track track-piano)",
+          "files": [
+            "track-piano.mid"
+          ]
+        },
+        {
+          "stage": "agent-response-error",
+          "message": "Specialist Piano (instrument, track track-piano) returned invalid-timing during initial: note timing exceeds region duration",
+          "reason": "note timing exceeds region duration",
+          "agent": "Piano (instrument, track track-piano)",
+          "taskId": "track-track-piano",
+          "code": "invalid-timing",
+          "index": 2,
+          "fields": [
+            "region.notes[9].startBeat",
+            "region.notes[9].durationBeats"
+          ],
+          "evaluatorCategory": "unknown",
+          "affectedScope": [
+            "unknown"
+          ],
+          "evidence": [],
+          "correctionOutcome": "not-attempted",
+          "commitStatus": "not-committed"
+        },
+        {
+          "stage": "operation-format-error",
+          "message": "Initial validation failed: note timing exceeds region duration (index 2, code invalid-timing, fields region.notes[9].startBeat, region.notes[9].durationBeats).",
+          "taskId": "track-track-piano",
+          "agent": "Piano (instrument, track track-piano)",
+          "index": 2,
+          "code": "invalid-timing",
+          "fields": [
+            "region.notes[9].startBeat",
+            "region.notes[9].durationBeats"
+          ],
+          "reason": "note timing exceeds region duration",
+          "attempt": "initial"
+        },
+        {
+          "stage": "operation-format-repair",
+          "agent": "Piano (instrument, track track-piano)",
+          "taskId": "track-track-piano",
+          "attempt": "1/1",
+          "code": "musical-regeneration",
+          "outcome": "retrying",
+          "message": "IMPORTANT: bounded musical regeneration 1/1 started for invalid musical fields. Valid operations and track ownership must remain unchanged."
+        },
+        {
+          "stage": "agent-response-error",
+          "message": "Specialist Piano (instrument, track track-piano) returned provider-finish-reason during repair (attempt 1/1): The provider returned a non-success completion finish reason. Requested completion budget: 24000 tokens.",
+          "reason": "The provider returned a non-success completion finish reason.",
+          "agent": "Piano (instrument, track track-piano)",
+          "taskId": "track-track-piano",
+          "attempt": "1/1",
+          "code": "provider-finish-reason",
+          "fields": [
+            "response"
+          ],
+          "evaluatorCategory": "unknown",
+          "affectedScope": [
+            "unknown"
+          ],
+          "evidence": [],
+          "correctionOutcome": "retrying",
+          "commitStatus": "not-committed"
+        },
+        {
+          "stage": "operation-format-exhausted",
+          "agent": "Piano (instrument, track track-piano)",
+          "taskId": "track-track-piano",
+          "attempt": "1/1",
+          "code": "musical-regeneration",
+          "outcome": "exhausted",
+          "message": "The single musical regeneration failed; the score remains unchanged."
+        }
+      ],
+      "errors": [
+        {
+          "code": "provider-finish-reason",
+          "message": "The provider returned a non-success completion finish reason."
+        }
+      ],
+      "repairs": 0,
+      "privateMidi": [
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "piano-development",
+          "label": "Piano arc",
+          "path": "private-midi/current-adviser-first-adviser-73e4c5a7-ac7d-4134-afae-3e2b92f6d4fd.mid",
+          "bytes": 68,
+          "sha256": "624b0e129a9663dccd2b1278c622d2bd80f224a559afdd5668b8be88506eb986",
+          "durationBeats": 4,
+          "noteCount": 2,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "strings-development",
+          "label": "Strings arc",
+          "path": "private-midi/current-adviser-first-adviser-d022ef67-b28f-4b87-a320-0aa8861965dc.mid",
+          "bytes": 60,
+          "sha256": "5600068dfaf248bbc669a1a4cb07783828ee5d7a5af0e553213775998cc15ac8",
+          "durationBeats": 4,
+          "noteCount": 1,
+          "targets": [
+            "track-strings"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "horn-development",
+          "label": "Horn arc",
+          "path": "private-midi/current-adviser-first-adviser-fcaf9439-828d-4520-a67d-a27720d12366.mid",
+          "bytes": 67,
+          "sha256": "e9a1c91e6c785d4179c86ff50a1278802e932e7ba97f8c4b41b5a49135d37cad",
+          "durationBeats": 4,
+          "noteCount": 2,
+          "targets": [
+            "track-horn"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "piano-development",
+          "label": "Piano continuation",
+          "path": "private-midi/current-adviser-first-adviser-3603759c-cb4f-4255-b337-54b80a2819a1.mid",
+          "bytes": 77,
+          "sha256": "aab827be49809d6bcb19863cf2bcd9291a36e9b2c31497ecb5cf407558d94411",
+          "durationBeats": 4,
+          "noteCount": 2,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "current-adviser-first",
+          "stage": "adviser",
+          "suggestionId": "strings-development",
+          "label": "Strings continuation",
+          "path": "private-midi/current-adviser-first-adviser-523f3c9c-24ad-4b32-8809-8b14dfc004cc.mid",
+          "bytes": 69,
+          "sha256": "01e6760c8dfe4041f6ad55aff6e2332912f132ceb1f5af86308121ba3860f073",
+          "durationBeats": 4,
+          "noteCount": 1,
+          "targets": [
+            "track-strings"
+          ]
+        }
+      ],
+      "advisoryMidiLoads": 2,
+      "writerAttempts": 2,
+      "writerRepairAttempts": 1,
+      "writerRepairLimit": 2,
+      "objectiveRubric": {
+        "pass": false,
+        "failures": [
+          "No safely applied candidate score was available."
+        ],
+        "baselineUnchangedBeforeApply": true,
+        "retainedMembership": false,
+        "playableCatalogMembership": false,
+        "retainedRegionsPreserved": false,
+        "operationOwnership": false,
+        "allOperationsValidated": false,
+        "segmentBounds": false,
+        "durationBeats": 0,
+        "sectionStartBeat": 0,
+        "sectionEndBeat": 0,
+        "sectionSpanBeats": 0,
+        "actualMaxNoteEndBeat": 0,
+        "coverageBeats": 0,
+        "coverageFraction": 0,
+        "coverageDensityBeats": 0,
+        "coverageDensityFraction": 0,
+        "barsWithAnyNote": 0,
+        "noteCount": 0,
+        "tracksWithNotes": [],
+        "tracksWithNewMaterial": [],
+        "allRetainedTracksHaveNewMaterial": false,
+        "semanticChanged": false,
+        "fullSectionSpan": false
+      },
+      "baselineUnchanged": true,
+      "writerPromptChecks": {
+        "writerCalls": 2,
+        "callsWithSegmentBounds": 2,
+        "allWriterCallsHadSegmentBounds": true,
+        "note": "The production writer schema itself includes 128-beat, 512-note, 512-startBeat, and 60-operation limits; this arm also received the same explicit segment rules and sparse-writing direction in safeDirection. The experiment adapter lifted adviser-stage completion budgets to 16000 tokens; normal production behavior is unchanged."
+      }
+    },
+    {
+      "arm": "consolidated-orchestrator",
+      "status": "failed",
+      "approved": false,
+      "startedAt": "2026-09-15T22:49:04.741Z",
+      "completedAt": "2026-09-15T22:50:16.738Z",
+      "wallMs": 71997,
+      "model": "grok-4.20-0309-non-reasoning",
+      "operations": [
+        {
+          "id": "op-piano-1",
+          "type": "add-region",
+          "trackId": "track-piano",
+          "summary": "Add region 16-128: sparse mid-register chords and single-note echoes, mp legato, C3-G4, 7 notes with long rests",
+          "region": {
+            "id": "reg-piano-16-128",
+            "name": "Piano mid chords echoes",
+            "startBeat": 16,
+            "durationBeats": 112,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 65,
+                "velocity": 55,
+                "startBeat": 4,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 69,
+                "velocity": 58,
+                "startBeat": 20,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 52,
+                "startBeat": 36,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 67,
+                "velocity": 60,
+                "startBeat": 52,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 64,
+                "velocity": 54,
+                "startBeat": 68,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 71,
+                "velocity": 57,
+                "startBeat": 84,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 60,
+                "velocity": 53,
+                "startBeat": 100,
+                "durationBeats": 2,
+                "articulation": "legato"
+              }
+            ]
+          }
+        },
+        {
+          "id": "op-piano-2",
+          "type": "add-region",
+          "trackId": "track-piano",
+          "summary": "Add region 64-192: gentle rising 3-5 note arpeggios with wide rests, gradual mp to mf then ease, G3-C5, 15 notes",
+          "region": {
+            "id": "reg-piano-64-192",
+            "name": "Piano rising arpeggios",
+            "startBeat": 64,
+            "durationBeats": 128,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 67,
+                "velocity": 62,
+                "startBeat": 8,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 71,
+                "velocity": 65,
+                "startBeat": 9,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 68,
+                "startBeat": 10,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 64,
+                "startBeat": 28,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 76,
+                "velocity": 67,
+                "startBeat": 29,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 79,
+                "velocity": 70,
+                "startBeat": 30,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 69,
+                "velocity": 63,
+                "startBeat": 52,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 66,
+                "startBeat": 53,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 77,
+                "velocity": 69,
+                "startBeat": 54,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 65,
+                "velocity": 60,
+                "startBeat": 76,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 64,
+                "startBeat": 77,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 76,
+                "velocity": 67,
+                "startBeat": 78,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 71,
+                "velocity": 62,
+                "startBeat": 100,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 65,
+                "startBeat": 101,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 79,
+                "velocity": 68,
+                "startBeat": 102,
+                "durationBeats": 2,
+                "articulation": "legato"
+              }
+            ]
+          }
+        },
+        {
+          "id": "op-piano-3",
+          "type": "add-region",
+          "trackId": "track-piano",
+          "summary": "Add region 128-256: sparse descending high-register motifs with wide rests, return to mp, open interval ending with rest at 256, C4-G5, 8 notes",
+          "region": {
+            "id": "reg-piano-128-256",
+            "name": "Piano descending motifs",
+            "startBeat": 128,
+            "durationBeats": 128,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 84,
+                "velocity": 58,
+                "startBeat": 8,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 79,
+                "velocity": 62,
+                "startBeat": 24,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 76,
+                "velocity": 55,
+                "startBeat": 44,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 60,
+                "startBeat": 60,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 77,
+                "velocity": 57,
+                "startBeat": 80,
+                "durationBeats": 1.5,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 59,
+                "startBeat": 100,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 67,
+                "velocity": 54,
+                "startBeat": 116,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 64,
+                "velocity": 56,
+                "startBeat": 124,
+                "durationBeats": 3,
+                "articulation": "legato"
+              }
+            ]
+          }
+        },
+        {
+          "id": "op-strings-1",
+          "type": "add-region",
+          "trackId": "track-strings",
+          "summary": "Add low sustained pads with occasional 2-note voicings, mp legato, register C2-G3, <25 notes, wide rests",
+          "region": {
+            "id": "reg-strings-16-128",
+            "name": "Strings low pads and voicings",
+            "startBeat": 16,
+            "durationBeats": 112,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 48,
+                "velocity": 55,
+                "startBeat": 4,
+                "durationBeats": 8,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 43,
+                "velocity": 52,
+                "startBeat": 20,
+                "durationBeats": 6,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 55,
+                "velocity": 58,
+                "startBeat": 36,
+                "durationBeats": 4,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 50,
+                "velocity": 54,
+                "startBeat": 52,
+                "durationBeats": 8,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 48,
+                "velocity": 56,
+                "startBeat": 68,
+                "durationBeats": 6,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 43,
+                "velocity": 53,
+                "startBeat": 84,
+                "durationBeats": 4,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 55,
+                "velocity": 57,
+                "startBeat": 100,
+                "durationBeats": 6,
+                "articulation": "legato"
+              }
+            ]
+          }
+        },
+        {
+          "id": "op-strings-2",
+          "type": "add-region",
+          "trackId": "track-strings",
+          "summary": "Add mid-register rising 4-note phrases with 8-16 beat rests, crescendo to mf, register G3-C5, <30 notes",
+          "region": {
+            "id": "reg-strings-80-192",
+            "name": "Strings mid rising phrases",
+            "startBeat": 80,
+            "durationBeats": 112,
+            "dynamics": "mp",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 67,
+                "velocity": 60,
+                "startBeat": 4,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 71,
+                "velocity": 62,
+                "startBeat": 6,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 65,
+                "startBeat": 7,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 63,
+                "startBeat": 8,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 69,
+                "velocity": 64,
+                "startBeat": 24,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 67,
+                "startBeat": 26,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 76,
+                "velocity": 70,
+                "startBeat": 27,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 68,
+                "startBeat": 28,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 65,
+                "velocity": 62,
+                "startBeat": 48,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 69,
+                "velocity": 65,
+                "startBeat": 50,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 68,
+                "startBeat": 51,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 71,
+                "velocity": 66,
+                "startBeat": 52,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 67,
+                "velocity": 69,
+                "startBeat": 72,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 72,
+                "startBeat": 74,
+                "durationBeats": 1,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 76,
+                "velocity": 74,
+                "startBeat": 75,
+                "durationBeats": 2,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 74,
+                "velocity": 71,
+                "startBeat": 76,
+                "durationBeats": 1,
+                "articulation": "legato"
+              }
+            ]
+          }
+        },
+        {
+          "id": "op-strings-3",
+          "type": "add-region",
+          "trackId": "track-strings",
+          "summary": "Add high-register sparse sustained tones and soft descending steps, decrescendo to mp, register C4-E5, <25 notes with final long rest",
+          "region": {
+            "id": "reg-strings-160-256",
+            "name": "Strings high sparse descending",
+            "startBeat": 160,
+            "durationBeats": 96,
+            "dynamics": "mf",
+            "articulation": "legato",
+            "notes": [
+              {
+                "pitch": 79,
+                "velocity": 68,
+                "startBeat": 4,
+                "durationBeats": 8,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 76,
+                "velocity": 65,
+                "startBeat": 20,
+                "durationBeats": 6,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 72,
+                "velocity": 62,
+                "startBeat": 36,
+                "durationBeats": 8,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 69,
+                "velocity": 58,
+                "startBeat": 52,
+                "durationBeats": 6,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 67,
+                "velocity": 55,
+                "startBeat": 68,
+                "durationBeats": 8,
+                "articulation": "legato"
+              },
+              {
+                "pitch": 64,
+                "velocity": 52,
+                "startBeat": 84,
+                "durationBeats": 6,
+                "articulation": "legato"
+              }
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "stage": "orchestrator-started",
+          "message": "Consolidated Orchestrator started a sequential on-demand skill flow."
+        },
+        {
+          "stage": "on-demand-skills-completed",
+          "message": "Style then concept skills completed sequentially; advisory MIDI remained private."
+        },
+        {
+          "stage": "retained-track-plan-completed",
+          "message": "Orchestrator assigned all retained tracks without changing membership."
+        },
+        {
+          "stage": "track-writer-completed",
+          "agent": "Piano",
+          "trackId": "track-piano",
+          "operationCount": 3
+        },
+        {
+          "stage": "track-writer-completed",
+          "agent": "String Ensemble",
+          "trackId": "track-strings",
+          "operationCount": 3
+        }
+      ],
+      "errors": [
+        {
+          "message": "The isolated experiment failed before a verified score candidate was available."
+        }
+      ],
+      "repairs": 0,
+      "privateMidi": [
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "piano-development",
+          "label": "Piano continuation",
+          "path": "private-midi/consolidated-orchestrator-style-91c63d04-c2ae-409e-8ca1-2544cf434581.mid",
+          "bytes": 97,
+          "sha256": "9eebafd4ef7b1cda8be6000ec6e85562587c7554cbbaeae91e0ea624669ad99f",
+          "durationBeats": 16,
+          "noteCount": 4,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "strings-development",
+          "label": "Strings continuation",
+          "path": "private-midi/consolidated-orchestrator-style-11f06504-615a-4433-b925-1e7253017e2e.mid",
+          "bytes": 90,
+          "sha256": "9be71bf495ab005c96fe2dd623aaec9d215d66752a6089bd0546453818a5edc4",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-strings"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "horn-development",
+          "label": "Horn continuation",
+          "path": "private-midi/consolidated-orchestrator-style-afdd39b0-7893-4260-b46b-3b2098b8e5af.mid",
+          "bytes": 86,
+          "sha256": "eb9e377c9a0e5c502894dfb972a1f1d44232d273a1f77ab0f1670c1e039f3737",
+          "durationBeats": 16,
+          "noteCount": 3,
+          "targets": [
+            "track-horn"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "concept",
+          "suggestionId": "piano-extend-1",
+          "label": "Piano region 16-128",
+          "path": "private-midi/consolidated-orchestrator-concept-ce84184b-f905-49b7-bdc6-80d823949f33.mid",
+          "bytes": 129,
+          "sha256": "9df6f6219ee92be84bbccee8cf18f718bf793647f25edad3fa3d3b9cb51a1e98",
+          "durationBeats": 112,
+          "noteCount": 7,
+          "targets": [
+            "track-piano"
+          ]
+        },
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "plan",
+          "suggestionId": "piano-dev-1",
+          "label": "Piano sparse mid chords",
+          "path": "private-midi/consolidated-orchestrator-plan-61f94fcf-1d41-49aa-be3e-30771d72f2ef.mid",
+          "bytes": 133,
+          "sha256": "567e880c9e6f9478f60760bc46c5bd8d731a1683c046c8d4da6ae57324a9e32b",
+          "durationBeats": 112,
+          "noteCount": 7,
+          "targets": [
+            "track-piano"
+          ]
+        }
+      ],
+      "advisoryMidiLoads": 5,
+      "writerAttempts": 5,
+      "writerRepairAttempts": 2,
+      "writerRepairLimit": 2,
+      "objectiveRubric": {
+        "pass": false,
+        "failures": [
+          "No safely applied candidate score was available."
+        ],
+        "baselineUnchangedBeforeApply": true,
+        "retainedMembership": false,
+        "playableCatalogMembership": false,
+        "retainedRegionsPreserved": false,
+        "operationOwnership": false,
+        "allOperationsValidated": false,
+        "segmentBounds": false,
+        "durationBeats": 0,
+        "sectionStartBeat": 0,
+        "sectionEndBeat": 0,
+        "sectionSpanBeats": 0,
+        "actualMaxNoteEndBeat": 0,
+        "coverageBeats": 0,
+        "coverageFraction": 0,
+        "coverageDensityBeats": 0,
+        "coverageDensityFraction": 0,
+        "barsWithAnyNote": 0,
+        "noteCount": 0,
+        "tracksWithNotes": [],
+        "tracksWithNewMaterial": [],
+        "allRetainedTracksHaveNewMaterial": false,
+        "semanticChanged": false,
+        "fullSectionSpan": false
+      },
+      "baselineUnchanged": true,
+      "writerPromptChecks": {
+        "writerCalls": 5,
+        "callsWithSegmentBounds": 5,
+        "allWriterCallsHadSegmentBounds": true,
+        "note": "The consolidated writer prompt repeats the exact segment rules received by the current arm; no arm gets a larger region or operation allowance."
+      }
+    }
+  ],
+  "sharedEvaluator": {
+    "status": "not-run-no-candidates",
+    "reason": "Both arms produced no candidate score; blind evaluation was skipped."
+  },
+  "callTotals": {
+    "totalProviderCalls": 15,
+    "byArm": {
+      "provider": 1,
+      "current-adviser-first": 6,
+      "consolidated-orchestrator": 8
+    },
+    "totalRepairs": 0,
+    "wallMsByArm": {
+      "current-adviser-first": 81077,
+      "consolidated-orchestrator": 71997
+    }
+  },
+  "segmentBoundPromptAudit": {
+    "currentWriterPrompt": {
+      "writerCalls": 2,
+      "callsWithSegmentBounds": 2,
+      "allWriterCallsHadSegmentBounds": true,
+      "note": "The production writer schema itself includes 128-beat, 512-note, 512-startBeat, and 60-operation limits; this arm also received the same explicit segment rules and sparse-writing direction in safeDirection. The experiment adapter lifted adviser-stage completion budgets to 16000 tokens; normal production behavior is unchanged."
+    },
+    "consolidatedWriterPrompt": {
+      "writerCalls": 5,
+      "callsWithSegmentBounds": 5,
+      "allWriterCallsHadSegmentBounds": true,
+      "note": "The consolidated writer prompt repeats the exact segment rules received by the current arm; no arm gets a larger region or operation allowance."
+    },
+    "sameExplicitRulesRequested": true,
+    "omissionStatus": "observed"
+  },
+  "callsPath": "call-metrics.json",
+  "smallSampleLimitation": "One paired run for one long prompt is directional evidence only; no repeated expensive retries were made beyond bounded workflow/adapter repairs.",
+  "savedProjectTouched": false,
+  "normalProductionWorkflowChanged": false
+}

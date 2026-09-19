@@ -9,6 +9,6 @@ import type { ConversationMessageRole } from './conversationMessageRole';
 
 export interface ConversationMessage {
   role: ConversationMessageRole;
-  /** @maxLength 4000 */
+  /** @maxLength 20000 */
   content: string;
 }

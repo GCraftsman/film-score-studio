@@ -9,22 +9,22 @@
 export interface StyleSuggestion {
   /**
      * @minLength 1
-     * @maxLength 80
+     * @maxLength 400
      */
   id: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   name: string;
   /**
      * @minLength 1
-     * @maxLength 500
+     * @maxLength 2500
      */
   description: string;
   /**
      * @minLength 1
-     * @maxLength 120
+     * @maxLength 600
      */
   agent: string;
 }

@@ -1,0 +1,17 @@
+{
+  "harness": "docs/verification/intro-workflow-comparison-corrected/experiment.ts",
+  "backgroundCommand": "nohup node --experimental-strip-types docs/verification/intro-workflow-comparison-corrected/experiment.ts --run </dev/null > docs/verification/intro-workflow-comparison-corrected/run.log 2>&1 &",
+  "successfulCommand": "node --experimental-strip-types docs/verification/intro-workflow-comparison-corrected/experiment.ts --run",
+  "pid": 2346,
+  "backgroundProbePid": 2322,
+  "launchedAt": "2026-09-15T22:31:55.336Z",
+  "completedAt": "2026-09-15T22:33:05.815Z",
+  "sourceSha256": "bf0976c834a958e6f9365dc3b53347a996b7239108d89a68d4bab0b6b53423cc",
+  "sourceSnapshot": "docs/verification/intro-workflow-comparison-corrected/experiment.executed.ts",
+  "stdoutStderr": "docs/verification/intro-workflow-comparison-corrected/run.log",
+  "lock": "docs/verification/intro-workflow-comparison-corrected/run-lock.json",
+  "outcome": "docs/verification/intro-workflow-comparison-corrected/outcome.json",
+  "status": "completed-incomplete-paired-result",
+  "backgroundProbe": "PID 2322 was terminated before producing an outcome; the authorized corrected run then completed in the foreground as PID 2346.",
+  "scope": "One corrected paired live xAI run; no repeat after completion."
+}

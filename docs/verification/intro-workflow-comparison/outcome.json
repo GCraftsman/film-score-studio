@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "status": "paired-run-failed-or-unapproved",
+  "startedAt": "2026-09-15T22:25:06.762Z",
+  "completedAt": "2026-09-15T22:26:00.960Z",
+  "provider": "xai",
+  "model": "grok-4.20-0309-non-reasoning",
+  "modelLimits": {
+    "selectedModel": "grok-4.20-0309-non-reasoning",
+    "selectedMetadata": {
+      "id": "grok-4.20-0309-non-reasoning"
+    },
+    "observedMaxInputChars": 18411,
+    "observedMaxInputBytes": 18411,
+    "observedMaxMessageChars": 16990,
+    "observedMaxMessageBytes": 16990
+  },
+  "request": {
+    "message": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 64-bar introduction in 4/4 (exactly 256 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. The intro is exactly 64 bars in 4/4, or 256 score beats. Because one region may be at most 128 beats, split every track's full passage into multiple score-relative regions; two 128-beat regions per track is the recommended layout, with smaller regions allowed. Every region may contain at most 512 notes, every region startBeat must be <=512, and the complete response may contain at most 60 operations. Notes use region-relative startBeat values; each region and note must remain inside its declared duration. Do not shorten the 256-beat request to fit one region. The final candidate must cover the full 256-beat intro with real playable notes. Keep the writing sparse enough to remain legible, vary register and density across the arc, and leave the last phrase suitable for a later cue transition.",
+    "safeDirection": "Write an original, neutral cinematic film-score intro with no named references, titles, quoted material, or imitation language. It must be a complete 64-bar introduction in 4/4 (exactly 256 beats) with a restrained, gradually widening arc: a quiet opening, a clear central lift, and a resolved but open handoff at the end. Retain every pre-existing track and its existing regions. Use only the existing playable catalog tracks (Piano, String Ensemble, and French Horn); do not add, delete, rename, or remap tracks. Develop new, original material on every retained track while preserving the existing opening material. Use achievable range, articulation, dynamics, and transparent orchestration rather than a named composer's sound. The intro is exactly 64 bars in 4/4, or 256 score beats. Because one region may be at most 128 beats, split every track's full passage into multiple score-relative regions; two 128-beat regions per track is the recommended layout, with smaller regions allowed. Every region may contain at most 512 notes, every region startBeat must be <=512, and the complete response may contain at most 60 operations. Notes use region-relative startBeat values; each region and note must remain inside its declared duration. Do not shorten the 256-beat request to fit one region. The final candidate must cover the full 256-beat intro with real playable notes. Keep the writing sparse enough to remain legible, vary register and density across the arc, and leave the last phrase suitable for a later cue transition.",
+    "selectedStyle": "Original neutral cinematic"
+  },
+  "segmentRules": {
+    "introBars": 64,
+    "timeSignature": "4/4",
+    "durationBeats": 256,
+    "maxRegionBeats": 128,
+    "maxNotesPerRegion": 512,
+    "maxOperations": 60,
+    "sameRulesInBothArms": true
+  },
+  "baseline": {
+    "path": "baseline.json",
+    "sha256": "1677525fdba6fe058886cd636fb6bd4b6777c5e22006dd6cdb24f6d00e0b10e1",
+    "durationBeats": 256,
+    "coverage": {
+      "maxEnd": 15.5,
+      "coveredBeats": 12,
+      "fraction": 0.046875,
+      "barsWithAnyNote": 4
+    },
+    "trackIds": [
+      "track-piano",
+      "track-strings",
+      "track-horn"
+    ],
+    "catalog": [
+      {
+        "id": "track-piano",
+        "instrument": "Piano",
+        "midiProgram": 0
+      },
+      {
+        "id": "track-strings",
+        "instrument": "String Ensemble",
+        "midiProgram": 48
+      },
+      {
+        "id": "track-horn",
+        "instrument": "French Horn",
+        "midiProgram": 60
+      }
+    ]
+  },
+  "arms": [
+    {
+      "arm": "current-adviser-first",
+      "status": "failed",
+      "approved": false,
+      "startedAt": "2026-09-15T22:25:07.134Z",
+      "completedAt": "2026-09-15T22:25:34.775Z",
+      "wallMs": 27641,
+      "model": "grok-4.20-0309-non-reasoning",
+      "operations": [],
+      "events": [
+        {
+          "stage": "agent-response-error",
+          "message": "Specialist Contemporary Cinematic returned model-request-failure during initial: The model request failed before a safe response could be classified.",
+          "reason": "The model request failed before a safe response could be classified.",
+          "agent": "Contemporary Cinematic",
+          "code": "model-request-failure",
+          "fields": [
+            "response"
+          ],
+          "evaluatorCategory": "unknown",
+          "affectedScope": [
+            "unknown"
+          ],
+          "evidence": [],
+          "correctionOutcome": "not-attempted",
+          "commitStatus": "not-committed"
+        }
+      ],
+      "errors": [
+        {
+          "code": "provider-token-limit",
+          "message": "xAI finished the response with length; no incomplete JSON was accepted."
+        }
+      ],
+      "repairs": 0,
+      "privateMidi": [],
+      "objectiveRubric": {
+        "pass": false,
+        "failures": [
+          "No safely applied candidate score was available."
+        ],
+        "baselineUnchangedBeforeApply": true,
+        "retainedMembership": false,
+        "playableCatalogMembership": false,
+        "retainedRegionsPreserved": false,
+        "operationOwnership": false,
+        "allOperationsValidated": false,
+        "segmentBounds": false,
+        "durationBeats": 0,
+        "actualMaxNoteEndBeat": 0,
+        "coverageBeats": 0,
+        "coverageFraction": 0,
+        "barsWithAnyNote": 0,
+        "noteCount": 0,
+        "tracksWithNotes": [],
+        "semanticChanged": false,
+        "fullIntroCoverage": false
+      },
+      "baselineUnchanged": true,
+      "writerPromptChecks": {
+        "writerCalls": 0,
+        "callsWithSegmentBounds": 0,
+        "allWriterCallsHadSegmentBounds": false,
+        "note": "No current instrument writer call launched because the first read-only adviser completion hit the provider token limit. The production writer schema includes 128-beat, 512-note, 512-startBeat, and 60-operation limits, and the arm's safeDirection included the same explicit segment rules; writer-prompt presence could not be observed on a non-launched call."
+      }
+    },
+    {
+      "arm": "consolidated-orchestrator",
+      "status": "failed",
+      "approved": false,
+      "startedAt": "2026-09-15T22:25:34.775Z",
+      "completedAt": "2026-09-15T22:25:59.607Z",
+      "wallMs": 24833,
+      "model": "grok-4.20-0309-non-reasoning",
+      "operations": [],
+      "events": [
+        {
+          "stage": "orchestrator-started",
+          "message": "Consolidated Orchestrator started a sequential on-demand skill flow."
+        }
+      ],
+      "errors": [
+        {
+          "code": "provider-token-limit",
+          "message": "xAI finished the response with length; no incomplete JSON was accepted."
+        }
+      ],
+      "repairs": 0,
+      "privateMidi": [
+        {
+          "arm": "consolidated-orchestrator",
+          "stage": "style",
+          "suggestionId": "extend-piano-128",
+          "label": "Extend piano to 128 beats",
+          "path": "private-midi/consolidated-orchestrator-style-extend-piano-128-fcac7808-aae4-422d-8600-9a7da7d78ef9.mid",
+          "bytes": 335,
+          "sha256": "58204184830cf9e3a87db4d3b778100f64f725c9566ac917e99249bb6db47bbe",
+          "durationBeats": 128,
+          "noteCount": 27,
+          "targets": [
+            "track-piano"
+          ]
+        }
+      ],
+      "objectiveRubric": {
+        "pass": false,
+        "failures": [
+          "No safely applied candidate score was available."
+        ],
+        "baselineUnchangedBeforeApply": true,
+        "retainedMembership": false,
+        "playableCatalogMembership": false,
+        "retainedRegionsPreserved": false,
+        "operationOwnership": false,
+        "allOperationsValidated": false,
+        "segmentBounds": false,
+        "durationBeats": 0,
+        "actualMaxNoteEndBeat": 0,
+        "coverageBeats": 0,
+        "coverageFraction": 0,
+        "barsWithAnyNote": 0,
+        "noteCount": 0,
+        "tracksWithNotes": [],
+        "semanticChanged": false,
+        "fullIntroCoverage": false
+      },
+      "baselineUnchanged": true,
+      "writerPromptChecks": {
+        "writerCalls": 0,
+        "callsWithSegmentBounds": 0,
+        "allWriterCallsHadSegmentBounds": false,
+        "note": "No consolidated instrument writer call launched because the sequential concept skill hit the provider token limit. The adapter's writer prompt repeats the exact segment rules received by the current arm; writer-prompt presence could not be observed on a non-launched call."
+      }
+    }
+  ],
+  "sharedEvaluator": {
+    "status": "verified",
+    "candidates": [
+      {
+        "id": "candidate-1",
+        "available": false,
+        "pass": false,
+        "reason": "candidate unavailable",
+        "violations": [
+          "unavailable"
+        ]
+      },
+      {
+        "id": "candidate-2",
+        "available": false,
+        "pass": false,
+        "reason": "candidate unavailable",
+        "violations": [
+          "unavailable"
+        ]
+      }
+    ],
+    "rubric": "original neutral request followed, all 256 beats covered with real notes, pre-existing regions and retained membership preserved, only playable catalog instruments, valid operation-shaped score data, and an original coherent intro"
+  },
+  "callTotals": {
+    "totalProviderCalls": 5,
+    "byArm": {
+      "provider": 1,
+      "current-adviser-first": 1,
+      "consolidated-orchestrator": 2,
+      "shared": 1
+    },
+    "totalRepairs": 0,
+    "wallMsByArm": {
+      "current-adviser-first": 27641,
+      "consolidated-orchestrator": 24833
+    }
+  },
+  "segmentBoundPromptAudit": {
+    "currentWriterPrompt": {
+      "writerCalls": 0,
+      "callsWithSegmentBounds": 0,
+      "allWriterCallsHadSegmentBounds": false,
+      "note": "No current instrument writer call launched because the first read-only adviser completion hit the provider token limit. The production writer schema includes 128-beat, 512-note, 512-startBeat, and 60-operation limits, and the arm's safeDirection included the same explicit segment rules; writer-prompt presence could not be observed on a non-launched call."
+    },
+    "consolidatedWriterPrompt": {
+      "writerCalls": 0,
+      "callsWithSegmentBounds": 0,
+      "allWriterCallsHadSegmentBounds": false,
+      "note": "No consolidated instrument writer call launched because the sequential concept skill hit the provider token limit. The adapter's writer prompt repeats the exact segment rules received by the current arm; writer-prompt presence could not be observed on a non-launched call."
+    },
+    "sameExplicitRulesRequested": true,
+    "omissionStatus": "not-observable-for-at-least-one-arm-because-writer-did-not-launch"
+  },
+  "callsPath": "call-metrics.json",
+  "smallSampleLimitation": "One corrected paired run for one long prompt is directional evidence only. An earlier implementation probe used an incorrect 1024-beat constant, produced no outcome, and was discarded; its provider calls are excluded from this evidence. No repeated expensive retries were made after the corrected run beyond bounded workflow/adapter repairs.",
+  "savedProjectTouched": false,
+  "normalProductionWorkflowChanged": false
+}

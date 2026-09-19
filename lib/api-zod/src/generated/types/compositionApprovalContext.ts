@@ -18,14 +18,18 @@ import type { TrackProposal } from './trackProposal';
 export interface CompositionApprovalContext {
   /**
      * @minLength 1
-     * @maxLength 4000
+     * @maxLength 20000
      */
   originalMessage: string;
   /** @maxItems 12 */
   originalHistory: ConversationMessage[];
   originalMidi: MidiSnippet[];
-  /** @maxLength 1000 */
+  /** @maxLength 5000 */
   selectedStyle?: string;
+  /** Authenticated owner/project scope bound into the approval signature. */
+  projectId?: string;
+  /** Server-signed initial Orchestrator decision that the original request requires playable notes or regions after membership approval. Omitted only for legacy checkpoints. */
+  requiresPlayableMaterial?: boolean;
   /** @maxItems 16 */
   adviserRoster: SpecialistSelection[];
   /** @maxItems 16 */

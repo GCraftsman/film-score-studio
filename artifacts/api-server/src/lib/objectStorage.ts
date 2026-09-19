@@ -114,6 +114,15 @@ export class ObjectStorageService {
       },
     });
   }
+
+  async delete(objectPath: string): Promise<void> {
+    try {
+      const file = await this.getFile(objectPath);
+      await file.delete();
+    } catch (error) {
+      if (!(error instanceof ObjectNotFoundError)) throw error;
+    }
+  }
 }
 
 /**

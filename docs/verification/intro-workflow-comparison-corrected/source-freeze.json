@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "source": "experiment.ts",
+  "snapshot": "experiment.executed.ts",
+  "sha256": "bf0976c834a958e6f9365dc3b53347a996b7239108d89a68d4bab0b6b53423cc",
+  "bytes": 81292,
+  "frozenAt": "2026-09-15T22:30:00Z",
+  "priorPilotSourceHash": null,
+  "priorPilotSourceHashNote": "The first pilot source was not frozen before launch; its exact bytes cannot be reconstructed.",
+  "provenance": "Corrected experiment-only source copied from the prior adapter, then modified only in this separate evidence directory."
+}

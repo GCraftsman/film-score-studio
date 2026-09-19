@@ -4,6 +4,7 @@ import { WorkletSynthesizer } from 'spessasynth_lib';
 import { BasicSoundBank, SoundBankLoader, SpessaSynthProcessor } from 'spessasynth_core';
 import { SoundFontEngine, type SoundFontSynthesizer } from './soundfont-engine.ts';
 import { unlockAudioContextFromGesture } from './soundfont-audio-context.ts';
+import { shouldStartWithCompatibilityAudio } from './soundfont-audio-mode.ts';
 
 function fakeSynth(): SoundFontSynthesizer & { calls: unknown[]; mutableChannelCount: number } {
   const calls: unknown[] = [];
@@ -50,6 +51,13 @@ function engineFor(synth = fakeSynth(), fetcher = async () => ({
 
 test('uses the installed SpessaSynth WorkletSynthesizer API', () => {
   assert.equal(typeof WorkletSynthesizer, 'function');
+});
+
+test('starts with compatibility SoundFont audio on Replit development previews', () => {
+  assert.equal(shouldStartWithCompatibilityAudio('example.replit.dev'), true);
+  assert.equal(shouldStartWithCompatibilityAudio('localhost'), true);
+  assert.equal(shouldStartWithCompatibilityAudio('example.replit.app'), false);
+  assert.equal(shouldStartWithCompatibilityAudio('studio.example.com'), false);
 });
 
 test('compatibility path renders a real core SoundFont signal', () => {

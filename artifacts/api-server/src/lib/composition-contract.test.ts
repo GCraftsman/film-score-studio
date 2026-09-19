@@ -34,8 +34,8 @@ test("the complete selected style description is accepted by the server request 
 });
 
 test("selected styles over the contract bound are rejected", () => {
-  assert.equal(ComposeWithOrchestratorBody.safeParse(requestWith("x".repeat(1000))).success, true);
-  assert.equal(ComposeWithOrchestratorBody.safeParse(requestWith("x".repeat(1001))).success, false);
+  assert.equal(ComposeWithOrchestratorBody.safeParse(requestWith("x".repeat(5000))).success, true);
+  assert.equal(ComposeWithOrchestratorBody.safeParse(requestWith("x".repeat(5001))).success, false);
   const response = {
     response: "Choose a scoring style.",
     workflow: "style-intake" as const,
@@ -45,8 +45,8 @@ test("selected styles over the contract bound are rejected", () => {
     usageGuard: "bounded",
     operations: [],
   };
-  assert.equal(ComposeWithOrchestratorResponse.safeParse({ ...response, selectedStyle: "x".repeat(1000) }).success, true);
-  assert.equal(ComposeWithOrchestratorResponse.safeParse({ ...response, selectedStyle: "x".repeat(1001) }).success, false);
+  assert.equal(ComposeWithOrchestratorResponse.safeParse({ ...response, selectedStyle: "x".repeat(5000) }).success, true);
+  assert.equal(ComposeWithOrchestratorResponse.safeParse({ ...response, selectedStyle: "x".repeat(5001) }).success, false);
 });
 
 test("approval continuation contract preserves adviser context and never treats membership as automatic", () => {
@@ -59,6 +59,7 @@ test("approval continuation contract preserves adviser context and never treats 
       durationMs: 500,
       notes: [{ note: 60, velocity: 90, startMs: 0, durationMs: 250 }],
     }],
+    requiresPlayableMaterial: true,
     adviserRoster: [{ agent: "Harmony & Voice Leading", group: "concept", question: "What supports the melody?" }],
     adviserConsultations: [{
       agent: "Harmony & Voice Leading",

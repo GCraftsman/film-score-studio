@@ -1,0 +1,12 @@
+{
+  "harness": "docs/verification/intro-workflow-comparison/experiment.ts",
+  "command": "node --experimental-strip-types docs/verification/intro-workflow-comparison/experiment.ts --run",
+  "successfulLaunchMode": "foreground",
+  "successfulPid": 1995,
+  "startedAt": "2026-09-15T22:25:06.762Z",
+  "completedAt": "2026-09-15T22:26:00.960Z",
+  "stdoutStderr": "docs/verification/intro-workflow-comparison/run.log",
+  "lock": "docs/verification/intro-workflow-comparison/run-lock.json",
+  "outcome": "docs/verification/intro-workflow-comparison/outcome.json",
+  "note": "A background launch probe exited before starting the corrected run. An earlier implementation probe used an incorrect 1024-beat constant, produced no outcome, and was discarded; its provider calls are not included in the recorded comparison. The corrected paired run was launched once in the foreground and no second provider run was made after completion."
+}
