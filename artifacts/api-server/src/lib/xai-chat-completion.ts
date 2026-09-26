@@ -1,4 +1,4 @@
-import { ReplitConnectors } from "@replit/connectors-sdk";
+import type { XaiProvider } from "./xai-provider.ts";
 import {
   AI_MUSIC_SAFETY_POLICY,
 } from "./ai-music-safety.ts";
@@ -93,7 +93,7 @@ function isProviderTimeout(error: unknown): boolean {
  * transport helper, owns its two recovery attempts.
  */
 export async function chatDetailed(
-  connectors: ReplitConnectors,
+  provider: XaiProvider,
   model: string,
   messages: ModelMessage[],
   maxTokens: number,
@@ -108,7 +108,7 @@ export async function chatDetailed(
     max_completion_tokens: maxTokens,
     ...(jsonMode ? { response_format: { type: "json_object" } } : {}),
   });
-  const proxyFetch = injectedProxyFetch ?? connectors.createProxyFetch("xai");
+  const proxyFetch = injectedProxyFetch ?? provider.createProxyFetch("xai");
   for (let attempt = 1; attempt <= CHAT_MAX_ATTEMPTS; attempt += 1) {
     throwIfAborted(requestSignal);
     const timeoutSignal = AbortSignal.timeout(providerRequestTimeoutMs(maxTokens));

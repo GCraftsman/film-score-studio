@@ -1,4 +1,3 @@
-import { ReplitConnectors } from "@replit/connectors-sdk";
 import { randomUUID } from "node:crypto";
 import {
   ComposeWithOrchestratorBody,
@@ -67,6 +66,7 @@ import {
   chatDetailed,
   providerRequestTimeoutMs,
 } from "../lib/xai-chat-completion";
+import { createXaiProvider, type XaiProvider } from "../lib/xai-provider";
 import { xaiLaunchLimiter } from "../lib/chat-limiter";
 import { logTemporaryRejectedAdviserText } from "../lib/temporary-rejected-adviser-text";
 import { ObjectStorageService } from "../lib/objectStorage";
@@ -91,8 +91,8 @@ function safetyNormalizedHistory(history: unknown[]): unknown[] {
   });
 }
 
-async function getModel(connectors: ReplitConnectors, signal?: AbortSignal): Promise<string> {
-  const proxyFetch = connectors.createProxyFetch("xai");
+async function getModel(provider: XaiProvider, signal?: AbortSignal): Promise<string> {
+  const proxyFetch = provider.createProxyFetch("xai");
   const response = await xaiLaunchLimiter.schedule(
     () => proxyFetch("/v1/language-models", { method: "GET", signal }),
     signal,
@@ -107,14 +107,14 @@ async function getModel(connectors: ReplitConnectors, signal?: AbortSignal): Pro
 }
 
 async function chat(
-  connectors: ReplitConnectors,
+  provider: XaiProvider,
   model: string,
   messages: ModelMessage[],
   maxTokens: number,
   jsonMode = false,
   signal?: AbortSignal,
 ): Promise<string> {
-  const completion = await chatDetailed(connectors, model, messages, maxTokens, jsonMode, undefined, signal);
+  const completion = await chatDetailed(provider, model, messages, maxTokens, jsonMode, undefined, signal);
   throwForCompletionFailure(normalizeModelCompletion(completion));
   return completion.content;
 }
@@ -485,13 +485,13 @@ router.post(["/compose", "/compose/stream"], async (req, res): Promise<void> => 
     // mutable request source field on a resume.
     const sourceMidi = verifiedCheckpoint?.context.originalMidi ?? parsed.data.midiSnippets;
     const sourceStyle = verifiedCheckpoint?.context.selectedStyle ?? parsed.data.selectedStyle;
-    const connectors = new ReplitConnectors();
-    const modelId = await getModel(connectors, requestSignal);
+    const provider = createXaiProvider();
+    const modelId = await getModel(provider, requestSignal);
     const model: WorkflowModel = {
       complete: (messages, maxTokens, jsonMode) =>
-        chat(connectors, modelId, messages, maxTokens, jsonMode, requestSignal),
+        chat(provider, modelId, messages, maxTokens, jsonMode, requestSignal),
       completeDetailed: (messages, maxTokens, jsonMode) =>
-        chatDetailed(connectors, modelId, messages, maxTokens, jsonMode, undefined, requestSignal),
+        chatDetailed(provider, modelId, messages, maxTokens, jsonMode, undefined, requestSignal),
     };
     const logDiagnostic = (
       diagnostic: WorkflowDiagnostic,
